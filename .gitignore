@@ -1,6 +1,23 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# npm
 node_modules
 npm-debug.log
+package-lock.json
+
+# misc
 .DS_Store
 packaged-sam.yaml
 cognito.js
-package-lock.json
+.env*
+
+# Editors
+.idea/
+*.iml
+
+# Build files
+*.tgz
+yarn-error.log
+
+# production
+build/

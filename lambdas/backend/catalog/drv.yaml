@@ -1,0 +1,171 @@
+---
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: "EuroFIR-DietaryReferenceValues"
+host: "a4dpdeb988.execute-api.eu-central-1.amazonaws.com"
+basePath: "/beta"
+schemes:
+- "https"
+paths:
+  /drv/{country_code}:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "user_key"
+        in: "header"
+        required: true
+        type: "string"
+      - name: "component_code"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "eng_name"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "country_code"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Data"
+        500:
+          description: "500 response"
+        401:
+          description: "401 response"
+        403:
+          description: "403 response"
+        404:
+          description: "404 response"
+      security:
+      - api_key: []
+securityDefinitions:
+  api_key:
+    type: "apiKey"
+    name: "x-api-key"
+    in: "header"
+definitions:
+  MetaData:
+    type: "object"
+    required:
+    - "ageMax"
+    - "ageMin"
+    - "ageUnit"
+    - "engName"
+    - "sex"
+    properties:
+      reference:
+        description: "Dietary value reference"
+        $ref: "#/definitions/DataReference"
+      engName:
+        type: "string"
+        description: "User group"
+      sex:
+        type: "string"
+        description: "Sex"
+        enum:
+        - "M"
+        - "F"
+        - "M,F"
+      ageMin:
+        type: "integer"
+        description: "Lowest age for which the dietary reference value is valid"
+      ageMax:
+        type: "integer"
+        description: "Highest age for which the dietary reference value is valid"
+      ageUnit:
+        type: "string"
+        description: "Unit of age (months / years)"
+        enum:
+        - "M"
+        - "Y"
+      drvs:
+        type: "array"
+        description: "Dietary reference values"
+        items:
+          $ref: "#/definitions/DietaryReferenceValue"
+  DietaryReferenceValue:
+    type: "object"
+    properties:
+      component:
+        description: "Food component"
+        $ref: "#/definitions/Component"
+      reference:
+        description: "Dietary value reference"
+        $ref: "#/definitions/DataReference"
+      unit:
+        description: "Unit of the food component"
+        $ref: "#/definitions/Unit"
+      lt:
+        type: "number"
+        format: "double"
+        description: "Lowest Threshold Intake"
+      ar:
+        type: "number"
+        format: "double"
+        description: "Average Requirement"
+      pr:
+        type: "number"
+        format: "double"
+        description: "Population Reference Intake"
+      ul:
+        type: "number"
+        format: "double"
+        description: "Upper Limit of Intake"
+      valueTypeCode:
+        type: "string"
+        description: "Value type as specified in the EuroFIR Value Type Thesaurus"
+  Data:
+    type: "object"
+    required:
+    - "data"
+    - "success"
+    properties:
+      data:
+        type: "array"
+        description: "Dietary values with basic information describing the reference"
+        items:
+          $ref: "#/definitions/MetaData"
+      success:
+        type: "boolean"
+        description: "Description if request was successful"
+      status:
+        type: "string"
+        description: "Description of what was done"
+  Component:
+    type: "object"
+    properties:
+      code:
+        type: "string"
+        description: "Unit code as specified in the EuroFIR Unit Thesaurus"
+      description:
+        type: "string"
+        description: "Description of the code"
+  Unit:
+    type: "object"
+    properties:
+      code:
+        type: "string"
+        description: "Unit code as specified in the EuroFIR Unit Thesaurus"
+      description:
+        type: "string"
+        description: "Description of the code"
+  DataReference:
+    type: "object"
+    properties:
+      acqType:
+        type: "string"
+        description: "Acquisition type as specified in the EuroFIR Acquisition Type\
+          \ Thesaurus"
+      referenceType:
+        type: "string"
+        description: "Reference type as specified in the EuroFIR Reference Type Thesaurus"
+      citation:
+        type: "string"
+        description: "Reference’s citation"
+

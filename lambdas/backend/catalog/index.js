@@ -5,15 +5,15 @@ const fs = require('fs')
 // const petStoreSwaggerDefinition = require('./pet-store-prod.json')
 
 // Load Swagger as YAML
-const petStoreSwaggerDefinition = loadYaml('./pet-store-prod.yaml')
+const drvDef = loadYaml('./drv.yaml')
 
 const usagePlans = [{
-  id: 'YOUR_USAGE_PLAN_ID',
-  name: 'Free',
+  id: 'emvv2e',
+  name: 'Basic',
   apis: [{
-    id: 'YOUR_API_ID',
+    id: 'a4dpdeb988',
     image: '/sam-logo.png',
-    swagger: petStoreSwaggerDefinition
+    swagger: drvDef
   }]
 }]
 
