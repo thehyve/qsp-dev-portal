@@ -283,7 +283,7 @@ Resources:
               HostName: !Join
                 - ''
                 - - !Ref DevPortalSiteS3Bucket
-                  - .s3-website-
+                  - .s3-website.
                   - !Ref 'AWS::Region'
                   - .amazonaws.com
               ReplaceKeyPrefixWith: '#!/'
@@ -674,7 +674,7 @@ Outputs:
       - ''
       - - http://
         - !Ref DevPortalSiteS3Bucket
-        - .s3-website-
+        - .s3-website.
         - !Ref 'AWS::Region'
         - .amazonaws.com
     Description: URL for website hosted on S3

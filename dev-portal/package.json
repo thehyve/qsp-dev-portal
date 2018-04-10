@@ -1,6 +1,6 @@
 {
   "name": "dev-portal",
-  "homepage": "http://thehyve-qsp-developer-portal-site-test.s3-website-eu-central-1.amazonaws.com/",
+  "homepage": "http://thehyve-qsp-developer-portal-site-test.s3-website.eu-central-1.amazonaws.com/",
   "version": "0.1.0",
   "private": true,
   "devDependencies": {},

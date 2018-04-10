@@ -67,10 +67,10 @@ function modifyDevPortalAwsService(cognitoIdentityPoolId, primaryAwsRegion, cogn
 function modifyExpressServer(siteS3Bucket, primaryAwsRegion, apiGatewayApiId) {
     const expressServerPath = `${rootDir}/lambdas/backend/express-server.js`
     const expressServer = fs.readFileSync(expressServerPath, 'utf8')
-    const domainRegex = new RegExp(`const domain = '${siteS3Bucket}.s3-website-${primaryAwsRegion}.amazonaws.com'`)
+    const domainRegex = new RegExp(`const domain = '${siteS3Bucket}.s3-website.${primaryAwsRegion}.amazonaws.com'`)
 
     const expressServerModified = expressServer
-      .replace(domainRegex, 'const domain = \'YOUR_CLIENT_BUCKET_NAME.s3-website-YOUR_PRIMARY_AWS_REGION.amazonaws.com\'')
+      .replace(domainRegex, 'const domain = \'YOUR_CLIENT_BUCKET_NAME.s3-website.YOUR_PRIMARY_AWS_REGION.amazonaws.com\'')
 
     fs.writeFileSync(expressServerPath, expressServerModified, 'utf8')
 }*/
@@ -108,10 +108,10 @@ function modifyPackageFile(config) {
 function modifyUiPackageFile(siteS3Bucket, primaryAwsRegion) {
     const packageJsonPath = `${rootDir}/dev-portal/package.json`
     const packageJson = fs.readFileSync(packageJsonPath, 'utf8')
-    const homePageRegex = new RegExp(`"homepage": "http://${siteS3Bucket}.s3-website-${primaryAwsRegion}.amazonaws.com/"`, 'g')
+    const homePageRegex = new RegExp(`"homepage": "http://${siteS3Bucket}.s3-website.${primaryAwsRegion}.amazonaws.com/"`, 'g')
 
     const packageJsonModified = packageJson
-      .replace(homePageRegex, '"homepage": "http://YOUR_CLIENT_BUCKET_NAME.s3-website-YOUR_PRIMARY_AWS_REGION.amazonaws.com/"')
+      .replace(homePageRegex, '"homepage": "http://YOUR_CLIENT_BUCKET_NAME.s3-website.YOUR_PRIMARY_AWS_REGION.amazonaws.com/"')
 
     fs.writeFileSync(packageJsonPath, packageJsonModified, 'utf8')
 }
