@@ -1,16 +1,16 @@
 'use strict';
-const controller = require('common-lambda-assets/customers-controller.js')
+const controller = require('common-lambda-assets/customers-controller.js');
 
-console.log("starting listener function")
+console.log("starting listener function");
 
 exports.handler = (event, context, callback) => {
-    console.log('Received event:', JSON.stringify(event, null, 2))
+    console.log('Received event:', JSON.stringify(event, null, 2));
 
     const message = JSON.parse(event.Records[0].Sns.Message);
 
-    const action = message.action
-    const customerId = message['customer-identifier']
-    const productCode = message['product-code']
+    const action = message.action;
+    const customerId = message['customer-identifier'];
+    const productCode = message['product-code'];
 
     switch (action) {
         case 'subscribe-success':
@@ -26,8 +26,8 @@ exports.handler = (event, context, callback) => {
             unsubscribe(customerId, productCode, callback);
             break;
         default:
-            console.log("Unknown action type " + action)
-            callback("Invalid action: " + action)
+            console.log("Unknown action type " + action);
+            callback("Invalid action: " + action);
             break;
     }
 };
