@@ -10,21 +10,25 @@ import { confirmMarketplaceSubscription } from '../../services/api-catalog'
     signedIn: false,
     errorMessage: '',
     isOpen: false
-  }
+  };
 
-  open = () => this.setState({ isSubmitting: false, errorMessage: '', isOpen: true })
-  close = () => this.setState({ isOpen: false })
-  handleRegister = (...args) => this._handleRegister(...args)
+  open = () => this.setState({ isSubmitting: false, errorMessage: '', isOpen: true });
+  close = () => this.setState({ isOpen: false });
+  handleRegister = (...args) => this._handleRegister(...args);
 
   _handleRegister(event, serializedForm) {
-    event.preventDefault()
-    this.setState({isSubmitting: true})
+    event.preventDefault();
+    this.setState({isSubmitting: true});
 
-    register(serializedForm.email, serializedForm.password)
+    register(serializedForm.email, serializedForm.password, [
+            {name: "name", "value": serializedForm.name},
+            {name: "custom:organisation", value: serializedForm.organisation},
+            {name: "custom:apiClient", value: serializedForm.apiClient},
+        ])
     .then(() => {
-        this.setState({signedIn: true, isSubmitting: false, errorMessage: ''})
+        this.setState({signedIn: true, isSubmitting: false, errorMessage: ''});
 
-        const { usagePlanId, token } = this.props
+        const { usagePlanId, token } = this.props;
 
         if (usagePlanId && token) {
    	       return confirmMarketplaceSubscription(usagePlanId, token)
@@ -48,6 +52,9 @@ import { confirmMarketplaceSubscription } from '../../services/api-catalog'
         <Modal.Content>
           <Form onSubmit={this.handleRegister} error={!!this.state.errorMessage} loading={this.state.isSubmitting}>
             <Form.Input label='Email' name='email' />
+            <Form.Input label='Name' name='name' />
+            <Form.Input label='Organisation' name='organisation' />
+            <Form.Input label='API client' name='apiClient' />
             <Form.Input type='password' label='Password' name='password' autoComplete='false' />
             <Message error content={this.state.errorMessage} />
             <Modal.Actions style={{textAlign: 'right'}}>

@@ -62,9 +62,8 @@ export function init() {
   }
 }
 
-export function register(email, password) {
+export function register(email, password, attributeList) {
   localStorage.clear()
-  const attributeList = []
   return new Promise((resolve, reject) => {
     userPool.signUp(email, password, attributeList, null, (err, result) => {
       if (err) {

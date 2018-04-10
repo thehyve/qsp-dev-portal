@@ -536,7 +536,32 @@ Resources:
       Schema:
         - AttributeDataType: String
           Name: email
+          Required: true
+          Mutable: false
+          StringAttributeConstraints:
+            MinLength: 1
+            MaxLength: 256
+        - AttributeDataType: String
+          Name: name
+          Mutable: true
           Required: false
+          StringAttributeConstraints:
+            MinLength: 1
+            MaxLength: 256
+        - AttributeDataType: String
+          Name: custom:organisation
+          Required: false
+          Mutable: true
+          StringAttributeConstraints:
+            MinLength: 1
+            MaxLength: 256
+        - AttributeDataType: String
+          Name: custom:apiClient
+          Required: false
+          Mutable: true
+          StringAttributeConstraints:
+            MinLength: 1
+            MaxLength: 256
 
   CognitoUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
