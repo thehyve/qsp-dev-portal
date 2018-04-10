@@ -13,17 +13,17 @@ import { init, isAuthenticated } from '../../services/self'
 import { apiGatewayClient } from '../../services/api'
 import './App.css'
 
-const NoMatch = () => <h2>Page not found</h2>
+const NoMatch = () => <h2>Page not found</h2>;
 class MatchWhenAuthorized extends PureComponent { // eslint-disable-line
   constructor(props) {
-    super(props)
+    super(props);
 
     const apiGatewayClientInterval = window.setInterval(() => {
       if (apiGatewayClient) {
-        window.clearInterval(apiGatewayClientInterval)
+        window.clearInterval(apiGatewayClientInterval);
         this.setState({apiGatewayClient})
       }
-    }, 100)
+    }, 100);
 
     this.state = {apiGatewayClient, apiGatewayClientInterval}
   }
@@ -33,10 +33,10 @@ class MatchWhenAuthorized extends PureComponent { // eslint-disable-line
   }
 
   render() {
-    const {component: Component, ...rest} = this.props
+    const {component: Component, ...rest} = this.props;
 
     return <Route {...rest} render={props => {
-      if (!isAuthenticated()) return <Redirect to={{ pathname: '/', state: { from: props.location } }}/>
+      if (!isAuthenticated()) return <Redirect to={{ pathname: '/', state: { from: props.location } }}/>;
 
       return this.state.apiGatewayClient ? <Component {...props} />: (<Dimmer active>
         <Loader content='Loading' />
@@ -47,13 +47,13 @@ class MatchWhenAuthorized extends PureComponent { // eslint-disable-line
 
 export default class App extends PureComponent {
   constructor() {
-    super()
-    init()
+    super();
+    init();
 
     // We are using an S3 redirect rule to prefix the url path with #!
     // This then converts it back to a URL path for React routing
     // NOTE: For local development, you will get a Page Not Found when refreshing the Swagger UI page when it has a #!
-    const hashRoute = window.location.hash.substring(2)
+    const hashRoute = window.location.hash.substring(2);
     window.history.pushState({}, 'home page', hashRoute)
   }
 

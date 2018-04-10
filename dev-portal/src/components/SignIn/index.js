@@ -10,20 +10,20 @@ import { confirmMarketplaceSubscription } from '../../services/api-catalog'
      signedIn: false,
      errorMessage: '',
      isOpen: false
-   }
-   open = () => this.setState({ isSubmitting: false, errorMessage: '', isOpen: true })
-   close = () => this.setState({ isOpen: false })
-   handleLogin = (event, serializedForm) => this._handleLogin(event, serializedForm)
+   };
+   open = () => this.setState({ isSubmitting: false, errorMessage: '', isOpen: true });
+   close = () => this.setState({ isOpen: false });
+   handleLogin = (event, serializedForm) => this._handleLogin(event, serializedForm);
 
   _handleLogin(event, serializedForm) {
-    event.preventDefault()
-    this.setState({isSubmitting: true})
+    event.preventDefault();
+    this.setState({isSubmitting: true});
 
     login(serializedForm.email, serializedForm.password)
     .then(() => {
-        this.setState({signedIn: true, isSubmitting: false, errorMessage: ''})
+        this.setState({signedIn: true, isSubmitting: false, errorMessage: ''});
 
-        const { usagePlanId, token } = this.props
+        const { usagePlanId, token } = this.props;
 
         if (usagePlanId && token) {
    	       return confirmMarketplaceSubscription(usagePlanId, token)
@@ -33,7 +33,7 @@ import { confirmMarketplaceSubscription } from '../../services/api-catalog'
   }
 
   render() {
-    const { isOpen } = this.state
+    const { isOpen } = this.state;
 
     return this.state.signedIn ? <Redirect to='/apis' /> : (
       <Modal

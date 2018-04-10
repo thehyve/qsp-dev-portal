@@ -6,7 +6,7 @@ import { getApi } from '../../services/api-catalog'
 
 export default class Head extends PureComponent {
   constructor(props) {
-    super(props)
+    super(props);
 
     if (this.isApiDetailsRoute()) {
       getApi(props.match.params.apiId)
@@ -44,7 +44,7 @@ export default class Head extends PureComponent {
   }
 
   logout() {
-    logout()
+    logout();
     this.setState({ loggedOut: true })
   }
 

@@ -8,18 +8,18 @@ import { fetchUsage, mapUsageByDate } from '../../services/api-catalog'
      isLoading: false,
      errorMessage: '',
      isOpen: false
-   }
+   };
 
-   open = () => this.setState({ isLoading: false, errorMessage: '', isOpen: true })
-   close = () => this.setState({ isOpen: false })
+   open = () => this.setState({ isLoading: false, errorMessage: '', isOpen: true });
+   close = () => this.setState({ isOpen: false });
 
   loadUsage(event) {
-    event.preventDefault()
-    this.setState({isLoading: true})
+    event.preventDefault();
+    this.setState({isLoading: true});
     fetchUsage(this.props.usagePlanId)
     .then((result) => {
-      const data = mapUsageByDate(result.data, 'used')
-      const ctx = document.getElementById('api-usage-chart-container')
+      const data = mapUsageByDate(result.data, 'used');
+      const ctx = document.getElementById('api-usage-chart-container');
 
       new Chart(ctx, {
           type: 'line',
@@ -46,14 +46,14 @@ import { fetchUsage, mapUsageByDate } from '../../services/api-catalog'
                   ]
               }
           }
-      })
+      });
       this.setState({isLoading: false, errorMessage: ''})
     })
     .catch((e) => this.setState({errorMessage: e, isLoading: false}))
   }
 
   render() {
-    const { isOpen } = this.state
+    const { isOpen } = this.state;
 
     return <Modal
       size='small'
@@ -68,7 +68,7 @@ import { fetchUsage, mapUsageByDate } from '../../services/api-catalog'
           See usage for the API
         </Modal.Description>
         {this.state.errorMessage ? <Message error content={this.state.errorMessage.toString()} /> : ''}
-        <canvas id='api-usage-chart-container' width='400' height='400'></canvas>
+        <canvas id='api-usage-chart-container' width='400' height='400'/>
       </Modal.Content>
       <Modal.Actions style={{textAlign: 'right'}}>
         <Button type='button' onClick={this.close}>Close</Button>

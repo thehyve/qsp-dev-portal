@@ -9,11 +9,11 @@ export default class AlertPopup extends PureComponent {
   state = {
     isVisible: false,
     message: ''
-  }
+  };
 
   handleDismiss = () => {
     this.setState({ isVisible: false })
-  }
+  };
 
   render() {
       return (
