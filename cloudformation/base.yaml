@@ -533,6 +533,9 @@ Resources:
       Policies:
         PasswordPolicy:
           MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireUppercase: true
       Schema:
         - AttributeDataType: String
           Name: email
@@ -540,7 +543,7 @@ Resources:
           Mutable: false
           StringAttributeConstraints:
             MinLength: 1
-            MaxLength: 256
+            MaxLength: 254
         - AttributeDataType: String
           Name: name
           Mutable: true
@@ -549,14 +552,14 @@ Resources:
             MinLength: 1
             MaxLength: 256
         - AttributeDataType: String
-          Name: custom:organisation
+          Name: organisation
           Required: false
           Mutable: true
           StringAttributeConstraints:
             MinLength: 1
             MaxLength: 256
         - AttributeDataType: String
-          Name: custom:apiClient
+          Name: apiClient
           Required: false
           Mutable: true
           StringAttributeConstraints:
