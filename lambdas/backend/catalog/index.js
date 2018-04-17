@@ -1,23 +1,23 @@
-const yaml = require('js-yaml')
-const fs = require('fs')
+const yaml = require('js-yaml');
+const fs = require('fs');
 
 // Load Swagger as JSON
 // const petStoreSwaggerDefinition = require('./pet-store-prod.json')
 
 // Load Swagger as YAML
-const drvDef = loadYaml('./drv.yaml')
+const drvDef = loadYaml('./drv.yaml');
 
 const usagePlans = [{
-  id: 'emvv2e',
+  id: 'b04or5',
   name: 'Basic',
   apis: [{
-    id: 'a4dpdeb988',
+    id: '5iz79asre6',
     image: '/sam-logo.png',
     swagger: drvDef
   }]
-}]
+}];
 
-module.exports = usagePlans
+module.exports = usagePlans;
 
 function loadYaml (path) {
   try {

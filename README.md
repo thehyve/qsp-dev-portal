@@ -39,7 +39,7 @@ Add your swagger definition to the `swagger` property to enable documentation fo
 Run:
 
 ```bash
-npm run setup# Window users: all commands must use the `win-` prefix version, eg. npm run win-setup
+yarn run setup# Window users: all commands must use the `win-` prefix version, eg. yarn run win-setup
 ```
 
 Follow the prompts and enter your region, and names for your S3 buckets and CloudFormation stack. The names you provide for the S3 buckets must be unique to that region (ie. not just unique to your account) so it is recommended to add a prefix or suffix (eg. my-org-dev-portal). You can choose to provide an existing bucket for the __artifacts__ S3 bucket name, or a new one (in which case it will be created for you). The __site__ S3 bucket must __NOT__ exist, as this is managed by the CloudFormation stack.
@@ -65,21 +65,21 @@ Most components in the developer portal are managed by the CloudFormation stack 
 To create/update the stack, run:
 
 ```bash
-npm run package-deploy
+yarn run package-deploy
 ```
 
 #### WARNING: DESTRUCTIVE OPERATIONS BELOW
 To clean up the resources created, run the following commands. Note that these commands perform a `aws s3 rb --force` operation on your S3 buckets, and will delete all contents of your artifacts and app bucket. You should absolutely not run `npm run delete-artifacts-bucket` if it is a generic artifacts bucket that contains items other than those related to the developer portal you want to delete. The same is true for the `npm run delete-app-bucket` command, however, this is less likely to have non-developer-portal assets since it was created by CloudFormation. As a result of the app S3 bucket being created by CloudFormation, if you do not delete the bucket before deleting the CloudFormation Stack (`npm run delete-stack`), the CloudFormation stack will "fail" to delete due to the S3 bucket being non-empty (everything except the S3 bucket will have been successfully deleted).
 
 ```bash
-#npm run delete-artifacts-bucket
-#npm run delete-app-bucket
-npm run delete-stack
+#yarn run delete-artifacts-bucket
+#yarn run delete-app-bucket
+yarn run delete-stack
 ```
 
 These operations will not delete any API Keys that may have been generated as a result of user registration to the developer portal. We will add a script to achieve this in a future update. For now you will need to manually delete these API Keys.
 
-__Windows users:__ use the `win-` prefixed commands, eg. `npm run win-package-deploy` and `npm run win-delete-stack`
+__Windows users:__ use the `win-` prefixed commands, eg. `yarn run win-package-deploy` and `yarn run win-delete-stack`
 
 ### UI (/app)
 
@@ -97,7 +97,7 @@ By default, the backend implementation assumes a one-to-one association between 
 
 ### AWS Marketplace SNS Listener Function (Optional) (/listener)
 
-The listener Lambda function will be triggered when customers subscribe or unsubscribe to your product through the AWS Marketplace console. AWS Marketplace will generate a unique SNS Topic where events will be published for your product. This is configurable via 'marketplaceSubscriptionTopic' configuration in package.json. After changing this you will need to run 'npm run update-stack' and 'npm run subscribe-listener' to subscribe the listener function.
+The listener Lambda function will be triggered when customers subscribe or unsubscribe to your product through the AWS Marketplace console. AWS Marketplace will generate a unique SNS Topic where events will be published for your product. This is configurable via 'marketplaceSubscriptionTopic' configuration in package.json. After changing this you will need to run `yarn run update-stack` and `yarn run subscribe-listener` to subscribe the listener function.
 
 From the listener function you can manage your Usage Plan Keys through API Gateway to grant/revoke access to your APIs as well as implement any other subscription/unsubscription business logic. If you have multiple marketplace products, you will need to subscribe the listener function to the SNS topic for each product.
 
@@ -106,16 +106,16 @@ From the listener function you can manage your Usage Plan Keys through API Gatew
 Deploy changes to the application UI:
 
 ```bash
-npm run upload-site
+yarn run upload-site
 ```
 
 Deploy changes to CloudFormation, Swagger, or lambda functions:
 
 ```bash
-npm run package-deploy
+yarn run package-deploy
 ```
 
-__Windows users:__ use the `win-` prefixed commands, eg. `npm run win-package-deploy` and `npm run win-delete-stack`
+__Windows users:__ use the `win-` prefixed commands, eg. `yarn run win-package-deploy` and `yarn run win-delete-stack`
 
 ## Debugging
 
@@ -142,9 +142,9 @@ The product billing dimension name should be "apigateway" with description "Requ
 
 4) Update marketplaceSubscriptionTopic in package.json with the AWS Marketplace Product Code
 
-5) Update CloudFormation stack via 'npm run update-stack'
+5) Update CloudFormation stack via `yarn run update-stack`
 
-6) Subscribe your listener function to your subscription topic via 'npm run subscribe-listener'
+6) Subscribe your listener function to your subscription topic via `yarn run subscribe-listener`
 
 ### Marketplace Flow
 

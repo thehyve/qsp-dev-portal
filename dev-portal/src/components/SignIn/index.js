@@ -13,13 +13,14 @@ import { confirmMarketplaceSubscription } from '../../services/api-catalog'
    };
    open = () => this.setState({ isSubmitting: false, errorMessage: '', isOpen: true });
    close = () => this.setState({ isOpen: false });
-   handleLogin = (event, serializedForm) => this._handleLogin(event, serializedForm);
+   handleLogin = (event) => this._handleLogin(event);
 
-  _handleLogin(event, serializedForm) {
+  _handleLogin(event) {
     event.preventDefault();
     this.setState({isSubmitting: true});
+    const data = new FormData(event.target);
 
-    login(serializedForm.email, serializedForm.password)
+    login(data.get('email'), data.get('password'))
     .then(() => {
         this.setState({signedIn: true, isSubmitting: false, errorMessage: ''});
 
@@ -46,7 +47,7 @@ import { confirmMarketplaceSubscription } from '../../services/api-catalog'
         <Modal.Header>Sign in</Modal.Header>
         <Modal.Content>
           <Form onSubmit={this.handleLogin} error={!!this.state.errorMessage} loading={this.state.isSubmitting}>
-            <Form.Input label='Email' name='email' />
+            <Form.Input type='email' label='Email' name='email' />
             <Form.Input type='password' label='Password' name='password' autoComplete='false' />
             <Message error content={this.state.errorMessage} />
             <Modal.Actions style={{textAlign: 'right'}}>
