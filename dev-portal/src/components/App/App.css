@@ -7,8 +7,8 @@
 }
 
 .App-header {
-  background-color: #222;
-  height: 150px;
+  background-color: #666;
+  height: 70px;
   padding: 20px;
   color: white;
   text-align: center;
@@ -19,10 +19,23 @@
 }
 
 .App-intro {
+  padding: 0rem;
+}
+
+.App-segment {
+  height: 400px;
+  background-color: #CCCCCC !important;
+}
+
+.App-body {
   padding: 1rem;
 }
 
 @keyframes App-logo-spin {
-  from { transform: scale(1); }
-  to { transform: scale(1.08); }
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
 }

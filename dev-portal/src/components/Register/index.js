@@ -139,7 +139,7 @@ import { confirmMarketplaceSubscription } from '../../services/api-catalog'
         open={isOpen}
         onOpen={this.open}
         onClose={this.close}
-        trigger={<Button secondary fluid>Register</Button>}
+        trigger={<Button positive>Register</Button>}
       >
         <Modal.Header>Register</Modal.Header>
         <Modal.Content>
