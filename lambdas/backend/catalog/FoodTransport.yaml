@@ -1,0 +1,81 @@
+---
+swagger: "2.0"
+info:
+  description: "SOAP web service that provides access to food composition data collected\
+    \ by EU project EuroFIR. See the PDF documentation for more information on syntax\
+    \ and allowed requests."
+  version: "2018-04-18T08:10:33Z"
+  title: "EuroFIR-FoodTransport"
+host: "gms327o2ak.execute-api.eu-central-1.amazonaws.com"
+basePath: "/beta"
+schemes:
+- "https"
+paths:
+  /food-transport:
+    get:
+      description: "Retrieve the WSDL specification of the EuroFIR Food Transport\
+        \ SOAP service."
+      produces:
+      - "application/xml"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+      security:
+      - api_key: []
+    post:
+      description: "Execute a SOAP request on the EuroFIR Food Transport SOAP service.\
+        \ See the PDF documentation on the developer portal for more information."
+      produces:
+      - "text/xml"
+      - "application/json"
+      parameters:
+      - name: "Content-Type"
+        in: "header"
+        required: true
+        type: "string"
+      - name: "Accept"
+        in: "header"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "Response data for the service."
+          schema:
+            $ref: "#/definitions/Empty"
+        500:
+          description: "Request failed."
+          schema:
+            $ref: "#/definitions/Empty"
+      security:
+      - api_key: []
+    options:
+      description: "CORS preflight request."
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      security:
+      - api_key: []
+securityDefinitions:
+  api_key:
+    type: "apiKey"
+    name: "x-api-key"
+    in: "header"
+definitions:
+  Empty:
+    type: "object"
+    title: "Empty Schema"

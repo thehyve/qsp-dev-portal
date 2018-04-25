@@ -22,7 +22,7 @@ import { fetchUsage, mapUsageByDate } from '../../services/api-catalog'
       const ctx = document.getElementById('api-usage-chart-container');
 
       new Chart(ctx, {
-          type: 'line',
+          type: 'bar',
           data: {
               labels: data.map(d => new Date(parseInt(d[0], 10)).toLocaleDateString()),
               datasets: [
@@ -31,7 +31,13 @@ import { fetchUsage, mapUsageByDate } from '../../services/api-catalog'
                       data: data.map(d => d[1]),
                       backgroundColor: 'rgba(255, 99, 132, 0.2)',
                       borderColor: 'rgba(255,99,132,1)',
-                      borderWidth: 1
+                      borderWidth: 1,
+                      type: 'line'
+                  },
+                  {
+                    label: 'Remaining',
+                    data: data.map(d => d[0]),
+                    type: 'bar'
                   }
               ]
           },

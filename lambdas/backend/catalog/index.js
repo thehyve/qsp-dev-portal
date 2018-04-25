@@ -6,15 +6,29 @@ const fs = require('fs');
 
 // Load Swagger as YAML
 const drvDef = loadYaml('./drv.yaml');
+const foodTransport = loadYaml('./FoodTransport.yaml');
+const harmonisedQuisper = loadYaml('./HarmonizedQuisper.yaml');
 
 const usagePlans = [{
   id: 'b04or5',
   name: 'Basic',
-  apis: [{
-    id: '5iz79asre6',
-    image: '/sam-logo.png',
-    swagger: drvDef
-  }]
+  apis: [
+    {
+      id: '5iz79asre6',
+      image: '/sam-logo.png',
+      swagger: drvDef
+    },
+    {
+      id: 'gms327o2ak',
+      image: '/sam-logo.png',
+      swagger: foodTransport
+    },
+    {
+      id: 'tnrl2m4nkf',
+      image: '/sam-logo.png',
+      swagger: harmonisedQuisper
+    }
+  ]
 }];
 
 module.exports = usagePlans;
