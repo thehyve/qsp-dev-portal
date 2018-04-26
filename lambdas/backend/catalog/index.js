@@ -8,6 +8,9 @@ const fs = require('fs');
 const drvDef = loadYaml('./drv.yaml');
 const foodTransport = loadYaml('./FoodTransport.yaml');
 const harmonisedQuisper = loadYaml('./HarmonizedQuisper.yaml');
+const hq = '/pdfs/HarmonizedQuisper.pdf';
+const drv = '/pdfs/drv.pdf';
+const ft = '/pdfs/FoodTransport.pdf';
 
 const usagePlans = [{
   id: 'b04or5',
@@ -16,17 +19,20 @@ const usagePlans = [{
     {
       id: '5iz79asre6',
       image: '/sam-logo.png',
-      swagger: drvDef
+      swagger: drvDef,
+      extraDoc: drv
     },
     {
       id: 'gms327o2ak',
       image: '/sam-logo.png',
-      swagger: foodTransport
+      swagger: foodTransport,
+      extraDoc: ft
     },
     {
       id: 'tnrl2m4nkf',
       image: '/sam-logo.png',
-      swagger: harmonisedQuisper
+      swagger: harmonisedQuisper,
+      extraDoc: hq
     }
   ]
 }];
