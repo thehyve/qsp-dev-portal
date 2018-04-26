@@ -18,17 +18,17 @@ import { fetchUsage, mapUsageByDate } from '../../services/api-catalog'
     this.setState({isLoading: true});
     fetchUsage(this.props.usagePlanId)
     .then((result) => {
-      const data = mapUsageByDate(result.data, 'used');
+      const usedData = mapUsageByDate(result.data, 'used');
+      const remainingData = mapUsageByDate(result.data, 'remaning');
       const ctx = document.getElementById('api-usage-chart-container');
-
       new Chart(ctx, {
           type: 'bar',
           data: {
-              labels: data.map(d => new Date(parseInt(d[0], 10)).toLocaleDateString()),
+              labels: usedData.map(d => new Date(parseInt(d[0], 10)).toLocaleDateString()),
               datasets: [
                   {
                       label: 'Usage',
-                      data: data.map(d => d[1]),
+                      data: usedData.map(d => d[1]),
                       backgroundColor: 'rgba(255, 99, 132, 0.2)',
                       borderColor: 'rgba(255,99,132,1)',
                       borderWidth: 1,
@@ -36,7 +36,7 @@ import { fetchUsage, mapUsageByDate } from '../../services/api-catalog'
                   },
                   {
                     label: 'Remaining',
-                    data: data.map(d => d[0]),
+                    data: remainingData.map(d => d[1]),
                     type: 'bar'
                   }
               ]

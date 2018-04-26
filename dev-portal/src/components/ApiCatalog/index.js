@@ -36,11 +36,11 @@ const ApiCard = ({usagePlan, api}) => (
     </Card.Meta>
     <Card.Description>{api.swagger.info.description}</Card.Description>
 </Card.Content>
-<Card.Meta>
+<Card.Content extra>
   <a href = {api.extraDoc} target = "_blank">
     <Button >Show PDF</Button>
   </a>
-</Card.Meta>
+</Card.Content>
 
   { isAuthenticated() ? (<Card.Content extra>
     { isSubscribed(usagePlan.id) ? <SubscribedApiActionsDropdown api={api} usagePlan={usagePlan} /> : <Button onClick={event => handleSubscribe(event, usagePlan)}>Subscribe</Button>}
