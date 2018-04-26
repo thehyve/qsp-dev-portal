@@ -1,57 +1,57 @@
-import React, { PureComponent } from 'react'
-import { Link } from 'react-router-dom'
-import { Container, Segment, Divider, Card } from 'semantic-ui-react'
-import SignIn from '../components/SignIn'
-import Register from '../components/Register'
-import { isAuthenticated } from '../services/self'
-import { confirmMarketplaceSubscription } from '../services/api-catalog'
-import { getQueryString } from '../services/misc'
+/**
+ * Copyright (c) 2018 The Hyve B.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import React, {PureComponent} from 'react'
+import {Link} from 'react-router-dom'
+import {Container, Card} from 'semantic-ui-react'
+import '../index.css'
 
 export default class HomePage extends PureComponent {
+
   constructor() {
     super()
-    this.state = {}
-
-    const { usagePlanId, token } = getQueryString()
-    if (usagePlanId && token) {
-      this.state = { usagePlanId, token }
-
-      if (isAuthenticated()) {
-        confirmMarketplaceSubscription(usagePlanId, token).then(() => {
-          window.location.href = '/apis'
-        })
-      }
-    }
   }
 
   render() {
     return (
-      <Container>
+      <Container className='Home'>
         <Card.Group itemsPerRow={3} stackable style={{textAlign: 'center'}}>
           <Card>
             <Card.Content>
               <Card.Header><Link to='/case-studies'>Case Studies</Link></Card.Header>
-              <Card.Description>Want to learn about what you can achieve by integrating with our APIs? The possibilities are endless, but <Link to='/case-studies'>here are just a few examples</Link>.</Card.Description>
+              <Card.Description>Want to learn about what you can achieve by integrating with our APIs? The possibilities
+                are endless, but <Link to='/case-studies'>here are just a few examples</Link>.</Card.Description>
             </Card.Content>
           </Card>
           <Card>
             <Card.Content>
               <Card.Header><Link to='/apis'>APIs</Link></Card.Header>
-              <Card.Description><Link to='/apis'>See what APIs we have on offer</Link>, including extensive documentation. Sign in to manage your subscriptions, see your current usage, get your API Key, and test against our live API.</Card.Description>
+              <Card.Description><Link to='/apis'>See what APIs we have on offer</Link>, including extensive
+                documentation. Sign in to manage your subscriptions, see your current usage, get your API Key, and test
+                against our live API.</Card.Description>
             </Card.Content>
           </Card>
           <Card>
             <Card.Content>
               <Card.Header><Link to='/getting-started'>Getting Started</Link></Card.Header>
-              <Card.Description>Ready to get started? This is the place that answers all your questions. We'll have you up and running in no time. <Link to='/getting-started'>Let's get started!</Link></Card.Description>
+              <Card.Description>Ready to get started? This is the place that answers all your questions. We'll have you
+                up and running in no time. <Link to='/getting-started'>Let's get started!</Link></Card.Description>
             </Card.Content>
           </Card>
         </Card.Group>
-        { isAuthenticated() ? '' : (<Segment padded>
-          <SignIn usagePlanId={this.state.usagePlanId} token={this.state.token} />
-          <Divider horizontal>Or</Divider>
-          <Register usagePlanId={this.state.usagePlanId} token={this.state.token} />
-        </Segment>) }
       </Container>
     )
   }
