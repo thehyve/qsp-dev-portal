@@ -20,11 +20,6 @@ import {Container, Card} from 'semantic-ui-react'
 import '../index.css'
 
 export default class HomePage extends PureComponent {
-
-  constructor() {
-    super()
-  }
-
   render() {
     return (
       <Container className='Home'>
