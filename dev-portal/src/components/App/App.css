@@ -19,7 +19,8 @@
 }
 
 .App-intro {
-  padding: 0rem;
+  padding: 0;
+  margin-bottom: 55px;
 }
 
 .App-segment {
