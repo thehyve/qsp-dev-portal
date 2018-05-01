@@ -1,47 +1,71 @@
 ---
 swagger: "2.0"
 info:
+  description: "Service that provides dietary reference values compiled by EuroFIR."
   version: "1.0.0"
   title: "EuroFIR-DietaryReferenceValues"
-host: "a4dpdeb988.execute-api.eu-central-1.amazonaws.com"
-basePath: "/beta"
+host: "qsp-api.thehyve.net"
+basePath: "/drv-beta"
 schemes:
 - "https"
 paths:
-  /drv/{country_code}:
+  /dietary-reference/{country_code}:
     get:
+      summary: "Retrieve dietary reference values for specified country code."
+      description: "Retrieve dietary reference values for specified country code."
       produces:
       - "application/json"
       parameters:
-      - name: "user_key"
-        in: "header"
-        required: true
-        type: "string"
       - name: "component_code"
         in: "query"
-        required: false
+        description: "Food component code as specified in the EuroFIR Component Thesaurus,\
+          \ listed at http://www.eurofir.org/eurofir-thesauri/."
+        required: true
         type: "string"
       - name: "eng_name"
         in: "query"
+        description: "Name of the user group in English."
         required: false
         type: "string"
       - name: "country_code"
         in: "path"
+        description: "ISO 3166 country code of the country to return data from."
         required: true
         type: "string"
       responses:
         200:
-          description: "200 response"
+          description: "Returns a list of dietary reference values"
           schema:
             $ref: "#/definitions/Data"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
         500:
-          description: "500 response"
+          description: "An internal error occurred"
         401:
-          description: "401 response"
+          description: "Unauthorized: provide a valid API key"
         403:
-          description: "403 response"
-        404:
-          description: "404 response"
+          description: "Forbidden: the provided API key is invalid"
+      security:
+      - api_key: []
+    options:
+      description: "CORS preflight request."
+      consumes:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
       security:
       - api_key: []
 securityDefinitions:
@@ -168,4 +192,3 @@ definitions:
       citation:
         type: "string"
         description: "Reference’s citation"
-
