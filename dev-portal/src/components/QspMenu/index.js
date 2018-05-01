@@ -16,12 +16,10 @@
 
 import React, {PureComponent} from 'react'
 import {Link, Redirect} from 'react-router-dom'
-import {Menu, Dropdown} from 'semantic-ui-react'
-import {Image} from 'semantic-ui-react'
+import {Menu, Popup, Image, Dropdown} from 'semantic-ui-react'
 import logo from './logo.png'
 import './QspMenu.css'
 import {isAuthenticated, logout, showApiKey} from "../../services/self"
-import Popup from "semantic-ui-react/dist/es/modules/Popup/Popup";
 
 
 export default class QspMenu extends PureComponent {
