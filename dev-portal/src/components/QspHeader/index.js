@@ -79,9 +79,7 @@ export default class QspHeader extends PureComponent {
   }
 
   renderToolbar() {
-    return (<div>
-      <QspMenu onChange={(d) => this.handleAuthChange(d)}/>
-    </div>);
+    return <QspMenu onChange={(d) => this.handleAuthChange(d)}/>;
   }
 
   render() {
