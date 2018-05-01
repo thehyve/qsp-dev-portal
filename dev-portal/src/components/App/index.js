@@ -15,21 +15,32 @@
  */
 
 import React, {PureComponent} from 'react'
-import {BrowserRouter, Route, Switch} from 'react-router-dom'
+import {BrowserRouter, Redirect, Route, Switch} from 'react-router-dom'
 import {Segment} from 'semantic-ui-react'
 import Home from '../../pages/Home'
+import Account from '../../pages/Account'
 import CaseStudies from '../../pages/CaseStudies'
 import GettingStarted from '../../pages/GettingStarted'
 import Dashboard from '../../pages/Dashboard'
 import Apis from '../../pages/Apis'
 import ApiDetails from '../../pages/ApiDetails'
 import AlertPopup from '../../components/AlertPopup'
-import {init} from '../../services/self'
+import {init, isAuthenticated} from '../../services/self'
 import './App.css'
 import Footer from "../Footer";
 import QspHeader from "../QspHeader";
 
 const NoMatch = () => <h2>Page not found</h2>;
+
+const PrivateRoute = ({ component: Component, ...rest }) => (
+  <Route {...rest} render={(props) => (
+   isAuthenticated() ? <Component {...props} />
+      : <Redirect to={{
+        pathname: '/',
+        state: { from: props.location }
+      }} />
+  )} />
+);
 
 export default class App extends PureComponent {
 
@@ -54,6 +65,7 @@ export default class App extends PureComponent {
             <Segment className='App-body' basic>
               <Switch>
                 <Route exact path="/" component={Home}/>
+                <PrivateRoute path="/account-details" component={Account}/>
                 <Route path="/case-studies" component={CaseStudies}/>
                 <Route path="/getting-started" component={GettingStarted}/>
                 <Route path="/dashboard" component={Dashboard}/>

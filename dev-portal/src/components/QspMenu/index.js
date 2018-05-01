@@ -16,7 +16,7 @@
 
 import React, {PureComponent} from 'react'
 import {Link, Redirect} from 'react-router-dom'
-import {Menu} from 'semantic-ui-react'
+import {Menu, Dropdown} from 'semantic-ui-react'
 import {Image} from 'semantic-ui-react'
 import logo from './logo.png'
 import './QspMenu.css'
@@ -45,10 +45,20 @@ export default class QspMenu extends PureComponent {
         </Menu.Item>
 
         <Menu.Menu position='right'>
+          <Menu.Item href='/apis'>
+            API Directory
+          </Menu.Item>
           {!this.state.signedIn ? '' : (
-            <Menu.Item onClick={() => this.handleLogout()}>
-              Sign Out
-            </Menu.Item>
+            <Dropdown item text='My Account'>
+              <Dropdown.Menu>
+                <Dropdown.Item href='/account-details'>
+                  Account
+                </Dropdown.Item>
+                <Dropdown.Item onClick={() => this.handleLogout()}>
+                  Sign Out
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
           )}
         </Menu.Menu>
       </Menu>

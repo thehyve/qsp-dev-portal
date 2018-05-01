@@ -25,7 +25,11 @@
 
 .App-segment {
   height: 400px;
-  background-color: #CCCCCC !important;
+  background-color: #666 !important;
+}
+
+.App-segment .ui.header {
+  color: #FFF !important;
 }
 
 .App-body {
