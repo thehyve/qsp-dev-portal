@@ -89,9 +89,11 @@ export function unsubscribe(usagePlanId) {
 }
 
 export function fetchUsage(usagePlanId) {
-    const date = new Date()
-    const start = new Date(date.getFullYear(), date.getMonth(), 1).toJSON().split('T')[0]
+    const startDate = new Date()
+    startDate.setDate(startDate.getDate() - 31);
+    const start = startDate.toJSON().split('T')[0]
     const end = new Date().toJSON().split('T')[0]
+
     return getApiGatewayClient().then(apiGatewayClient => {
         return apiGatewayClient.get('/subscriptions/' + usagePlanId + '/usage', { start, end }, {})
     })
