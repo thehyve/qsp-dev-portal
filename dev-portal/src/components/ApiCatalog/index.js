@@ -37,8 +37,8 @@ const ApiCard = ({usagePlan, api}) => (
     <Card.Description>{api.swagger.info.description}</Card.Description>
 </Card.Content>
 <Card.Content extra>
-  <a href = {api.extraDoc} target = "_blank">
-    <Button >Show PDF</Button>
+  <a href={api.extraDoc} target="_blank" rel="noopener noreferrer">
+    <Button >PDF documentation</Button>
   </a>
 </Card.Content>
 

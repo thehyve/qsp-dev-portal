@@ -19,7 +19,7 @@ import { fetchUsage, mapUsageByDate } from '../../services/api-catalog'
     fetchUsage(this.props.usagePlanId)
     .then((result) => {
       const usedData = mapUsageByDate(result.data, 'used');
-      const remainingData = mapUsageByDate(result.data, 'remaning');
+      const remainingData = mapUsageByDate(result.data, 'remaining');
       const ctx = document.getElementById('api-usage-chart-container');
       new Chart(ctx, {
           type: 'bar',

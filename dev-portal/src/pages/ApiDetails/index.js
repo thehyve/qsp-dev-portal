@@ -1,19 +1,19 @@
 import React, { PureComponent } from 'react'
-import { loadSwagger } from '../../services/swagger-ui'
+import { Dimmer, Loader} from 'semantic-ui-react'
 import { getApi } from '../../services/api-catalog'
 import Head from '../../components/Head'
+import SwaggerUI from "../../components/SwaggerUI";
 
 export default class ApiDetailsPage extends PureComponent {
   constructor(props) {
-    super(props)
-    this.state = {}
+    super();
+    this.state = {};
 
     getApi(props.match.params.apiId)
     .then(api => {
       this.setState({
         api
-      })
-      loadSwagger(api.swagger)
+      });
     })
   }
 
@@ -21,7 +21,10 @@ export default class ApiDetailsPage extends PureComponent {
     return (<div>
       <Head {...this.props} />
       <section className="swagger-section" style={{overflow: 'auto'}}>
-        <div className="swagger-ui-wrap" id="swagger-ui-container"></div>
+        {this.state.api ? <SwaggerUI spec={this.state.api.swagger}/> : (
+          <Dimmer active>
+            <Loader content='Loading' />
+          </Dimmer>)}
       </section>
     </div>)
   }

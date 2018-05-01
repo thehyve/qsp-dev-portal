@@ -118,9 +118,7 @@ export function mapUsageByDate(usage, usedOrRemaining) {
         })
     })
 
-    const usageByDate = Object.keys(dates).sort().map(date => [date, dates[date]])
-
-    return usageByDate
+  return Object.keys(dates).sort().map(date => [date, dates[date]])
 }
 
 function mapApiKeyUsageByDate(apiKeyUsage, startDate, usedOrRemaining) {
