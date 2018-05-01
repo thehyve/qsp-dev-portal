@@ -20,21 +20,28 @@ import {Menu, Dropdown} from 'semantic-ui-react'
 import {Image} from 'semantic-ui-react'
 import logo from './logo.png'
 import './QspMenu.css'
-import {isAuthenticated, logout} from "../../services/self"
+import {isAuthenticated, logout, showApiKey} from "../../services/self"
+import Popup from "semantic-ui-react/dist/es/modules/Popup/Popup";
 
 
 export default class QspMenu extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.state = {signedIn: isAuthenticated()};
+    this.state = {signedIn: isAuthenticated(), apiKey: ''};
   }
 
   handleLogout() {
-    const _state = {signedIn: false};
+    const _state = {signedIn: false, apiKey: ''};
     logout();
     this.setState(_state);
     this.props.onChange(_state);
+  }
+
+  showApiKey() {
+    showApiKey().then(apiKey => {
+      this.setState({ apiKey })
+    })
   }
 
   render() {
@@ -54,6 +61,12 @@ export default class QspMenu extends PureComponent {
                 <Dropdown.Item href='/account-details'>
                   Account
                 </Dropdown.Item>
+                <Popup
+                  trigger={<Menu.Item onClick={() => this.showApiKey()}>Show API Key</Menu.Item>}
+                  content={this.state.apiKey ? this.state.apiKey.toString() : 'Loading API Key...'}
+                  on='click'
+                  positioning='left'
+                />
                 <Dropdown.Item onClick={() => this.handleLogout()}>
                   Sign Out
                 </Dropdown.Item>

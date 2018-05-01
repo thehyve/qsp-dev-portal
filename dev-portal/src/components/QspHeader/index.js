@@ -33,7 +33,7 @@ export default class QspHeader extends PureComponent {
     super(props);
 
     this.state = {
-      isAuthenticated: isAuthenticated()
+      isAuthenticated: isAuthenticated(),
     };
 
     // TODO: Code below are legacy. To find out what does it mean in relation with AWS.
@@ -51,7 +51,7 @@ export default class QspHeader extends PureComponent {
     // ********************************************************************************
   }
 
-  handleSignIn(d) {
+  handleAuthChange(d) {
     this.setState({isAuthenticated: d.signedIn});
   }
 
@@ -69,7 +69,7 @@ export default class QspHeader extends PureComponent {
           <h1>Information service for personalized nutrition and lifestyle advice</h1>
           <Button.Group>
             <SignIn usagePlanId={this.state.usagePlanId} token={this.state.token}
-                    onChange={(d) => this.handleSignIn(d)}/>
+                    onChange={(d) => this.handleAuthChange(d)}/>
             <Button.Or/>
             <Register usagePlanId={this.state.usagePlanId} token={this.state.token}/>
           </Button.Group>
@@ -79,7 +79,9 @@ export default class QspHeader extends PureComponent {
   }
 
   renderToolbar() {
-    return <QspMenu onChange={(d) => this.handleSignIn(d)}/>;
+    return (<div>
+      <QspMenu onChange={(d) => this.handleAuthChange(d)}/>
+    </div>);
   }
 
   render() {
