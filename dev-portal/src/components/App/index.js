@@ -15,8 +15,8 @@
  */
 
 import React, {PureComponent} from 'react'
-import {BrowserRouter, Route, Redirect, Link, Switch} from 'react-router-dom'
-import {Dimmer, Loader, Segment} from 'semantic-ui-react'
+import {BrowserRouter, Route, Switch} from 'react-router-dom'
+import {Segment} from 'semantic-ui-react'
 import Home from '../../pages/Home'
 import CaseStudies from '../../pages/CaseStudies'
 import GettingStarted from '../../pages/GettingStarted'
@@ -24,44 +24,12 @@ import Dashboard from '../../pages/Dashboard'
 import Apis from '../../pages/Apis'
 import ApiDetails from '../../pages/ApiDetails'
 import AlertPopup from '../../components/AlertPopup'
-import {init, isAuthenticated} from '../../services/self'
-import {apiGatewayClient} from '../../services/api'
+import {init} from '../../services/self'
 import './App.css'
 import Footer from "../Footer";
 import QspHeader from "../QspHeader";
 
 const NoMatch = () => <h2>Page not found</h2>;
-
-class MatchWhenAuthorized extends PureComponent { // eslint-disable-line
-  constructor(props) {
-    super(props);
-
-    const apiGatewayClientInterval = window.setInterval(() => {
-      if (apiGatewayClient) {
-        window.clearInterval(apiGatewayClientInterval);
-        this.setState({apiGatewayClient})
-      }
-    }, 100);
-
-    this.state = {apiGatewayClient, apiGatewayClientInterval}
-  }
-
-  componentWillUnmount() {
-    if (this.state.apiGatewayClientInterval) window.clearInterval(this.state.apiGatewayClientInterval)
-  }
-
-  render() {
-    const {component: Component, ...rest} = this.props;
-
-    return <Route {...rest} render={props => {
-      if (!isAuthenticated()) return <Redirect to={{pathname: '/', state: {from: props.location}}}/>;
-
-      return this.state.apiGatewayClient ? <Component {...props} /> : (<Dimmer active>
-        <Loader content='Loading'/>
-      </Dimmer>)
-    }}/>
-  }
-}
 
 export default class App extends PureComponent {
 
