@@ -36,10 +36,10 @@ import { fetchUsage, mapUsageByDate } from '../../services/api-catalog'
                       yAxisID: 'A',
                   },
                   {
-                    label: 'Remaining',
-                    data: remainingData.map(d => d[1]),
-                    type: 'bar',
-                    yAxisID: 'B',
+                      label: 'Remaining',
+                      data: remainingData.map(d => d[1]),
+                      type: 'bar',
+                      yAxisID: 'B',
                   }
               ]
           },
