@@ -33,9 +33,11 @@ export default class AccountDetails extends PureComponent {
         <QspBreadcrumb {...this.props} />
         <h2>Account Details</h2>
         <Form noValidate loading={!this.state.isLoaded}>
-          <Form.Input type='email' label='Email' name='email'  value={this.state.userCredentials.email}/>
-          <Form.Input label='Name' name='name' value={this.state.userCredentials.name}/>
-          <Form.Input label='Organisation' name='organisation' value={this.state.userCredentials['custom:organisation']}/>
+          <Form.Input type='email' label='Email' name='email'  value={this.state.userCredentials.email} readOnly/>
+          <Form.Input label='Name' name='name' value={this.state.userCredentials.name} readOnly/>
+          <Form.Input
+            label='Organisation' name='organisation'
+            value={this.state.userCredentials['custom:organisation']} readOnly/>
         </Form>
       </div>)
   }
