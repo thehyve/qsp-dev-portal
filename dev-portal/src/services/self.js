@@ -134,6 +134,18 @@ export function logout() {
 }
 
 export function showApiKey() {
-  return apiGatewayClient.get('/apikey', {}, {}, {})
+  return cognitoUser.getUserAttributes((err, result) => {
+    if (err) {
+      return Promise.reject(err);
+    }
+    let params = {};
+    for (let i = 0; i < result.length; i++) {
+      if (result[i].getName() === 'custom:apiClient') {
+        params.apiClient = result[i].getValue();
+        break;
+      }
+    }
+    return apiGatewayClient.get('/apikey', params, {}, {})
       .then(({data}) => data.value)
+  });
 }
