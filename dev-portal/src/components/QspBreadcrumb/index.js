@@ -16,11 +16,11 @@
 
 import React, { PureComponent } from 'react'
 import { Breadcrumb } from 'semantic-ui-react'
-import { Link, Redirect} from 'react-router-dom'
-import { logout, showApiKey, isAuthenticated } from '../../services/self'
+import { Link} from 'react-router-dom'
+import { isAuthenticated } from '../../services/self'
 import { getApi } from '../../services/api-catalog'
 
-export default class Head extends PureComponent {
+export default class QspBreadcrumb extends PureComponent {
   constructor(props) {
     super(props);
 
@@ -35,7 +35,6 @@ export default class Head extends PureComponent {
 
     this.state = {
       isAuthenticated: isAuthenticated(),
-      apiKey: ''
     }
   }
 
@@ -59,19 +58,8 @@ export default class Head extends PureComponent {
     return this.props.pattern === '/apis/:apiId'
   }
 
-  logout() {
-    logout();
-    this.setState({ loggedOut: true })
-  }
-
-  showApiKey() {
-    showApiKey().then(apiKey => {
-      this.setState({ apiKey })
-    })
-  }
-
   render() {
-    return this.state.loggedOut ? <Redirect to='/' /> : (<section style={{marginBottom: '1rem'}}>
+    return (<section style={{marginBottom: '1rem'}}>
       <Breadcrumb>
         { this.isHomeRoute() ? <Breadcrumb.Section active>Home</Breadcrumb.Section> : <Breadcrumb.Section><Link to="/">Home</Link></Breadcrumb.Section> }
         { this.isGettingStartedRoute() ? <Breadcrumb.Section active><Breadcrumb.Divider icon='right chevron' />Getting Started</Breadcrumb.Section> : ''}
@@ -79,14 +67,6 @@ export default class Head extends PureComponent {
         { this.isApisListRoute() ? <Breadcrumb.Section active><Breadcrumb.Divider icon='right chevron' />APIs</Breadcrumb.Section> : ''}
         { this.isApiDetailsRoute() ? <Breadcrumb.Section><Breadcrumb.Section><Breadcrumb.Divider icon='right chevron' /><Link to="/apis">APIs</Link></Breadcrumb.Section><Breadcrumb.Section active><Breadcrumb.Divider icon='right chevron' />{ this.state.apiName }</Breadcrumb.Section></Breadcrumb.Section> : ''}
       </Breadcrumb>
-      {/*{ this.state.isAuthenticated ? <div style={{float: 'right'}}>*/}
-        {/*<Popup*/}
-          {/*trigger={<Button onClick={() => this.showApiKey()} size='mini'>Show API Key</Button>}*/}
-          {/*content={this.state.apiKey ? this.state.apiKey.toString() : 'Loading API Key...'}*/}
-          {/*on='click'*/}
-          {/*positioning='top right'*/}
-        {/*/>*/}
-      {/*</div> : ''}*/}
     </section>)
   }
 }

@@ -3,7 +3,7 @@ import { Dimmer, Loader } from 'semantic-ui-react'
 import ApiCatalog from '../../components/ApiCatalog'
 import { isAuthenticated } from '../../services/self'
 import { getCatalog, fetchSubscriptions } from '../../services/api-catalog'
-import Head from '../../components/Head'
+import QspBreadcrumb from '../../components/QspBreadcrumb'
 
 export default class ApisPage extends PureComponent {
   constructor(props) {
@@ -23,7 +23,7 @@ export default class ApisPage extends PureComponent {
 
   render() {
     return (<div>
-      <Head {...this.props} />
+      <QspBreadcrumb {...this.props} />
       {this.state.catalog && (!isAuthenticated() || this.state.subscriptions) ? <ApiCatalog catalog={this.state.catalog} /> : (<Dimmer active>
         <Loader content='Loading' />
       </Dimmer>)}

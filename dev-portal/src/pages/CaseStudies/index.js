@@ -1,9 +1,9 @@
 import React from 'react'
-import Head from '../../components/Head'
+import QspBreadcrumb from '../../components/QspBreadcrumb'
 
 export default (props) => (
   <div>
-    <Head {...props} />
+    <QspBreadcrumb {...props} />
     <h2>Case Studies</h2>
     <p>Sample data. You can modify this static content in (‘/developer portal’) folder of the ‘link to github’ application.</p>
     <h3>Pet Availability</h3>
