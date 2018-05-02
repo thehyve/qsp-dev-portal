@@ -38,6 +38,9 @@ export default class AccountDetails extends PureComponent {
           <Form.Input
             label='Organisation' name='organisation'
             value={this.state.userCredentials['custom:organisation']} readOnly/>
+          <Form.Input
+            label='API Client' name='apiClient'
+            value={this.state.userCredentials['custom:apiClient']} readOnly/>
         </Form>
       </div>)
   }
