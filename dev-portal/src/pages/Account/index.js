@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
 import { Form } from 'semantic-ui-react'
-import Head from '../../components/Head'
+import QspBreadcrumb from "../../components/QspBreadcrumb";
 
 export default class AccountDetails extends PureComponent {
 
@@ -14,7 +14,7 @@ export default class AccountDetails extends PureComponent {
   render() {
     return (
       <div>
-        <Head {...this.props} />
+        <QspBreadcrumb {...this.props} />
         <h2>Account Details</h2>
           <Form noValidate>
             <Form.Input type='email' label='Email' name='email' disabled/>
