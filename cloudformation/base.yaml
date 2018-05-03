@@ -297,12 +297,14 @@ Resources:
         AttributeType: S
       - AttributeName: MarketplaceCustomerId
         AttributeType: S
+      - AttributeName: ApiKeyId
+        AttributeType: S
       KeySchema:
       - AttributeName: Id
         KeyType: HASH
       ProvisionedThroughput:
-        ReadCapacityUnits: '5'
-        WriteCapacityUnits: '5'
+        ReadCapacityUnits: '1'
+        WriteCapacityUnits: '1'
       GlobalSecondaryIndexes:
       - IndexName: MarketplaceCustomerIdIndex
         KeySchema:
@@ -313,8 +315,8 @@ Resources:
           - ApiKeyId
           ProjectionType: INCLUDE
         ProvisionedThroughput:
-          ReadCapacityUnits: '5'
-          WriteCapacityUnits: '5'
+          ReadCapacityUnits: '1'
+          WriteCapacityUnits: '1'
 
   DevPortalLambdaExecutionRole:
     Type: AWS::IAM::Role

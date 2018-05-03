@@ -43,7 +43,7 @@ app.post('/signin', (req, res) => {
         if (data.items.length === 0) {
             console.log(`No API Key found for customer ${cognitoIdentityId}`);
 
-            customersController.createApiKey(cognitoIdentityId, errFunc, (createData) => {
+            customersController.createApiKey(cognitoIdentityId, null, errFunc, (createData) => {
                 console.log(`Create API Key data: ${createData}`);
                 const keyId = createData.id;
 
@@ -138,9 +138,7 @@ app.get('/subscriptions/:usagePlanId/usage', (req, res) => {
     if (!isUsagePlanInCatalog) {
         res.status(404).json('Invalid Usage Plan ID')
     } else {
-        customersController.getApiKeyForCustomer(cognitoIdentityId, errFunc, (data) => {
-            const keyId = data.items[0].id;
-
+        customersController.getUserApiKeyId(cognitoIdentityId, errFunc, (keyId) => {
             const params = {
                 endDate: req.query.end,
                 startDate: req.query.start,
@@ -190,7 +188,7 @@ app.delete('/subscriptions/:usagePlanId', (req, res) => {
 app.post('/marketplace-confirm/:usagePlanId', (req, res) => {
     const marketplaceToken = req.body['x-amzn-marketplace-token'];
 
-    if (marketplaceToken === null || marketplaceToken === undefined) {
+    if (!marketplaceToken) {
         console.log(`Couldn't find marketplace token. Event: ${util.inspect(req.apiGateway.event, { depth: null, colors: true })}`);
         res.status(400).json({ message: 'Missing AWS Marketplace token' })
     }
@@ -250,6 +248,10 @@ app.put('/marketplace-subscriptions/:usagePlanId', (req, res) => {
 
 function getCognitoIdentityId(req) {
     return req.apiGateway.event.requestContext.identity.cognitoIdentityId
+}
+
+function getAccessKey(req) {
+  return req.apiGateway.event.requestContext.identity.accessKey;
 }
 
 function getUsagePlanFromCatalog(usagePlanId) {
