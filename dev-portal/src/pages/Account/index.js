@@ -1,5 +1,6 @@
-import React, { PureComponent } from 'react'
-import { Form } from 'semantic-ui-react'
+import React, {PureComponent} from 'react'
+import {Form} from 'semantic-ui-react'
+import {getAccountDetails, isAuthenticated} from "../../services/self";
 import QspBreadcrumb from "../../components/QspBreadcrumb";
 
 export default class AccountDetails extends PureComponent {
@@ -7,8 +8,23 @@ export default class AccountDetails extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      apiKey: ''
-    };
+      isAuthenticated: isAuthenticated(),
+      isLoaded: false,
+      userCredentials: {
+        email: '',
+        name: '',
+        'custom:organisation': ''
+      }
+    }
+  }
+
+  componentDidMount() {
+    getAccountDetails().then((d) => {
+      this.setState({
+        userCredentials: d,
+        isLoaded: true
+      })
+    });
   }
 
   render() {
@@ -16,13 +32,17 @@ export default class AccountDetails extends PureComponent {
       <div>
         <QspBreadcrumb {...this.props} />
         <h2>Account Details</h2>
-          <Form noValidate>
-            <Form.Input type='email' label='Email' name='email' disabled/>
-            <Form.Input label='Name' name='name' disabled/>
-            <Form.Input label='Organisation' name='organisation' disabled/>
-            <Form.Input label='API client' name='apiClient' disabled/>
-          </Form>
-      </div>);
+        <Form noValidate loading={!this.state.isLoaded}>
+          <Form.Input type='email' label='Email' name='email'  value={this.state.userCredentials.email} readOnly/>
+          <Form.Input label='Name' name='name' value={this.state.userCredentials.name} readOnly/>
+          <Form.Input
+            label='Organisation' name='organisation'
+            value={this.state.userCredentials['custom:organisation']} readOnly/>
+          <Form.Input
+            label='API Client' name='apiClient'
+            value={this.state.userCredentials['custom:apiClient']} readOnly/>
+        </Form>
+      </div>)
   }
 }
 
