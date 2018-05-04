@@ -149,6 +149,6 @@ export function logout() {
 }
 
 export function showApiKey() {
-  return apiGatewayClient.get('/apikey', {}, {}, {})
-      .then(({data}) => data.value)
+  return isAuthenticated() ? apiGatewayClient.get('/apikey', {}, {}, {})
+      .then(({data}) => data.value) : ''
 }

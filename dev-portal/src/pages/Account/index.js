@@ -1,6 +1,6 @@
 import React, {PureComponent} from 'react'
 import {Form} from 'semantic-ui-react'
-import {getAccountDetails, isAuthenticated} from "../../services/self";
+import {getAccountDetails, isAuthenticated, showApiKey} from "../../services/self";
 import QspBreadcrumb from "../../components/QspBreadcrumb";
 
 export default class AccountDetails extends PureComponent {
@@ -13,16 +13,19 @@ export default class AccountDetails extends PureComponent {
       userCredentials: {
         email: '',
         name: '',
-        'custom:organisation': ''
+        'custom:organisation': '',
+        apiKey: ''
       }
     }
   }
 
   componentDidMount() {
     getAccountDetails().then((d) => {
-      this.setState({
-        userCredentials: d,
-        isLoaded: true
+      showApiKey().then((k) => {
+        this.setState({
+          apiKey : k ,
+          userCredentials: d,
+          isLoaded: true})
       })
     });
   }
@@ -33,6 +36,7 @@ export default class AccountDetails extends PureComponent {
         <QspBreadcrumb {...this.props} />
         <h2>Account Details</h2>
         <Form noValidate loading={!this.state.isLoaded}>
+          <Form.Input label='API Key' name='apiKey' value={this.state.apiKey}  readOnly/>
           <Form.Input type='email' label='Email' name='email'  value={this.state.userCredentials.email} readOnly/>
           <Form.Input label='Name' name='name' value={this.state.userCredentials.name} readOnly/>
           <Form.Input
