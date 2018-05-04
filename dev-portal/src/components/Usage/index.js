@@ -2,73 +2,97 @@ import React, { PureComponent } from 'react'
 import { Modal, Dropdown, Message, Button } from 'semantic-ui-react'
 import Chart from 'chart.js'
 import { fetchUsage, mapUsageByDate } from '../../services/api-catalog'
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
+import "react-datepicker/dist/react-datepicker.css";
+
+ var chart;
 
  export default class Usage extends PureComponent {
    state = {
      isLoading: false,
      errorMessage: '',
-     isOpen: false
+     isOpen: false,
+     startDate: moment()
    };
 
-   open = () => this.setState({ isLoading: false, errorMessage: '', isOpen: true });
+   open = () => this.setState({ isLoading: false, errorMessage: '', isOpen: true , startDate: moment()});
    close = () => this.setState({ isOpen: false });
+   handleChange = this.handleChange.bind(this);
+
+   handleChange(date) {
+     this.setState({
+       startDate: date
+     }, () => {
+       this.loadUsageChart()
+     });
+   }
+
+   loadUsageChart() {
+     this.setState({isLoading: true});
+     fetchUsage(this.props.usagePlanId , this.state.startDate.toDate())
+     .then((result) => {
+       const usedData = mapUsageByDate(result.data, 'used');
+       const remainingData = mapUsageByDate(result.data, 'remaining');
+       const ctx = document.getElementById('api-usage-chart-container');
+
+       if(chart) {
+          chart.destroy()
+       }
+       chart = new Chart(ctx, {
+         type: 'bar',
+         data: {
+           labels: usedData.map(d => new Date(parseInt(d[0], 10)).toLocaleDateString()),
+           datasets: [
+             {
+               label: 'Used',
+               data: usedData.map(d => d[1]),
+               backgroundColor: 'rgba(255, 99, 132, 0.2)',
+               borderColor: 'rgba(255,99,132,1)',
+               borderWidth: 1,
+               type: 'line',
+               yAxisID: 'A',
+             },
+             {
+               label: 'Remaining',
+               data: remainingData.map(d => d[1]),
+               type: 'bar',
+               yAxisID: 'B',
+             }
+           ]
+         },
+         options: {
+           scales: {
+             yAxes: [
+               {
+                 id: 'A',
+                 type: 'linear',
+                 position: 'left',
+                 ticks: {
+                   beginAtZero: true
+                 }
+               },
+               {
+                 id: 'B',
+                 type: 'linear',
+                 position: 'right',
+                 ticks: {
+                   beginAtZero: true
+                 }
+               }
+             ]
+           }
+         }
+       });
+       this.setState({isLoading: false, errorMessage: ''})
+     })
+     .catch((e) => this.setState({errorMessage: e, isLoading: false}))
+   }
+
 
   loadUsage(event) {
     event.preventDefault();
-    this.setState({isLoading: true});
-    fetchUsage(this.props.usagePlanId)
-    .then((result) => {
-      const usedData = mapUsageByDate(result.data, 'used');
-      const remainingData = mapUsageByDate(result.data, 'remaining');
-      const ctx = document.getElementById('api-usage-chart-container');
-      new Chart(ctx, {
-          type: 'bar',
-          data: {
-              labels: usedData.map(d => new Date(parseInt(d[0], 10)).toLocaleDateString()),
-              datasets: [
-                  {
-                      label: 'Usage',
-                      data: usedData.map(d => d[1]),
-                      backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                      borderColor: 'rgba(255,99,132,1)',
-                      borderWidth: 1,
-                      type: 'line',
-                      yAxisID: 'A',
-                  },
-                  {
-                      label: 'Remaining',
-                      data: remainingData.map(d => d[1]),
-                      type: 'bar',
-                      yAxisID: 'B',
-                  }
-              ]
-          },
-          options: {
-              scales: {
-                  yAxes: [
-                      {
-                          id: 'A',
-                          type: 'linear',
-                          position: 'left',
-                          ticks: {
-                              beginAtZero: true
-                          }
-                      },
-                      {
-                          id: 'B',
-                          type: 'linear',
-                          position: 'right',
-                          ticks: {
-                              beginAtZero: true
-                          }
-                      }
-                  ]
-              }
-          }
-      });
-      this.setState({isLoading: false, errorMessage: ''})
-    })
-    .catch((e) => this.setState({errorMessage: e, isLoading: false}))
+    this.loadUsageChart();
   }
 
   render() {
@@ -79,13 +103,18 @@ import { fetchUsage, mapUsageByDate } from '../../services/api-catalog'
       open={isOpen}
       onOpen={this.open}
       onClose={this.close}
-      trigger={<Dropdown.Item onClick={event => this.loadUsage(event)}>Show Usage</Dropdown.Item>}
-    >
-      <Modal.Header>Usage</Modal.Header>
+      trigger={<Dropdown.Item onClick={event => this.loadUsage(event)}>Show Usage</Dropdown.Item>} >
+      <Modal.Header>Used and Remaining API Usage</Modal.Header>
       <Modal.Content>
         <Modal.Description>
-          See usage for the API
+          You can view usage details for last 31 days from selected date.
         </Modal.Description>
+      </Modal.Content>
+      <Modal.Content>
+        <Modal.Description>
+          Select the latest date here
+        </Modal.Description>
+        <DatePicker selected={this.state.startDate} onChange={this.handleChange} maxDate={moment()}/>
         {this.state.errorMessage ? <Message error content={this.state.errorMessage.toString()} /> : ''}
         <canvas id='api-usage-chart-container' width='400' height='400'/>
       </Modal.Content>
