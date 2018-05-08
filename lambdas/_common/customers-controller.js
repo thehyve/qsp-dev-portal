@@ -82,9 +82,7 @@ function getIdentityFromMarketplaceId(marketplaceCustomerId, error, callback) {
         IndexName: "MarketplaceCustomerIdIndex",
         KeyConditionExpression: "MarketplaceCustomerId = :customerId",
         ExpressionAttributeValues: {
-          ":customerId": {
-            S: marketplaceCustomerId
-          },
+          ":customerId": marketplaceCustomerId
         },
         ProjectionExpression: "MarketplaceCustomerId, Id"
     };
@@ -394,9 +392,7 @@ function updateCustomerMarketplaceId(identity, marketplaceCustomerId, error, suc
         },
         UpdateExpression: 'set MarketplaceCustomerId = :customerId',
         ExpressionAttributeValues: {
-          ':customerId': {
-            S: marketplaceCustomerId
-          }
+          ':customerId': marketplaceCustomerId
         }
     };
 
