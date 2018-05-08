@@ -297,8 +297,6 @@ Resources:
         AttributeType: S
       - AttributeName: MarketplaceCustomerId
         AttributeType: S
-      - AttributeName: ApiKeyId
-        AttributeType: S
       KeySchema:
       - AttributeName: Id
         KeyType: HASH
@@ -523,7 +521,7 @@ Resources:
       Handler: index.handler
       MemorySize: 128
       Role: !GetAtt DevPortalLambdaExecutionRole.Arn
-      Runtime: nodejs4.3
+      Runtime: nodejs8.10
       Timeout: 3
 
   CognitoUserPool:
