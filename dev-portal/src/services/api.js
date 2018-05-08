@@ -1,5 +1,5 @@
 import { awsRegion } from './aws'
-export let apiGatewayClient
+export let apiGatewayClient;
 
 export function initApiGatewayClient({ accessKeyId, secretAccessKey, sessionToken } = {}) {
   apiGatewayClient = window.apigClientFactory.newClient({
@@ -11,12 +11,14 @@ export function initApiGatewayClient({ accessKeyId, secretAccessKey, sessionToke
 }
 
 export function getApiGatewayClient() {
-  if (apiGatewayClient) return Promise.resolve(apiGatewayClient)
+  if (apiGatewayClient) {
+    return Promise.resolve(apiGatewayClient);
+  }
 
   return new Promise(resolve => {
     const poller = window.setInterval(() => {
       if (apiGatewayClient) {
-        window.clearInterval(poller)
+        window.clearInterval(poller);
         resolve(apiGatewayClient)
       }
     }, 100)

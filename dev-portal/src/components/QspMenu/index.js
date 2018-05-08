@@ -63,7 +63,7 @@ export default class QspMenu extends PureComponent {
                   trigger={<Menu.Item onClick={() => this.showApiKey()}>Show API Key</Menu.Item>}
                   content={this.state.apiKey ? this.state.apiKey.toString() : 'Loading API Key...'}
                   on='click'
-                  positioning='left'
+                  position='left center'
                 />
                 <Dropdown.Item onClick={() => this.handleLogout()}>
                   Sign Out

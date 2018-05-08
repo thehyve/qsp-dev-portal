@@ -3,21 +3,21 @@
   "homepage": "http://qsp-dev-dev-portal.s3-website.eu-central-1.amazonaws.com/",
   "version": "0.1.0",
   "private": true,
-  "devDependencies": {},
+  "devDependencies": {
+    "react-scripts": "^1.1.4"
+  },
   "dependencies": {
     "amazon-cognito-identity-js": "1.7.0",
     "aws-sdk": "2.7.6",
     "chart.js": "2.4.0",
     "jquery": "3.1.1",
-    "prop-types": "^15.6.1",
     "react": "^16.3.0",
     "react-dom": "^16.3.0",
     "react-recaptcha": "^2.3.7",
     "react-router-dom": "^4.2.2",
-    "react-scripts": "^1.1.2",
     "semantic-ui-css": "2.2.4",
     "semantic-ui-react": "^0.79.0",
-    "swagger-ui-dist": "^3.14.0"
+    "swagger-ui-dist": "^3.14.1"
   },
   "scripts": {
     "start": "react-scripts start",
