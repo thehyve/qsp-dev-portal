@@ -150,5 +150,5 @@ export function logout() {
 
 export function showApiKey() {
   return apiGatewayClient.get('/apikey', {}, {}, {})
-      .then(({data}) => data.value)
+      .then(({data}) => data.value);
 }

@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2018 The Hyve B.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 'use strict';
 const controller = require('common-lambda-assets/customers-controller.js');
 
@@ -32,8 +48,8 @@ exports.handler = (event, context, callback) => {
     }
 };
 
-function subscribe(customerId, productCode, callback) {
-    console.log(`Subscribing customer ${customerId} to product code ${productCode}`);
+function subscribe(marketplaceCustomerId, productCode, callback) {
+    console.log(`Subscribing customer ${marketplaceCustomerId} to product code ${productCode}`);
 
     function err(err)  {
         console.log("error: " + err);
@@ -41,15 +57,15 @@ function subscribe(customerId, productCode, callback) {
     }
 
     // get identity id for marketplace customer id
-    controller.getCognitoIdentityId(customerId, err, identityId => {
-        console.log("Got cognito identity : " + identityId);
+    controller.getIdentityFromMarketplaceId(marketplaceCustomerId, err, identity => {
+      console.log(`Got cognito identity ${identity.cognitoIdentityId}`);
 
-        controller.getUsagePlanForProductCode(productCode, err, usagePlan => {
-            controller.subscribe(identityId, usagePlan.id, err, result => {
-                callback(null, result)
-            })
-        })
-    })
+      controller.getUsagePlanForProductCode(productCode, err, usagePlan => {
+        controller.subscribe(identity, usagePlan.id, err, result => {
+            callback(null, result);
+        });
+      });
+    });
 }
 
 function unsubscribe(customerId, productCode, callback) {
@@ -61,13 +77,13 @@ function unsubscribe(customerId, productCode, callback) {
     }
 
     // get identity id for marketplace customer id
-    controller.getCognitoIdentityId(customerId, err, identityId => {
-        console.log("Got cognito identity : " + identityId);
+    controller.getIdentityFromMarketplaceId(customerId, err, identity => {
+      console.log(`Got cognito identity ${identity.cognitoIdentityId}`);
 
-        controller.getUsagePlanForProductCode(productCode, err, usagePlan => {
-            controller.unsubscribe(identityId, usagePlan.id, err, result => {
-                callback(null, result)
-            })
+      controller.getUsagePlanForProductCode(productCode, err, usagePlan => {
+        controller.unsubscribe(identity, usagePlan.id, err, result => {
+          callback(null, result)
         })
+      })
     })
 }

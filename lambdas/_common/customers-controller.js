@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2018 The Hyve B.V.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 'use strict';
 const AWS = require('aws-sdk');
 
@@ -5,199 +21,333 @@ const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const apigateway = new AWS.APIGateway();
 
 const customersTable = 'DevPortalCustomers';
+const cognitoClient = new AWS.CognitoIdentityServiceProvider();
 
-function ensureCustomerItem(cognitoIdentityId, keyId, error, callback) {
-    const customerId = cognitoIdentityId; // + '+' + keyId
+/**
+ * Get user from the database, create it and its API key otherwise.
+ * @param identity aws-serverless-express event identity
+ * @param error string callback
+ * @param callback user object callback, including Id, ApiKeyId and optionally MarketplaceCustomerId.
+ */
+function ensureUser(identity, error, callback) {
+    const {cognitoIdentityId} = identity;
 
     // ensure user is tracked in customer table
-    const getParams = {
-        TableName: customersTable,
-        Key: {
-            Id: customerId
-        }
+    const params = {
+      TableName: customersTable,
+      Key: {
+        Id: cognitoIdentityId
+      }
     };
-    dynamoDb.get(getParams, (err, data) => {
+    dynamoDb.get(params, (err, data) => {
         if (err) {
-            error(err)
+          console.log(`Failed to get user ${cognitoIdentityId} from DynamoDb`, err);
+          error(err)
         } else if (data.Item === undefined) {
+          createApiKey(identity, error, (key) => {
             const putParams = {
-                TableName: customersTable,
-                Item: {
-                    Id: customerId,
-                    ApiKeyId: keyId
-                }
+              TableName: customersTable,
+              Item: {
+                Id: cognitoIdentityId,
+                ApiKeyId: key.id
+              }
             };
 
-            dynamoDb.putItem(putParams, (customerErr, customerData) => {
-                if (customerErr) {
-                    error(customerErr)
-                } else {
-                    console.log(`Created new customer in ddb with id ${customerId}`);
-                    callback(customerData)
-                }
+            dynamoDb.put(putParams, (customerErr, customerData) => {
+              if (customerErr) {
+                console.log(`Failed to insert user DynamoDB item for user ${cognitoIdentityId}`, customerErr);
+                error(customerErr)
+              } else {
+                console.log(`Created new customer in ddb with id ${cognitoIdentityId}`);
+                callback(customerData)
+              }
             })
+          });
         } else {
-            console.log(`Customer exists with id ${customerId}`);
-            callback(data.Item)
+          console.log(`Customer exists with id ${cognitoIdentityId}`);
+          callback(data.Item)
         }
     })
 }
 
-function getCognitoIdentityId(marketplaceCustomerId, error, callback) {
+/**
+ * Get the Cognito identity from a marketplace customer ID.
+ * @param marketplaceCustomerId AWS Marketplace customer ID.
+ * @param error string callback
+ * @param callback user object callback, with Id and MarketplaceCustomerId.
+ */
+function getIdentityFromMarketplaceId(marketplaceCustomerId, error, callback) {
     const params = {
         TableName: customersTable,
         IndexName: "MarketplaceCustomerIdIndex",
         KeyConditionExpression: "MarketplaceCustomerId = :customerId",
         ExpressionAttributeValues: {
-            ":customerId": marketplaceCustomerId
+          ":customerId": marketplaceCustomerId
         },
         ProjectionExpression: "MarketplaceCustomerId, Id"
     };
     dynamoDb.query(params, (err, data) => {
         if (err) {
-            error(err)
+          console.log(`Failed to query marketplace customer ${marketplaceCustomerId}`, err);
+          error(err)
         } else if (data.Items === undefined || data.Items.length === 0) {
-            // no customer matching marketplaceCustomerId - this should be created during marketplace subscription redirect
-            error(`No customer is registered in the developer portal for marketplace customer ID ${marketplaceCustomerId}`)
+          // no customer matching marketplaceCustomerId - this should be created during marketplace subscription redirect
+          error(`No customer is registered in the developer portal for marketplace customer ID ${marketplaceCustomerId}`)
         } else {
-            callback(data.Items[0].Id)
+          callback({cognitoIdentityId: data.Items[0].Id})
         }
     })
 }
 
-function subscribe(cognitoIdentityId, usagePlanId, errFunc, callback) {
-
-    getApiKeyForCustomer(cognitoIdentityId, errFunc, (data) => {
-        console.log(`Get Api Key data ${JSON.stringify(data)}`);
-
-        if (data.items.length === 0) {
-            console.log(`No API Key found for customer ${cognitoIdentityId}`);
-
-            createApiKey(cognitoIdentityId, errFunc, (createData) => {
-                console.log(`Create API Key data: ${createData}`);
-                const keyId = createData.id;
-
-                console.log(`Got key ID ${keyId}`);
-
-                createUsagePlanKey(keyId, usagePlanId, errFunc, (createKeyData) => {
-                    callback(createKeyData)
-                })
-            })
-        } else {
-            const keyId = data.items[0].id;
-
-            console.log(`Got key ID ${keyId}`);
-
-            createUsagePlanKey(keyId, usagePlanId, errFunc, (createKeyData) => {
-                callback(createKeyData)
-            })
-        }
-    })
-}
-
-function unsubscribe(cognitoIdentityId, usagePlanId, error, success) {
-
-    getApiKeyForCustomer(cognitoIdentityId, error, (data) => {
-        console.log(`Get Api Key data ${JSON.stringify(data)}`);
-
-        if (data.items.length === 0) {
-            console.log(`No API Key found for customer ${cognitoIdentityId}`);
-
-            error('Customer does not have an API Key')
-        } else {
-            const keyId = data.items[0].id;
-
-            console.log(`Found API Key for customer with ID ${keyId}`);
-
-            deleteUsagePlanKey(keyId, usagePlanId, error, (deleteData) => {
-                success(deleteData)
-            })
-        }
-    })
-}
-
-function createApiKey(cognitoIdentityId, error, callback) {
-    console.log(`Creating API Key for customer ${cognitoIdentityId}`);
-
-    // set the name to the cognito identity ID so we can query API Key for the cognito identity
-    const params = {
-        description: `Dev Portal API Key for ${cognitoIdentityId}`,
-        enabled: true,
-        generateDistinctId: true,
-        name: cognitoIdentityId
-    };
-
-    apigateway.createApiKey(params, (err, data) => {
-        if (err) {
-            console.log('createApiKey error', error);
-            error(err)
-        } else {
-            updateCustomerApiKeyId(cognitoIdentityId, data.id, error, () => callback(data))
-        }
-    })
-}
-
-function createUsagePlanKey(keyId, usagePlanId, error, callback) {
-    console.log(`Creating usage plan key for key id ${keyId} and usagePlanId ${usagePlanId}`);
+/**
+ * Subscribe a user to a usage plan. This ensures that the user has an API key, and subscribes that
+ * to the usage plan.
+ * @param identity aws-serverless-express event identity
+ * @param usagePlanId usage plan ID in the API Gateway
+ * @param error string callback
+ * @param callback api key object callback, id, name and value.
+ */
+function subscribe(identity, usagePlanId, error, callback) {
+  ensureApiKey(identity, error, (key) => {
+    console.log(`Creating usage plan key for key id ${key.id} and usagePlanId ${usagePlanId}`);
 
     const params = {
-        keyId,
-        keyType: 'API_KEY',
-        usagePlanId
+      keyId: key.id,
+      keyType: 'API_KEY',
+      usagePlanId
     };
     apigateway.createUsagePlanKey(params, (err, data) => {
-        if (err) error(err);
-        else callback(data)
-    })
+      if (err) {
+        console.log(`Failed to create usage plan key for user ${identity.cognitoIdentityId}, API key ${key.id} and usage plan ${usagePlanId}`, err);
+        error(err);
+      } else {
+        callback(data)
+      }
+    });
+  });
 }
 
-function deleteUsagePlanKey(keyId, usagePlanId, error, callback) {
+/**
+ * Unsubscribe a user from usage plan. This may use ensures that the user has an API key, and subscribes that
+ * to the usage plan.
+ * @param identity aws-serverless-express event identity
+ * @param usagePlanId usage plan ID in the API Gateway
+ * @param error string callback
+ * @param success no-arg callback
+ */
+function unsubscribe(identity, usagePlanId, error, success) {
+  getApiKeyId(identity, error, (keyId) => {
     console.log(`Deleting usage plan key for key id ${keyId} and usagePlanId ${usagePlanId}`);
 
     const params = {
-        keyId,
-        usagePlanId
+      keyId,
+      usagePlanId
     };
-    apigateway.deleteUsagePlanKey(params, (err, data) => {
-        if (err) error(err);
-        else callback(data)
-    })
+    apigateway.deleteUsagePlanKey(params, (err) => {
+      if (err) {
+        console.log(`Failed to delete usage plan key for user ${identity.cognitoIdentityId}, API key ${keyId} and usage plan ${usagePlanId}`, err);
+        error(err);
+      } else {
+        success();
+      }
+    });
+  });
 }
 
-function getApiKeyForCustomer(cognitoIdentityId, error, callback) {
-    console.log(`Getting API Key for customer  ${cognitoIdentityId}`);
+/**
+ * Create an API key for the user in the API Gateway. Do not call directly.
+ *
+ * @param identity aws-serverless-express event identity
+ * @param error string callback
+ * @param callback api key object callback, id, name and value.
+ */
+function createApiKey(identity, error, callback) {
+  constructApiKeyName(identity, error, (name) => {
+    const {cognitoIdentityId} = identity;
 
+    console.log(`Creating API Key with name ${name} for user ${cognitoIdentityId}`);
+
+    // set the name to the cognito identity ID so we can query API Key for the cognito identity
     const params = {
-        limit: 1,
-        includeValues: true,
-        nameQuery: cognitoIdentityId
+      description: `Dev Portal API Key for ${cognitoIdentityId}`,
+      enabled: true,
+      generateDistinctId: true,
+      name: name
     };
-    apigateway.getApiKeys(params, (err, data) => {
-        if (err) error(err);
-        else callback(data)
-    })
+
+    apigateway.createApiKey(params, (err, data) => {
+      if (err || !data) {
+        console.log(`Failed to create API key for user ${cognitoIdentityId}`, err);
+        error(err)
+      } else {
+        callback(data);
+      }
+    });
+  });
 }
 
-function getUsagePlansForCustomer(cognitoIdentityId, error, callback) {
-    console.log(`Getting API Key for customer ${cognitoIdentityId}`);
+/**
+ * Ensure that user has an API key and that it is stored in DynamoDB.
+ * @param identity aws-serverless-express event identity
+ * @param error string callback
+ * @param callback api key object callback, id, name and value.
+ */
+function ensureApiKey(identity, error, callback) {
+  console.log(`Getting API Key for customer ${identity.cognitoIdentityId}`);
 
-    getApiKeyForCustomer(cognitoIdentityId, error, (data) => {
-        if (data.items.length === 0) {
+  getApiKeyId(identity, error, (keyId) => {
+    if (keyId) {
+      apigateway.getApiKey({apiKey: keyId, includeValue: true}, (err, data) => {
+        if (data) {
+          callback(data);
+        } else if (err.code === 'NotFoundException') {
+          console.log(`API key ${keyId} for id ${identity.cognitoIdentityId} not found`);
+          createAndStoreApiKey(identity, error, callback);
+        } else {
+          console.log(`Failed to get API key ${keyId} for user ${identity.cognitoIdentityId}`, err);
+          error(err);
+        }
+      });
+    } else {
+      createAndStoreApiKey(identity, error, callback);
+    }
+  });
+}
+
+/**
+ * Creates an API key for a user and stores its ID in DynamoDB. Do not call directly.
+ * @param identity aws-serverless-express event identity
+ * @param error string callback
+ * @param callback api key object callback, id, name and value.
+ */
+function createAndStoreApiKey(identity, error, callback) {
+  createApiKey(identity, error, (newKey) => {
+    console.log(`Storing API key ${newKey.id} for user ${identity.cognitoIdentityId}`);
+    const params = {
+      TableName: customersTable,
+      Key: {
+        Id: identity.cognitoIdentityId,
+      },
+      UpdateExpression: 'SET ApiKeyId = :apiKeyId',
+      ExpressionAttributeValues: {
+        ':apiKeyId': newKey.id
+      }
+    };
+
+    // update DDB customer record with new API key id
+    dynamoDb.update(params, (err) => {
+      if (err) {
+        console.log(`Failed to store API key ${newKey.id} for user ${identity.cognitoIdentityId}`, err)
+      } else {
+        callback(newKey)
+      }
+    });
+  });
+}
+
+/**
+ * Get the stored API key ID of a user. This does not guarantee that the API key with that ID still exists.
+ *
+ * @param identity aws-serverless-express event identity
+ * @param error string callback
+ * @param callback api key object callback, id, name and value.
+ */
+function getApiKeyId(identity, error, callback) {
+  const {cognitoIdentityId} = identity;
+
+  console.log(`Getting API Key ID for customer ${cognitoIdentityId}`);
+
+  const params = {
+    TableName: customersTable,
+    Key: {
+      Id: cognitoIdentityId,
+    }
+  };
+
+  dynamoDb.get(params, (err, data) => {
+    if (err) {
+      console.log(`Cannot get API key ID from DynamoDB user ${cognitoIdentityId}`);
+      error(err)
+    } else if (data.Item === undefined) {
+      console.log(`No API Key found for customer ${cognitoIdentityId}`);
+      callback(null);
+    } else {
+      const keyId = data.Item.ApiKeyId;
+      console.log(`Got API key ID ${keyId}`);
+      callback(keyId)
+    }
+  });
+}
+
+/**
+ * Get all usage plans that a user is subscribed to.
+ * @param identity aws-serverless-express event identity
+ * @param error string callback
+ * @param callback APIGateway.Types.UsagePlans callback
+ */
+function getUsagePlansForCustomer(identity, error, callback) {
+    console.log(`Getting usage plans for customer ${identity.cognitoIdentityId}`);
+
+    getApiKeyId(identity, error, (keyId) => {
+        if (!keyId) {
             callback({data : {}})
         } else {
-            const keyId = data.items[0].id;
             const params = {
                 keyId,
                 limit: 1000
             };
             apigateway.getUsagePlans(params, (err, usagePlansData) => {
-                if (err) error(err);
-                else callback(usagePlansData)
+                if (err) {
+                  console.log(`Failed to get usage plans for user ${identity.cognitoIdentityId} with API key ${keyId}`, err);
+                  error(err);
+                } else {
+                  callback(usagePlansData)
+                }
             })
         }
     })
 }
 
+/**
+ * Get the user's API key usage for a usage plan. The start and end date may not be more than a year
+ * apart.
+ * @param identity aws-serverless-express event identity
+ * @param usagePlanId API Gateway usage plan ID
+ * @param startDate start date to get the usage from, string as yyyy-mm-dd, required.
+ * @param endDate end date, inclusive, to get the usage to, string as yyyy-mm-dd, required.
+ * @param error string callback
+ * @param callback APIGateway.Types.UsagePlans callback
+ */
+function getUsage(identity, usagePlanId, startDate, endDate, error, callback) {
+  getApiKeyId(identity, error, (keyId) => {
+    if (!keyId) {
+      error(`No API key stored for ${identity.cognitoIdentityId}`);
+    }
+    const params = {
+      endDate,
+      startDate,
+      usagePlanId,
+      keyId,
+      limit: 366
+    };
+
+    apigateway.getUsage(params, (err, data) => {
+      if (err) {
+        console.log(`Failed to get usage for user ${identity.cognitoIdentityId} with API key ${keyId} in usage plan ${usagePlanId}`, err);
+        error(err);
+      } else {
+        callback(data);
+      }
+    });
+  });
+}
+
+/**
+ * Get the usage plans corresponding to a AWS Marketplace product.
+ * @param productCode AWS Marketplace product code string.
+ * @param error string callback
+ * @param callback APIGateway.Types.UsagePlan callback
+ */
 function getUsagePlanForProductCode(productCode, error, callback) {
     console.log(`Getting Usage Plan for product ${productCode}`);
 
@@ -207,7 +357,8 @@ function getUsagePlanForProductCode(productCode, error, callback) {
     };
     apigateway.getUsagePlans(params, function(err, data) {
         if (err) {
-            error(err)
+          console.log(`Failed to get usage plans for product code ${productCode}`, err);
+          error(err)
         } else {
             console.log(`Got usage plans ${JSON.stringify(data.items)}`);
 
@@ -226,56 +377,49 @@ function getUsagePlanForProductCode(productCode, error, callback) {
     });
 }
 
-function updateCustomerMarketplaceId(cognitoIdentityId, marketplaceCustomerId, error, success) {
-    const dynamoDbParams = {
+/**
+ * Update the marketplace customer ID of a user in the DynamoDB.
+ * @param identity aws-serverless-express event identity
+ * @param marketplaceCustomerId market place customer ID
+ * @param error string callback
+ * @param success no-arg callback
+ */
+function updateCustomerMarketplaceId(identity, marketplaceCustomerId, error, success) {
+    const params = {
         TableName: customersTable,
         Key: {
-            Id: cognitoIdentityId
+          Id: identity.cognitoIdentityId
         },
-        UpdateExpression: 'set #a = :x',
-        ExpressionAttributeNames: { '#a': 'MarketplaceCustomerId' },
+        UpdateExpression: 'set MarketplaceCustomerId = :customerId',
         ExpressionAttributeValues: {
-            ':x': marketplaceCustomerId
+          ':customerId': marketplaceCustomerId
         }
     };
 
     // update DDB customer record with marketplace customer id
     // and update API Gateway API Key with marketplace customer id
-    dynamoDb.update(dynamoDbParams, (dynamoDbErr) => {
-        if (dynamoDbErr) {
-            error(dynamoDbErr)
+    dynamoDb.update(params, (err) => {
+        if (err) {
+          console.log(`Failed to update marketplace customer ID ${marketplaceCustomerId} in database item for user ${identity.cognitoIdentityId}`, err);
+          error(err)
         } else {
-            getApiKeyForCustomer(cognitoIdentityId, error, (data) => {
-                console.log(`Get Api Key data ${JSON.stringify(data)}`);
+            ensureApiKey(identity, error, (key) => {
+                console.log(`Got API key with ID ${key.id}`);
 
-                if (data.items.length === 0) {
-                    console.log(`No API Key found for customer ${cognitoIdentityId}`);
-
-                    createApiKey(cognitoIdentityId, errFunc, (createData) => {
-                        console.log(`Create API Key data: ${createData}`);
-                        const keyId = createData.id;
-
-                        console.log(`Got key ID ${keyId}`);
-
-                        updateApiKey(keyId, marketplaceCustomerId, error, (createKeyData) => {
-                            success(createKeyData)
-                        })
-                    })
-                } else {
-                    const keyId = data.items[0].id;
-
-                    console.log(`Got key ID ${keyId}`);
-
-                    updateApiKey(keyId, marketplaceCustomerId, error, (createKeyData) => {
-                        success(createKeyData)
-                    })
-                }
-            })
+                updateApiKeyCustomerId(key.id, marketplaceCustomerId, error, success);
+            });
         }
     })
 }
 
-function updateApiKey(apiKeyId, marketplaceCustomerId, error, success) {
+/**
+ * Set the marketplace customer ID in an API key. This ensures that the API key usage will be billed.
+ * @param apiKeyId API key ID
+ * @param marketplaceCustomerId market place customer ID
+ * @param error string callback
+ * @param success no-arg callback
+ */
+function updateApiKeyCustomerId(apiKeyId, marketplaceCustomerId, error, success) {
     console.log(`Updating API Key ${apiKeyId} in API Gateway with marketplace customer ID`);
 
     // update API Gateway API Key with marketplace customer id to support metering
@@ -290,54 +434,110 @@ function updateApiKey(apiKeyId, marketplaceCustomerId, error, success) {
         ]
     };
     apigateway.updateApiKey(params, function(err, data) {
-        if (err) error(err);
-        else     success(data)
+        if (err) {
+          console.log(`Failed to update customerId of API key ${apiKeyId}`, err);
+          error(err);
+        } else {
+          success(data)
+        }
     });
 }
 
-function updateCustomerApiKeyId(cognitoIdentityId, apiKeyId, error, success) {
-    // update customer record with marketplace customer code
-    const dynamoDbParams = {
-        TableName: customersTable,
-        Key: {
-            Id: cognitoIdentityId
-        },
-        UpdateExpression: 'set #a = :x',
-        ExpressionAttributeNames: { '#a': 'ApiKeyId' },
-        ExpressionAttributeValues: {
-            ':x': apiKeyId
-        }
-    };
-
-    dynamoDb.update(dynamoDbParams, (dynamoDbErr) => {
-        if (dynamoDbErr) {
-            error(dynamoDbErr)
-        } else {
-            success()
-        }
-    })
+/**
+ * Construct a legible API key name. Do not call directly.
+ * @param identity aws-serverless-express event identity
+ * @param error string callback
+ * @param callback string callback
+ */
+function constructApiKeyName(identity, error, callback) {
+  getUserAttributes(identity, {Username: 'user', 'custom:apiClient': 'apiClient'}, error, (attrs) => {
+    if (!attrs || !attrs.user) {
+      callback(identity.cognitoIdentityId)
+    }
+    callback(attrs.apiClient ? `${attrs.apiClient}:${attrs.user}` : attrs.user);
+  });
 }
 
-// function getUsagePlans(error, callback) {
-//     const params = {
-//         limit: 1000
-//     }
-//     apigateway.getUsagePlans(params, (err, data) => {
-//         if (err) error(err)
-//         else callback(data)
-//     })
-// }
+/**
+ * Get the attributes of a user. This will include the 'user' attribute containing the username.
+ * @param identity aws-serverless-express event identity
+ * @param keyMap remaps attributes corresponding to the keys in the map to a new key that is listed in
+ *        the value. Keys that are not in this map are ignored.
+ *        E.g. keyMap = {a: 'a1'} will map {a: 1, b: 2} to {a1: 1}. If the keyMap is falsey, all
+ *        attributes are returned as is.
+ * @param error string callback
+ * @param callback string callback
+ */
+function getUserAttributes(identity, keyMap, error, callback) {
+  if (identity.cognitoUserPoolId && identity.user) {
+    const params = {
+      UserPoolId: identity.cognitoUserPoolId,
+      Username: identity.user,
+    };
+    cognitoClient.adminGetUser(params, (err, data) => {
+      if (err) {
+        callback({user: identity.user});
+      } else {
+        let userAttrs = Object.assign({}, data.UserAttributes, {Username: data.Username});
+        if (!userAttrs) {
+          callback(null);
+        }
+        let attrs = {};
+        for (let i = 0; i < userAttrs.length; i++) {
+          if (!keyMap) {
+            attrs[userAttrs[i].Name] = userAttrs[i].Value
+          } else if (userAttrs[i].Name in keyMap) {
+            attrs[keyMap[userAttrs[i].Name]] = userAttrs[i].Value;
+          }
+        }
+        callback(attrs);
+      }
+    });
+  } else {
+    callback({user: identity.user})
+  }
+}
+
+/**
+ * Subscribe a user to a AWS marketplace product.
+ * @param identity aws-serverless-express event identity
+ * @param marketplaceToken token that marketplace passes when subscribing to a new product
+ * @param usagePlanId API gateway usage plan ID to subscribe to.
+ * @param error string callback
+ * @param callback string callback
+ */
+function subscribeFromMarketplace(identity, marketplaceToken, usagePlanId, error, callback) {
+  const marketplace = new AWS.MarketplaceMetering();
+
+  const params = {
+    RegistrationToken: marketplaceToken
+  };
+
+  // call MMS to crack token into marketplace customer ID and product code
+  marketplace.resolveCustomer(params, (err, data) => {
+    if (err) {
+      console.log(`Failed to resolve customer from marketplaceToken ${marketplaceToken}`, err);
+      error(err)
+    } else {
+      // persist the marketplaceCustomerId in DDB
+      // this is used when the subscription listener receives the subscribe notification
+      const marketplaceCustomerId = data.CustomerIdentifier;
+      updateCustomerMarketplaceId(identity, marketplaceCustomerId, error,
+        () => subscribe(identity, usagePlanId, error, callback));
+    }
+  })
+}
 
 module.exports = {
-    ensureCustomerItem: ensureCustomerItem,
-    subscribe: subscribe,
-    unsubscribe: unsubscribe,
-    createApiKey: createApiKey,
-    createUsagePlanKey: createUsagePlanKey,
-    deleteUsagePlanKey: deleteUsagePlanKey,
-    getApiKeyForCustomer: getApiKeyForCustomer,
-    getUsagePlansForCustomer: getUsagePlansForCustomer,
-    getUsagePlanForProductCode: getUsagePlanForProductCode,
-    updateCustomerMarketplaceId: updateCustomerMarketplaceId,
-    getCognitoIdentityId: getCognitoIdentityId
+  ensureUser,
+  subscribe,
+  unsubscribe,
+  ensureApiKey,
+  getApiKeyId,
+  getUsagePlansForCustomer,
+  getUsagePlanForProductCode,
+  updateCustomerMarketplaceId,
+  getUsage,
+  subscribeFromMarketplace,
+  getIdentityFromMarketplaceId,
 };

@@ -3,19 +3,28 @@
   "version": "1.0.0",
   "description": "Example application for running a Serverless Developer Portal with API Gateway and Lambda",
   "main": "index.js",
-  "config": {},
+  "config": {
+    "region": "eu-central-1",
+    "accountId": "qsp",
+    "s3BucketName": "QspTestDevPortalArtifacts"
+  },
   "scripts": {
-    "local": "node ./express-server-local"
+    "local": "node scripts/express-server-local",
+    "request": "node scripts/request",
+    "test": "tap test/*.js"
   },
   "license": "Apache-2.0",
   "dependencies": {
     "aws-sdk": "^2.7.10",
-    "aws-serverless-express": "^1.1.4",
+    "aws-serverless-express": "3.2.0",
     "body-parser": "^1.15.2",
     "common-lambda-assets": "file:../_common",
     "cors": "^2.8.1",
     "express": "^4.14.0",
     "js-yaml": "^3.7.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "merge-options": "^1.0.1",
+    "tap": "^11.1.4"
+  }
 }
