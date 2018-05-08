@@ -32,12 +32,14 @@ import { fetchUsage, mapUsageByDate } from '../../services/api-catalog'
                       backgroundColor: 'rgba(255, 99, 132, 0.2)',
                       borderColor: 'rgba(255,99,132,1)',
                       borderWidth: 1,
-                      type: 'line'
+                      type: 'line',
+                      yAxisID: 'A',
                   },
                   {
                     label: 'Remaining',
                     data: remainingData.map(d => d[1]),
-                    type: 'bar'
+                    type: 'bar',
+                    yAxisID: 'B',
                   }
               ]
           },
@@ -45,6 +47,17 @@ import { fetchUsage, mapUsageByDate } from '../../services/api-catalog'
               scales: {
                   yAxes: [
                       {
+                          id: 'A',
+                          type: 'linear',
+                          position: 'left',
+                          ticks: {
+                              beginAtZero: true
+                          }
+                      },
+                      {
+                          id: 'B',
+                          type: 'linear',
+                          position: 'right',
                           ticks: {
                               beginAtZero: true
                           }

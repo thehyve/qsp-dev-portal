@@ -126,6 +126,21 @@ export function login(email, password) {
   })
 }
 
+export function getAccountDetails() {
+  return new Promise((resolve, reject) => {
+    cognitoUser.getUserAttributes((err, result) => {
+      let userCredentials = {};
+      if (err) {
+        reject(err.message || JSON.stringify(err));
+      }
+      result.forEach(d => {
+        userCredentials[d.getName()] = d.getValue();
+      });
+      resolve(userCredentials);
+    });
+  });
+}
+
 export function logout() {
   cognitoUser.signOut();
   cognitoUser = null;

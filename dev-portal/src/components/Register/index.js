@@ -3,6 +3,9 @@ import {Button, Form, Label, Message, Modal} from 'semantic-ui-react'
 import { Redirect } from 'react-router-dom'
 import { register } from '../../services/self'
 import { confirmMarketplaceSubscription } from '../../services/api-catalog'
+import Recaptcha from 'react-recaptcha'
+
+const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
 
  export default class Register extends PureComponent {
   state = {
@@ -14,9 +17,10 @@ import { confirmMarketplaceSubscription } from '../../services/api-catalog'
     validValues: {},
     password: '',
     confirmPassword: '',
+    isValidCaptcha: false
   };
 
-  open = () => this.setState({ isSubmitting: false, errorMessage: '', validValues: {}, isOpen: true, password: '', confirmPassword: '', email: ''});
+  open = () => this.setState({ isSubmitting: false, errorMessage: '', validValues: {}, isOpen: true, password: '', confirmPassword: '', isValidCaptcha: false, email: ''});
   close = () => this.setState({ isOpen: false });
   handleRegister = (...args) => this._handleRegister(...args);
 
@@ -142,7 +146,11 @@ import { confirmMarketplaceSubscription } from '../../services/api-catalog'
 
   isSubmitDisabled = () => {
     const { email, name, password, confirmPassword } = this.state.validValues;
-    return email !== true || name !== true || password !== true || confirmPassword !== true;
+    return email !== true || name !== true || password !== true || confirmPassword !== true || this.state.isValidCaptcha !== true;
+  };
+
+  verifyCaptcha = () => {
+    this.setState({isValidCaptcha: true})
   };
 
  render() {
@@ -168,6 +176,9 @@ import { confirmMarketplaceSubscription } from '../../services/api-catalog'
             </Form.Input>
             <Form.Input type='password' label='Password' name='password' autoComplete='false' error={this.isError('password')} onBlur={this.validatePassword} />
             <Form.Input type='password' label='Confirm password' name='confirmPassword' autoComplete='false' error={this.isError('confirmPassword')} onChange={this.validateConfirmPassword}/>
+            <Recaptcha
+              sitekey={sitekey}
+              verifyCallback={ this.verifyCaptcha } />
             <Message error content={this.state.errorMessage} />
             <Modal.Actions style={{textAlign: 'right'}}>
               <Button type='button' onClick={this.close}>Close</Button>
