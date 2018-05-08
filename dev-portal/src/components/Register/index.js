@@ -132,8 +132,7 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
     const validValues = Object.assign({}, this.state.validValues);
     if (!/^[a-zA-Z_-]{0,254}$/.test(client)) {
       validValues['apiClient'] = false;
-      errorMessage = 'API client should contain only alphanumeric characters or the symbols dash ' +
-        ' or underscore.'
+      errorMessage = 'API client should contain only alphanumeric characters, dashes or underscores.'
     } else {
       validValues['apiClient'] = true;
     }
