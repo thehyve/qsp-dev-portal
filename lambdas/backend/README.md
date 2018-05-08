@@ -2,7 +2,7 @@
 
 This is uploaded as a Lambda to AWS API gateway.
 
-To run start development, run
+To start development, run
 ```shell
 yarn install
 yarn add --force file:../_common
