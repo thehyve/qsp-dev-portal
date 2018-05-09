@@ -1,12 +1,14 @@
 language: node_js
 node_js:
-  - 7
+  - "node"
 cache:
   directories:
     - node_modules
     - dev-portal/node_modules
+install:
+  - npm i -g npm@v6.0.0
+  - cd dev-portal && npm ci
 script:
   - cd dev-portal
-  - npm install
   - CI=true npm run test
   - npm run build
