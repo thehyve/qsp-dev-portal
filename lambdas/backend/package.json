@@ -16,7 +16,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "aws-sdk": "^2.7.10",
-    "aws-serverless-express": "3.2.0",
+    "aws-serverless-express": "^3.2.0",
     "body-parser": "^1.15.2",
     "common-lambda-assets": "file:../_common",
     "cors": "^2.8.1",
