@@ -6,8 +6,8 @@ cache:
     - node_modules
     - dev-portal/node_modules
 install:
-  - cd dev-portal && yarn install
-script:
   - cd dev-portal
+  - yarn install
+script:
   - CI=true yarn test
   - yarn build
