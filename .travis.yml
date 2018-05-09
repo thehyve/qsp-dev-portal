@@ -6,9 +6,8 @@ cache:
     - node_modules
     - dev-portal/node_modules
 install:
-  - npm i -g npm@v6.0.0
-  - cd dev-portal && npm ci
+  - cd dev-portal && yarn install
 script:
   - cd dev-portal
-  - CI=true npm run test
-  - npm run build
+  - CI=true yarn test
+  - yarn build
