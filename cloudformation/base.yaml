@@ -301,8 +301,8 @@ Resources:
       - AttributeName: Id
         KeyType: HASH
       ProvisionedThroughput:
-        ReadCapacityUnits: '5'
-        WriteCapacityUnits: '5'
+        ReadCapacityUnits: '1'
+        WriteCapacityUnits: '1'
       GlobalSecondaryIndexes:
       - IndexName: MarketplaceCustomerIdIndex
         KeySchema:
@@ -313,8 +313,8 @@ Resources:
           - ApiKeyId
           ProjectionType: INCLUDE
         ProvisionedThroughput:
-          ReadCapacityUnits: '5'
-          WriteCapacityUnits: '5'
+          ReadCapacityUnits: '1'
+          WriteCapacityUnits: '1'
 
   DevPortalLambdaExecutionRole:
     Type: AWS::IAM::Role
@@ -458,9 +458,9 @@ Resources:
     Properties:
       CodeUri: ../lambdas/backend
       Handler: index.handler
-      MemorySize: 1024
+      MemorySize: 128
       Role: !GetAtt DevPortalLambdaExecutionRole.Arn
-      Runtime: nodejs4.3
+      Runtime: nodejs8.10
       Timeout: 30
       Environment:
         Variables:
@@ -488,7 +488,7 @@ Resources:
       Handler: index.handler
       MemorySize: 128
       Role: !GetAtt DevPortalLambdaExecutionRole.Arn
-      Runtime: nodejs4.3
+      Runtime: nodejs8.10
       Timeout: 30
 
   # PreSignupLambdaExecutionRole:
@@ -521,7 +521,7 @@ Resources:
       Handler: index.handler
       MemorySize: 128
       Role: !GetAtt DevPortalLambdaExecutionRole.Arn
-      Runtime: nodejs4.3
+      Runtime: nodejs8.10
       Timeout: 3
 
   CognitoUserPool:

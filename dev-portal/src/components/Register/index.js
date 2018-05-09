@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { Button, Form, Message, Modal } from 'semantic-ui-react'
+import {Button, Form, Label, Message, Modal} from 'semantic-ui-react'
 import { Redirect } from 'react-router-dom'
 import { register } from '../../services/self'
 import { confirmMarketplaceSubscription } from '../../services/api-catalog'
@@ -12,6 +12,7 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
     isSubmitting: false,
     signedIn: false,
     errorMessage: '',
+    email: '',
     isOpen: false,
     validValues: {},
     password: '',
@@ -19,7 +20,7 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
     isValidCaptcha: false
   };
 
-  open = () => this.setState({ isSubmitting: false, errorMessage: '', validValues: {}, isOpen: true, password: '', confirmPassword: '' , isValidCaptcha: false});
+  open = () => this.setState({ isSubmitting: false, errorMessage: '', validValues: {}, isOpen: true, password: '', confirmPassword: '', isValidCaptcha: false, email: ''});
   close = () => this.setState({ isOpen: false });
   handleRegister = (...args) => this._handleRegister(...args);
 
@@ -47,22 +48,22 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
   }
 
   validateEmail = (event) => {
-    const val = event.target.value.trim();
-    const atSymbolIndex = val.indexOf('@');
-    const dotSymbolIndex = val.lastIndexOf('.');
+    const email = event.target.value.trim();
+    const atSymbolIndex = email.indexOf('@');
+    const dotSymbolIndex = email.lastIndexOf('.');
 
     let { errorMessage } = this.state;
     const validValues = Object.assign({}, this.state.validValues);
 
     validValues['email'] = true;
 
-    if (val.length < 5) {
+    if (email.length < 5) {
       validValues['email'] = false;
       errorMessage =  'Email address invalid.';
-    } else if (val.length > 255) {
+    } else if (email.length > 255) {
       validValues['email'] = false;
       errorMessage =  'Email address too long.';
-    } else if (atSymbolIndex === -1 || val.lastIndexOf('@') !== atSymbolIndex) {
+    } else if (atSymbolIndex === -1 || email.lastIndexOf('@') !== atSymbolIndex) {
       validValues['email'] = false;
       errorMessage = '@-symbol placement invalid.';
     } else if (dotSymbolIndex === -1 || atSymbolIndex > dotSymbolIndex) {
@@ -70,7 +71,7 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
       errorMessage = 'Domain dot (.) placement invalid.';
     }
 
-    this.updateValidity({ validValues, errorMessage })
+    this.updateValidity({ validValues, errorMessage, email})
   };
 
   updateValidity = (args) => {
@@ -125,6 +126,19 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
     this.updateValidity({validValues, confirmPassword})
   };
 
+  validateApiClient = (event) => {
+    const client = event.target.value;
+    let {errorMessage} = this.state;
+    const validValues = Object.assign({}, this.state.validValues);
+    if (!/^[0-9a-zA-Z_-]{0,254}$/.test(client)) {
+      validValues['apiClient'] = false;
+      errorMessage = 'API client should contain only alphanumeric characters, dashes or underscores.'
+    } else {
+      validValues['apiClient'] = true;
+    }
+    this.updateValidity({validValues, errorMessage})
+  };
+
   isError = (element) => {
     return element in this.state.validValues && !this.state.validValues[element]
   };
@@ -136,7 +150,7 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
 
   verifyCaptcha = () => {
     this.setState({isValidCaptcha: true})
-  }
+  };
 
  render() {
     const { isOpen } = this.state;
@@ -151,11 +165,14 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
       >
         <Modal.Header>Register</Modal.Header>
         <Modal.Content>
-          <Form onSubmit={this.handleRegister} error={!!this.state.errorMessage} loading={this.state.isSubmitting} novalidate>
+          <Form onSubmit={this.handleRegister} error={!!this.state.errorMessage} loading={this.state.isSubmitting} noValidate>
             <Form.Input type='email' label='Email' name='email' error={this.isError('email')} onBlur={this.validateEmail} />
             <Form.Input label='Name' name='name' error={this.isError('name')}  onBlur={this.validateNonEmpty('name')} required />
             <Form.Input label='Organisation' name='organisation' error={this.isError('organisation')} />
-            <Form.Input label='API client' name='apiClient' error={this.isError('apiClient')} />
+            <Form.Input label='API client' name='apiClient' error={this.isError('apiClient')} onBlur={this.validateApiClient}>
+              <input/>
+              <Label basic>:{this.state.email ? this.state.email : 'me@example.com'}</Label>
+            </Form.Input>
             <Form.Input type='password' label='Password' name='password' autoComplete='false' error={this.isError('password')} onBlur={this.validatePassword} />
             <Form.Input type='password' label='Confirm password' name='confirmPassword' autoComplete='false' error={this.isError('confirmPassword')} onChange={this.validateConfirmPassword}/>
             <Recaptcha

@@ -1,14 +1,12 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
-
-import SwaggerUIBundle from 'swagger-ui-dist/swagger-ui-bundle.js';
-import 'swagger-ui-dist/swagger-ui.css';
+import SwaggerUIClass from 'swagger-ui'
+import 'swagger-ui/dist/swagger-ui.css'
 
 class SwaggerUI extends Component {
   componentDidMount() {
-    SwaggerUIBundle({
+    SwaggerUIClass({
       dom_id: '#swaggerContainer',
-      url: this.props.url,
+      url: this.props.url ? this.props.url : 'http://petstore.swagger.io/v2/swagger.json',
       spec: this.props.spec,
       validatorUrl: null,
       highlightSizeThreshold: 5000,
@@ -28,14 +26,5 @@ class SwaggerUI extends Component {
     );
   }
 }
-
-SwaggerUI.propTypes = {
-  url: PropTypes.string,
-  spec: PropTypes.object
-};
-
-SwaggerUI.defaultProps = {
-  url: `http://petstore.swagger.io/v2/swagger.json`
-};
 
 export default SwaggerUI;

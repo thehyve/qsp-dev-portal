@@ -1,4 +1,4 @@
-import AWS from 'aws-sdk'
+import AWS from 'aws-sdk/global'
 import { CognitoUserPool, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js'
 import { cognitoIdentityPoolId, cognitoUserPoolId, cognitoClientId, cognitoRegion } from './aws'
 import { initApiGatewayClient, apiGatewayClient } from './api'
@@ -126,6 +126,21 @@ export function login(email, password) {
   })
 }
 
+export function getAccountDetails() {
+  return new Promise((resolve, reject) => {
+    cognitoUser.getUserAttributes((err, result) => {
+      let userCredentials = {};
+      if (err) {
+        reject(err.message || JSON.stringify(err));
+      }
+      result.forEach(d => {
+        userCredentials[d.getName()] = d.getValue();
+      });
+      resolve(userCredentials);
+    });
+  });
+}
+
 export function logout() {
   cognitoUser.signOut();
   cognitoUser = null;
@@ -135,5 +150,9 @@ export function logout() {
 
 export function showApiKey() {
   return apiGatewayClient.get('/apikey', {}, {}, {})
-      .then(({data}) => data.value)
+      .then(({data}) => data.value);
+}
+
+export function resetApiKeyName() {
+  return apiGatewayClient.post('/apikey/reset-name', {}, {}, {});
 }

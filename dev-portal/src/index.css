@@ -8,3 +8,12 @@ body {
 .Home {
   padding-top: 1rem;
 }
+
+/*
+Fix modal bug in semantic-ui-css 2.3.1. See
+https://github.com/Semantic-Org/Semantic-UI-CSS/issues/40
+*/
+.ui.active.dimmer.modals.transition {
+  display: flex !important;
+  display: -ms-flexbox !important;
+}
