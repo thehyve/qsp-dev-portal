@@ -148,9 +148,9 @@ export function logout() {
   localStorage.clear()
 }
 
-export function showApiKey() {
+export function getApiKey() {
   return apiGatewayClient.get('/apikey', {}, {}, {})
-      .then(({data}) => data.value);
+      .then(({data}) => data);
 }
 
 export function resetApiKeyName() {

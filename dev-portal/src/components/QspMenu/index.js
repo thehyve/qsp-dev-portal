@@ -19,27 +19,38 @@ import {Link, Redirect} from 'react-router-dom'
 import {Menu, Popup, Image, Dropdown} from 'semantic-ui-react'
 import logo from './logo.png'
 import './QspMenu.css'
-import {isAuthenticated, logout, showApiKey} from "../../services/self"
+import {isAuthenticated, logout, getApiKey} from "../../services/self"
 
 
 export default class QspMenu extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.state = {signedIn: isAuthenticated(), apiKey: ''};
+    this.state = {signedIn: isAuthenticated(), apiKey: {}};
   }
 
   handleLogout() {
-    const _state = {signedIn: false, apiKey: ''};
+    const _state = {signedIn: false, apiKey: {}};
     logout();
     this.setState(_state);
     this.props.onChange(_state);
   }
 
   showApiKey() {
-    showApiKey().then(apiKey => {
+    getApiKey().then(apiKey => {
       this.setState({ apiKey })
     })
+  }
+
+  apiKeyHeader() {
+    let header = 'API key';
+    if (this.state.apiKey.name) {
+      header += ' for ' + this.state.apiKey.name;
+    }
+    if (this.state.apiKey.id) {
+      header += ' (id ' + this.state.apiKey.id + ')';
+    }
+    return header;
   }
 
   render() {
@@ -61,9 +72,14 @@ export default class QspMenu extends PureComponent {
                 </Dropdown.Item>
                 <Popup
                   trigger={<Menu.Item onClick={() => this.showApiKey()}>Show API Key</Menu.Item>}
-                  content={this.state.apiKey ? this.state.apiKey.toString() : 'Loading API Key...'}
+                  content={this.state.apiKey.value ? this.state.apiKey.value : 'Loading API Key...'}
+                  size='large'
+                  header={this.apiKeyHeader()}
                   on='click'
                   position='left center'
+                  wide='very'
+                  style={{width: '29rem'}}
+                  basic={true}
                 />
                 <Dropdown.Item onClick={() => this.handleLogout()} as={Link} to='/'>
                   Sign Out
