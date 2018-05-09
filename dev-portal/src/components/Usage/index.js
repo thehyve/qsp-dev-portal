@@ -6,14 +6,15 @@ import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import "react-datepicker/dist/react-datepicker.css";
 
- var chart;
+
 
  export default class Usage extends PureComponent {
    state = {
      isLoading: false,
      errorMessage: '',
      isOpen: false,
-     startDate: moment()
+     startDate: moment(),
+     chart: undefined
    };
 
    open = () => this.setState({ isLoading: false, errorMessage: '', isOpen: true , startDate: moment()});
@@ -29,6 +30,7 @@ import "react-datepicker/dist/react-datepicker.css";
    }
 
    loadUsageChart() {
+
      this.setState({isLoading: true});
      fetchUsage(this.props.usagePlanId , this.state.startDate.toDate())
      .then((result) => {
@@ -36,10 +38,10 @@ import "react-datepicker/dist/react-datepicker.css";
        const remainingData = mapUsageByDate(result.data, 'remaining');
        const ctx = document.getElementById('api-usage-chart-container');
 
-       if(chart) {
-          chart.destroy()
+       if(this.state.chart) {
+         this.state.chart.destroy()
        }
-       chart = new Chart(ctx, {
+       let _chart = new Chart(ctx, {
          type: 'bar',
          data: {
            labels: usedData.map(d => new Date(parseInt(d[0], 10)).toLocaleDateString()),
@@ -84,7 +86,7 @@ import "react-datepicker/dist/react-datepicker.css";
            }
          }
        });
-       this.setState({isLoading: false, errorMessage: ''})
+       this.setState({chart: _chart, isLoading: false, errorMessage: ''})
      })
      .catch((e) => this.setState({errorMessage: e, isLoading: false}))
    }
