@@ -51,11 +51,24 @@ app.get('/apikey', (req, res) => {
   customersController.ensureApiKey(getIdentity(req), error(res), (key) => {
     const data = {
       id: key.id,
-      value: key.value
+      name: key.name,
+      value: key.value,
     };
     res.status(200).json(data)
   });
 });
+
+app.post('/apikey/reset-name', (req, res) => {
+  customersController.resetApiKeyName(getIdentity(req), error(res), (key) => {
+    const data = {
+      id: key.id,
+      name: key.name,
+      value: key.value,
+    };
+    res.status(200).json(data)
+  });
+});
+
 
 app.get('/subscriptions', (req, res) => {
   console.log(`GET /subscriptions`);
