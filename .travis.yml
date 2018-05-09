@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - 4
+  - 6
+cache:
+  directories:
+    - dev-portal/node_modules
+script:
+  - cd dev-portal && CI=true npm run test
