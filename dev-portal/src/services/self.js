@@ -1,4 +1,4 @@
-import AWS from 'aws-sdk'
+import AWS from 'aws-sdk/global'
 import { CognitoUserPool, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js'
 import { cognitoIdentityPoolId, cognitoUserPoolId, cognitoClientId, cognitoRegion } from './aws'
 import { initApiGatewayClient, apiGatewayClient } from './api'

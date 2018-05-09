@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
-
-import SwaggerUIBundle from 'swagger-ui-dist/swagger-ui-bundle';
-import 'swagger-ui-dist/swagger-ui.css';
+import SwaggerUIClass from 'swagger-ui'
+import 'swagger-ui/dist/swagger-ui.css'
 
 class SwaggerUI extends Component {
   componentDidMount() {
-    SwaggerUIBundle({
+    SwaggerUIClass({
       dom_id: '#swaggerContainer',
       url: this.props.url ? this.props.url : 'http://petstore.swagger.io/v2/swagger.json',
       spec: this.props.spec,
