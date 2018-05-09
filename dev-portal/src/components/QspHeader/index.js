@@ -71,7 +71,8 @@ export default class QspHeader extends PureComponent {
             <SignIn usagePlanId={this.state.usagePlanId} token={this.state.token}
                     onChange={(d) => this.handleAuthChange(d)}/>
             <Button.Or/>
-            <Register usagePlanId={this.state.usagePlanId} token={this.state.token}/>
+            <Register usagePlanId={this.state.usagePlanId} token={this.state.token}
+                      onChange={(d) => this.handleAuthChange(d)}/>
           </Button.Group>
         </Header>
       </Segment>
