@@ -130,7 +130,7 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
     const client = event.target.value;
     let {errorMessage} = this.state;
     const validValues = Object.assign({}, this.state.validValues);
-    if (!/^[a-zA-Z_-]{0,254}$/.test(client)) {
+    if (!/^[0-9a-zA-Z_-]{0,254}$/.test(client)) {
       validValues['apiClient'] = false;
       errorMessage = 'API client should contain only alphanumeric characters, dashes or underscores.'
     } else {
@@ -165,7 +165,7 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
       >
         <Modal.Header>Register</Modal.Header>
         <Modal.Content>
-          <Form onSubmit={this.handleRegister} error={!!this.state.errorMessage} loading={this.state.isSubmitting} novalidate>
+          <Form onSubmit={this.handleRegister} error={!!this.state.errorMessage} loading={this.state.isSubmitting} noValidate>
             <Form.Input type='email' label='Email' name='email' error={this.isError('email')} onBlur={this.validateEmail} />
             <Form.Input label='Name' name='name' error={this.isError('name')}  onBlur={this.validateNonEmpty('name')} required />
             <Form.Input label='Organisation' name='organisation' error={this.isError('organisation')} />
