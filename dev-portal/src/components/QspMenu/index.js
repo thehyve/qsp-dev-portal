@@ -65,7 +65,7 @@ export default class QspMenu extends PureComponent {
                   on='click'
                   position='left center'
                 />
-                <Dropdown.Item onClick={() => this.handleLogout()}>
+                <Dropdown.Item onClick={() => this.handleLogout()} as={Link} to='/'>
                   Sign Out
                 </Dropdown.Item>
               </Dropdown.Menu>
