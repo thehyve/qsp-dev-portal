@@ -36,13 +36,12 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
       {Name: "custom:apiClient", Value: data.get('apiClient').trim()},
     ])
     .then(() => {
-        this.setState({signedIn: true, isSubmitting: false, errorMessage: ''});
-
-        const { usagePlanId, token } = this.props;
-
-        if (usagePlanId && token) {
-   	       return confirmMarketplaceSubscription(usagePlanId, token)
-        }
+      this.setState({signedIn: true, isSubmitting: false, errorMessage: ''});
+      const {usagePlanId, token} = this.props;
+      if (usagePlanId && token) {
+        return confirmMarketplaceSubscription(usagePlanId, token)
+      }
+      this.props.onChange({signedIn: true});
     })
     .catch((e) => this.setState({errorMessage: e.message, isSubmitting: false}))
   }
