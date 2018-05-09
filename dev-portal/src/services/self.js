@@ -1,4 +1,4 @@
-import AWS from 'aws-sdk'
+import {config as AWSConfig, CognitoIdentityCredentials} from 'aws-sdk/global'
 import { CognitoUserPool, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js'
 import { cognitoIdentityPoolId, cognitoUserPoolId, cognitoClientId, cognitoRegion } from './aws'
 import { initApiGatewayClient, apiGatewayClient } from './api'
@@ -36,17 +36,17 @@ export function init() {
       const cognitoLoginKey = getCognitoLoginKey();
       const Logins = {};
       Logins[cognitoLoginKey] = session.getIdToken().getJwtToken();
-      AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+      AWSConfig.credentials = new CognitoIdentityCredentials({
         IdentityPoolId: cognitoIdentityPoolId,
         Logins: Logins
       });
 
-      AWS.config.credentials.refresh((error) => {
+      AWSConfig.credentials.refresh((error) => {
         if (error) {
           logout();
           console.error(error)
         } else {
-          initApiGatewayClient(AWS.config.credentials)
+          initApiGatewayClient(AWSConfig.credentials)
         }
       })
     })
@@ -97,18 +97,18 @@ export function login(email, password) {
           const cognitoLoginKey = getCognitoLoginKey();
           const Logins = {};
           Logins[cognitoLoginKey] = result.getIdToken().getJwtToken();
-          AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+          AWSConfig.credentials = new CognitoIdentityCredentials({
             IdentityPoolId: cognitoIdentityPoolId,
             Logins: Logins
           });
 
-          AWS.config.credentials.refresh((error) => {
+          AWSConfig.credentials.refresh((error) => {
             if (error) {
               console.error(error)
             } else {
               console.log('Successfully logged in');
 
-              initApiGatewayClient(AWS.config.credentials);
+              initApiGatewayClient(AWSConfig.credentials);
 
               apiGatewayClient.post('/signin', {}, {}, {}).then((result) => {
                 resolve(result)
