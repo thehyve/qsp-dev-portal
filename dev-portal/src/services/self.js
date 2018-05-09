@@ -152,3 +152,7 @@ export function showApiKey() {
   return apiGatewayClient.get('/apikey', {}, {}, {})
       .then(({data}) => data.value);
 }
+
+export function resetApiKeyName() {
+  return apiGatewayClient.post('/apikey/reset-name', {}, {}, {});
+}

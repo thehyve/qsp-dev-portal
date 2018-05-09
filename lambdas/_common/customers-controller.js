@@ -280,6 +280,40 @@ function getApiKeyId(identity, error, callback) {
 }
 
 /**
+ * Resets the API key name using the current user attributes.
+ * @param identity aws-serverless-express event identity
+ * @param error string callback
+ * @param callback api key object callback, id, name and value.
+ */
+function resetApiKeyName(identity, error, callback) {
+  ensureApiKey(identity, error, key => {
+    constructApiKeyName(identity, error, name => {
+      if (key.name !== name) {
+        const params = {
+          apiKey: key.id,
+          patchOperations: [
+            {
+              op: 'replace',
+              path: '/name',
+              value: name
+            }
+          ]
+        };
+        apigateway.updateApiKey(params, err => {
+          if (err) {
+            console.log(`Failed to update name of API key ${key.id}`, err);
+            error(err);
+          } else {
+            key.name = name;
+            callback(key);
+          }
+        });
+      }
+    })
+  });
+}
+
+/**
  * Get all usage plans that a user is subscribed to.
  * @param identity aws-serverless-express event identity
  * @param error string callback
@@ -538,6 +572,7 @@ module.exports = {
   getUsagePlanForProductCode,
   updateCustomerMarketplaceId,
   getUsage,
+  resetApiKeyName,
   subscribeFromMarketplace,
   getIdentityFromMarketplaceId,
 };
