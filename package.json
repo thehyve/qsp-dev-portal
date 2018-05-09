@@ -54,7 +54,9 @@
     "win-post-setup": "yarn run win-post-config && cd dev-portal && yarn install && yarn run win-upload-site && yarn home"
   },
   "license": "Apache-2.0",
-  "dependencies": {},
+  "dependencies": {
+    "react-datepicker": "^1.4.1"
+  },
   "devDependencies": {
     "aws-sdk": "^2.235.1",
     "inquirer": "^1.2.1"
