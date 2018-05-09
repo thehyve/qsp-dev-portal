@@ -4,6 +4,10 @@ node_js:
   - 6
 cache:
   directories:
+    - node_modules
     - dev-portal/node_modules
 script:
-  - cd dev-portal && CI=true npm run test
+  - cd dev-portal
+  - npm install
+  - CI=true npm run test
+  - npm run build
