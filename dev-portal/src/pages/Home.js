@@ -23,14 +23,7 @@ export default class HomePage extends PureComponent {
   render() {
     return (
       <Container className='Home'>
-        <Card.Group itemsPerRow={3} stackable style={{textAlign: 'center'}}>
-          <Card>
-            <Card.Content>
-              <Card.Header><Link to='/case-studies'>Case Studies</Link></Card.Header>
-              <Card.Description>Want to learn about what you can achieve by integrating with our APIs? The possibilities
-                are endless, but <Link to='/case-studies'>here are just a few examples</Link>.</Card.Description>
-            </Card.Content>
-          </Card>
+        <Card.Group itemsPerRow={2} stackable style={{textAlign: 'center'}}>
           <Card>
             <Card.Content>
               <Card.Header><Link to='/apis'>APIs</Link></Card.Header>
