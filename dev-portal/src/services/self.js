@@ -65,6 +65,7 @@ export function init() {
 export function register(email, password, attributeList) {
   localStorage.clear();
   return new Promise((resolve, reject) => {
+    console.log(attributeList)
     userPool.signUp(email, password, attributeList, null, (err, result) => {
       if (err) {
         reject(err)
@@ -139,6 +140,17 @@ export function getAccountDetails() {
       resolve(userCredentials);
     });
   });
+}
+
+export function updateUserDetails(userAttributes) {
+  return new Promise((resolve, reject) => {
+    cognitoUser.updateAttributes( userAttributes , (err, result) => {
+      if (err) {
+        reject({message: err.message }|| JSON.stringify(err));
+      }
+      resolve(result);
+    });
+  })
 }
 
 export function logout() {
