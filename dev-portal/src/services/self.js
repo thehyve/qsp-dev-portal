@@ -92,8 +92,6 @@ export function login(email, password) {
       cognitoUser.authenticateUser(authenticationDetails, {
         onSuccess: (result) => {
           // cognitoUser = result.user
-          console.log('access token + ' + result.getAccessToken().getJwtToken());
-
           const cognitoLoginKey = getCognitoLoginKey();
           const Logins = {};
           Logins[cognitoLoginKey] = result.getIdToken().getJwtToken();
@@ -106,8 +104,6 @@ export function login(email, password) {
             if (error) {
               console.error(error)
             } else {
-              console.log('Successfully logged in');
-
               initApiGatewayClient(AWS.config.credentials);
 
               apiGatewayClient.post('/signin', {}, {}, {}).then((result) => {
