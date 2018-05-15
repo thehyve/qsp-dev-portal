@@ -1,0 +1,800 @@
+---
+swagger: "2.0"
+info:
+  version: "1.0.0"
+  title: "Personalized Dietary Advice Service"
+host: "j3ctrwbieg.execute-api.eu-central-1.amazonaws.com"
+basePath: "/beta"
+schemes:
+- "https"
+paths:
+  /properties:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "format"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/ArrayOfProperty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Content-Type:
+              type: "string"
+        500:
+          description: "500 response"
+          headers:
+            Content-Type:
+              type: "string"
+      security:
+      - api_key: []
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /properties/{id}:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Property"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+        500:
+          description: "500 response"
+        404:
+          description: "404 response"
+      security:
+      - api_key: []
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /references:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "generic.gender"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "format"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "generic.age"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "property"
+        in: "query"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/ArrayOfPropertyReferences"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Content-Type:
+              type: "string"
+        500:
+          description: "500 response"
+          headers:
+            Content-Type:
+              type: "string"
+      security:
+      - api_key: []
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /status:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "generic.age"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "generic.gender"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "format"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/ArrayOfStatusValue"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Content-Type:
+              type: "string"
+        500:
+          description: "500 response"
+          headers:
+            Content-Type:
+              type: "string"
+      security:
+      - api_key: []
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /units:
+    get:
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/ArrayOfUnits"
+        500:
+          description: "500 response"
+      security:
+      - api_key: []
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+  /units/{id}:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Unit"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+        500:
+          description: "500 response"
+      security:
+      - api_key: []
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /{language}/advices:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "generic.gender"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "generic.age"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "nutrient.protein.from.food"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "language"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/ArrayOfAdvice"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+        500:
+          description: "500 response"
+      security:
+      - api_key: []
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "language"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /{language}/advices/{code}:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "code"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "language"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Advice"
+        500:
+          description: "500 response"
+        404:
+          description: "404 response"
+      security:
+      - api_key: []
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "code"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "language"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+securityDefinitions:
+  api_key:
+    type: "apiKey"
+    name: "x-api-key"
+    in: "header"
+definitions:
+  ArrayOfUnits:
+    type: "array"
+    items:
+      type: "object"
+      description: "The unit that values for this property should be expressed in."
+      properties:
+        id:
+          type: "string"
+          description: "Unique identifier of this unit. Refers to either the SNOMEDCT\
+            \ ontology or to the EUROFIR thesauri."
+        code:
+          type: "string"
+          description: "Short code describing the unit"
+        name:
+          type: "string"
+          description: "Human readable description of the unit"
+      required:
+      - "id"
+  ArrayOfPropertyReferences:
+    type: "array"
+    items:
+      type: "object"
+      properties:
+        property:
+          type: "object"
+          properties:
+            id:
+              type: "string"
+              description: "Unique identifier of this property. Refers to either the\
+                \ SNOMEDCT ontology or to the EUROFIR thesauri. "
+            name:
+              type: "string"
+              description: "Description of this property."
+            group:
+              type: "string"
+              description: "Group that this property belongs to."
+              enum:
+              - "Generic"
+              - "Nutrient"
+              - "Biomarker"
+              - "Physical"
+              - "SNP"
+              - "Foodgroup"
+            unit:
+              type: "object"
+              description: "The unit that values for this property should be expressed\
+                \ in."
+              properties:
+                id:
+                  type: "string"
+                  description: "Unique identifier of this unit. Refers to either the\
+                    \ SNOMEDCT ontology or to the EUROFIR thesauri. "
+                code:
+                  type: "string"
+                  description: "Short code describing the unit"
+                name:
+                  type: "string"
+                  description: "Human readable description of the unit"
+              required:
+              - "id"
+            modifiers:
+              type: "array"
+              description: "A list of modifiers that is allowed for this property"
+              items:
+                type: "string"
+          required:
+          - "id"
+          - "name"
+        references:
+          type: "array"
+          description: "The references for the given property"
+          items:
+            type: "object"
+            properties:
+              status:
+                type: "string"
+                description: "The status of this property. There are three types of\
+                  \ status values that could be returned. SNP values: Risk allele\
+                  \ or Non-risk allele Intake from supplements: Yes or No Other values:\
+                  \ Very low, Low, OK, High or Very high "
+                enum:
+                - "Very low"
+                - "Low"
+                - "OK"
+                - "High"
+                - "Very high"
+                - "Risk allele"
+                - "Non-risk allele"
+                - "Yes"
+                - "No"
+              color:
+                type: "string"
+                description: "The color that is associated with the status."
+                enum:
+                - "GREEN"
+                - "AMBER"
+                - "RED"
+              value:
+                type: "object"
+                description: "Reference condition for the property itself"
+                properties:
+                  type:
+                    type: "string"
+                    description: "Type of value"
+                    enum:
+                    - "numeric"
+                    - "text"
+                  value:
+                    type: "string"
+                    description: "The value that is represented. The datatype depends\
+                      \ on the type of value."
+                  unit:
+                    type: "object"
+                    properties:
+                      id:
+                        type: "string"
+                        description: "Unique identifier of this unit. Refers to either\
+                          \ the SNOMEDCT ontology or to the EUROFIR thesauri. "
+                      code:
+                        type: "string"
+                        description: "Short code describing the unit"
+                      name:
+                        type: "string"
+                        description: "Human readable description of the unit"
+                    required:
+                    - "id"
+                required:
+                - "type"
+                - "value"
+              conditions:
+                type: "array"
+                description: "List of secondary conditions on the reference. Currently\
+                  \ the only secondary conditions allowed are on age and gender. "
+                items:
+                  type: "object"
+                  properties:
+                    property:
+                      type: "object"
+                      properties:
+                        id:
+                          type: "string"
+                          description: "Unique identifier of this property. Refers\
+                            \ to either the SNOMEDCT ontology or to the EUROFIR thesauri. "
+                        name:
+                          type: "string"
+                          description: "Description of this property."
+                        group:
+                          type: "string"
+                          description: "Group that this property belongs to."
+                          enum:
+                          - "Generic"
+                          - "Nutrient"
+                          - "Biomarker"
+                          - "Physical"
+                          - "SNP"
+                          - "Foodgroup"
+                        unit:
+                          type: "object"
+                          description: "The unit that values for this property should\
+                            \ be expressed in."
+                          properties:
+                            id:
+                              type: "string"
+                              description: "Unique identifier of this unit. Refers\
+                                \ to either the SNOMEDCT ontology or to the EUROFIR\
+                                \ thesauri. "
+                            code:
+                              type: "string"
+                              description: "Short code describing the unit"
+                            name:
+                              type: "string"
+                              description: "Human readable description of the unit"
+                          required:
+                          - "id"
+                        modifiers:
+                          type: "array"
+                          description: "A list of modifiers that is allowed for this\
+                            \ property"
+                          items:
+                            type: "string"
+                      required:
+                      - "id"
+                      - "name"
+                    lower_boundary:
+                      type: "number"
+                      format: "decimal"
+                      description: "Lowest value for the given property to apply the\
+                        \ reference"
+                    upper_boundary:
+                      type: "number"
+                      format: "decimal"
+                      description: "Highest value for the given property to apply\
+                        \ the reference"
+                    exact_match:
+                      type: "string"
+                      description: "Exact match for the property to apply the reference"
+            required:
+            - "status"
+      required:
+      - "property"
+      - "references"
+  ArrayOfProperty:
+    type: "array"
+    items:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          description: "Unique identifier of this property. Refers to either the SNOMEDCT\
+            \ \nontology or to the EUROFIR thesauri.\n"
+        name:
+          type: "string"
+          description: "Description of this property."
+        group:
+          type: "string"
+          description: "Group that this property belongs to."
+          enum:
+          - "Generic"
+          - "Nutrient"
+          - "Biomarker"
+          - "Physical"
+          - "SNP"
+          - "Foodgroup"
+        unit:
+          type: "object"
+          description: "The unit that values for this property should be expressed\
+            \ in."
+          properties:
+            id:
+              type: "string"
+              description: "Unique identifier of this unit. Refers to either the SNOMEDCT\
+                \ \nontology or to the EUROFIR thesauri.\n"
+            code:
+              type: "string"
+              description: "Short code describing the unit"
+            name:
+              type: "string"
+              description: "Human readable description of the unit"
+          required:
+          - "id"
+        modifiers:
+          type: "array"
+          description: "A list of modifiers that is allowed for this property"
+          items:
+            type: "string"
+      required:
+      - "id"
+      - "name"
+  ArrayOfAdvice:
+    type: "array"
+    items:
+      type: "object"
+      properties:
+        code:
+          type: "string"
+          description: "Unique code describing the advice"
+        subject:
+          type: "string"
+          description: "Description of the property that this advice is about"
+        text:
+          type: "string"
+          description: "localized advice text"
+      required:
+      - "code"
+  ArrayOfStatusValue:
+    type: "array"
+    items:
+      type: "object"
+      properties:
+        property:
+          type: "object"
+          description: "The property that this status is about."
+          properties:
+            id:
+              type: "string"
+              description: "Unique identifier of this property. Refers to either the\
+                \ SNOMEDCT ontology or to the EUROFIR thesauri."
+            name:
+              type: "string"
+              description: "Description of this property."
+            group:
+              type: "string"
+              description: "Group that this property belongs to."
+              enum:
+              - "Generic"
+              - "Nutrient"
+              - "Biomarker"
+              - "Physical"
+              - "SNP"
+              - "Foodgroup"
+            unit:
+              type: "object"
+              description: "The unit that values for this property should be expressed\
+                \ in."
+              properties:
+                id:
+                  type: "string"
+                  description: "Unique identifier of this unit. Refers to either the\
+                    \ SNOMEDCT ontology or to the EUROFIR thesauri. "
+                code:
+                  type: "string"
+                  description: "Short code describing the unit"
+                name:
+                  type: "string"
+                  description: "Human readable description of the unit"
+              required:
+              - "id"
+            modifiers:
+              type: "array"
+              description: "A list of modifiers that is allowed for this property"
+              items:
+                type: "string"
+          required:
+          - "id"
+          - "name"
+        value:
+          type: "object"
+          description: "A reference to the value that this status is based on"
+          properties:
+            type:
+              type: "string"
+              description: "Type of value"
+              enum:
+              - "numeric"
+              - "text"
+            value:
+              type: "string"
+              description: "The value that is represented. The datatype depends on\
+                \ the type of value."
+            unit:
+              type: "object"
+              description: "The unit that values for this property should be expressed\
+                \ in."
+              properties:
+                id:
+                  type: "string"
+                  description: "Unique identifier of this unit. Refers to either the\
+                    \ SNOMEDCT  ontology or to the EUROFIR thesauri. "
+                code:
+                  type: "string"
+                  description: "Short code describing the unit"
+                name:
+                  type: "string"
+                  description: "Human readable description of the unit"
+              required:
+              - "id"
+          required:
+          - "type"
+          - "value"
+        status:
+          type: "string"
+          description: "The status of this property. There are three types of status\
+            \ values that could be returned. SNP values: Risk allele or Non-risk allele\
+            \ Intake from supplements: Yes or No Other values: Very low, Low, OK,\
+            \ High or Very high "
+          enum:
+          - "Very low"
+          - "Low"
+          - "OK"
+          - "High"
+          - "Very high"
+          - "Risk allele"
+          - "Non-risk allele"
+          - "Yes"
+          - "No"
+        color:
+          type: "string"
+          description: "The color that is associated with the status."
+          enum:
+          - "GREEN"
+          - "AMBER"
+          - "RED"
+      required:
+      - "property"
+      - "status"
+  Advice:
+    required:
+    - "code"
+    properties:
+      code:
+        type: "string"
+        description: "Unique code describing the advice"
+      subject:
+        type: "string"
+        description: "Description of the property that this advice is about"
+      text:
+        type: "string"
+        description: "localized advice text"
+  Unit:
+    type: "object"
+    required:
+    - "id"
+    properties:
+      id:
+        type: "string"
+        description: "Unique identifier of this unit. Refers to either the SNOMEDCT\
+          \ \nontology or to the EUROFIR thesauri.\n"
+      code:
+        type: "string"
+        description: "Short code describing the unit"
+      name:
+        type: "string"
+        description: "Human readable description of the unit"
+    description: "The unit that values for this property should be expressed in."
+  Property:
+    required:
+    - "id"
+    - "name"
+    properties:
+      id:
+        type: "string"
+        description: "Unique identifier of this property. Refers to either the SNOMEDCT\
+          \ \nontology or to the EUROFIR thesauri.\n"
+      name:
+        type: "string"
+        description: "Description of this property."
+      group:
+        type: "string"
+        description: "Group that this property belongs to."
+        enum:
+        - "Generic"
+        - "Nutrient"
+        - "Biomarker"
+        - "Physical"
+        - "SNP"
+        - "Foodgroup"
+      unit:
+        type: "object"
+        description: "The unit that values for this property should be expressed in."
+        properties:
+          id:
+            type: "string"
+            description: "Unique identifier of this unit. Refers to either the SNOMEDCT\
+              \ \nontology or to the EUROFIR thesauri.\n"
+          code:
+            type: "string"
+            description: "Short code describing the unit"
+          name:
+            type: "string"
+            description: "Human readable description of the unit"
+        required:
+        - "id"
+      modifiers:
+        type: "array"
+        description: "A list of modifiers that is allowed for this property"
+        items:
+          type: "string"
