@@ -7,7 +7,8 @@ export function initApiGatewayClient({ accessKeyId, secretAccessKey, sessionToke
       secretKey: secretAccessKey,
       sessionToken: sessionToken,
       region: awsRegion
-    })
+    });
+  return apiGatewayClient;
 }
 
 export function getApiGatewayClient() {

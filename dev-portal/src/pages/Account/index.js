@@ -41,7 +41,7 @@ export default class AccountDetails extends PureComponent {
   }
 
   handleSubmit = () => {
-    this.setState({isLoaded: false,});
+    this.setState({isLoaded: false});
     const {name, organisation, apiClient} = this.state;
     let userDetails = {
       name,
@@ -50,10 +50,8 @@ export default class AccountDetails extends PureComponent {
     };
     updateUserDetails(userDetails)
         .then(() => this.setState({isLoaded: true, errorMessage: '' , successMessage: 'Account details updated successfully'}))
+        .catch(e => this.setState({isLoaded: true, errorMessage: e.toString(), successMessage: ''}))
         .then(() => resetApiKeyName())
-        .catch(e => {
-          this.setState({errorMessage: e.toString(), isLoaded: true , successMessage: ''})
-        });
   };
 
   render() {

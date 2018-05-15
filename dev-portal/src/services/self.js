@@ -1,163 +1,50 @@
-import AWS from 'aws-sdk/global'
-import { CognitoUserPool, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js'
-import { cognitoIdentityPoolId, cognitoUserPoolId, cognitoClientId, cognitoRegion } from './aws'
 import { initApiGatewayClient, apiGatewayClient } from './api'
 import { clearSubscriptions } from './api-catalog'
-
-const poolData = {
-  UserPoolId: cognitoUserPoolId,
-  ClientId: cognitoClientId
-};
-
-let cognitoUser;
-let userPool;
-
-export function isAuthenticated() {
-  return cognitoUser
-}
-
-function getCognitoLoginKey() {
-  return `cognito-idp.${cognitoRegion}.amazonaws.com/${cognitoUserPoolId}`
-}
+import {
+  cognitoAuthenticate, cognitoGetAccountDetails,
+  cognitoInitSession,
+  cognitoLogout,
+  cognitoRefreshCredentials,
+  cognitoSignUp, cognitoUpdateAccountDetails, getCognitoUser
+} from "./cognito";
 
 export function init() {
-  // attempt to refresh credentials from active session
-  userPool = new CognitoUserPool(poolData);
-  cognitoUser = userPool.getCurrentUser();
-
-  if (cognitoUser !== null) {
-    cognitoUser.getSession(function(err, session) {
-      if (err) {
-        logout();
-        console.error(err);
-        return
-      }
-
-      const cognitoLoginKey = getCognitoLoginKey();
-      const Logins = {};
-      Logins[cognitoLoginKey] = session.getIdToken().getJwtToken();
-      AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: cognitoIdentityPoolId,
-        Logins: Logins
-      });
-
-      AWS.config.credentials.refresh((error) => {
-        if (error) {
-          logout();
-          console.error(error)
-        } else {
-          initApiGatewayClient(AWS.config.credentials)
-        }
-      })
-    })
-  } else {
-    initApiGatewayClient()
-    // if (!/index\.html/.test(window.location.href)) {
-    //   // window.location = 'index.html'
-    //   return
-    // } else {
-    //   window.localStorage.removeItem('aws.cognito.identity-id.' + cognitoIdentityPoolId)
-    //   window.localStorage.removeItem('aws.cognito.identity-providers.' + cognitoIdentityPoolId)
-    // }
-  }
+  cognitoInitSession()
+      .then(cognitoRefreshCredentials)
+      .then(initApiGatewayClient);
 }
 
 export function register(email, password, attributeList) {
   localStorage.clear();
-  return new Promise((resolve, reject) => {
-    userPool.signUp(email, password, attributeList, null, (err, result) => {
-      if (err) {
-        reject(err)
-      } else {
-        resolve(login(email, password))
-      }
-    })
-  })
+  return cognitoSignUp(email, password, attributeList)
+      .then(() => login(email, password));
 }
 
 export function login(email, password) {
-    const authenticationData = {
-      Username: email,
-      Password: password
-    };
-    const authenticationDetails = new AuthenticationDetails(authenticationData)
-    userPool = new CognitoUserPool(poolData);
-    const userData = {
-      Username: email,
-      Pool: userPool
-    };
-
-    cognitoUser = new CognitoUser(userData);
-    return new Promise((resolve, reject) => {
-      cognitoUser.authenticateUser(authenticationDetails, {
-        onSuccess: (result) => {
-          // cognitoUser = result.user
-          console.log('access token + ' + result.getAccessToken().getJwtToken());
-
-          const cognitoLoginKey = getCognitoLoginKey();
-          const Logins = {};
-          Logins[cognitoLoginKey] = result.getIdToken().getJwtToken();
-          AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-            IdentityPoolId: cognitoIdentityPoolId,
-            Logins: Logins
-          });
-
-          AWS.config.credentials.refresh((error) => {
-            if (error) {
-              console.error(error)
-            } else {
-              console.log('Successfully logged in');
-
-              initApiGatewayClient(AWS.config.credentials);
-
-              apiGatewayClient.post('/signin', {}, {}, {}).then((result) => {
-                resolve(result)
-              }).catch((err) => {
-                reject(err)
-              })
-            }
-          })
-        },
-
-        onFailure: (err) => {
-          reject(err)
-        }
-    })
-  })
+  return cognitoAuthenticate(email, password)
+      .then(cognitoRefreshCredentials)
+      .then(initApiGatewayClient)
+      .then(client => client.post('/signin', {}, {}, {}));
 }
 
 export function getAccountDetails() {
-  return new Promise((resolve, reject) => {
-    cognitoUser.getUserAttributes((err, result) => {
-      if (err) {
-        reject(err.message || JSON.stringify(err));
-      }
-      let userCredentials = {};
-      result.forEach(d => {
-        userCredentials[d.getName()] = d.getValue();
+  return cognitoGetAccountDetails()
+      .then(result => {
+        let userCredentials = {};
+        result.forEach(d => {
+          userCredentials[d.getName()] = d.getValue();
+        });
+        return userCredentials;
       });
-      resolve(userCredentials);
-    });
-  });
 }
 
 export function updateUserDetails(input) {
-  return new Promise((resolve, reject) => {
-    let userAttributes = Object.entries(input)
-        .map(([key, value]) => ({Name: key , Value: value}));
-
-    cognitoUser.updateAttributes(userAttributes , (err, result) => {
-      if (err) {
-        reject(err.message || JSON.stringify(err));
-      }
-      resolve(result);
-    });
-  })
+  return cognitoUpdateAccountDetails(input)
+      .then(cognitoGetAccountDetails);
 }
 
 export function logout() {
-  cognitoUser.signOut();
-  cognitoUser = null;
+  cognitoLogout();
   clearSubscriptions();
   localStorage.clear()
 }
@@ -169,4 +56,8 @@ export function getApiKey() {
 
 export function resetApiKeyName() {
   return apiGatewayClient.post('/apikey/reset-name', {}, {}, {});
+}
+
+export function isAuthenticated() {
+  return !!getCognitoUser();
 }
