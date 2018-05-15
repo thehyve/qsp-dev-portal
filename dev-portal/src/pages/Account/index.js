@@ -31,6 +31,10 @@ export default class AccountDetails extends PureComponent {
   };
 
   componentDidMount() {
+    this.synchAccountDetails();
+  }
+
+  synchAccountDetails = () => {
     getAccountDetails().then((d) => {
       const {email, name, 'custom:organisation':organisation , 'custom:apiClient':apiClient} = d;
       this.setState({
@@ -38,7 +42,7 @@ export default class AccountDetails extends PureComponent {
         isLoaded: true, errorMessage: '',successMessage: ''
       })
     });
-  }
+  };
 
   handleSubmit = () => {
     this.setState({isLoaded: false,});
@@ -49,10 +53,16 @@ export default class AccountDetails extends PureComponent {
       'custom:apiClient': apiClient,
     };
     updateUserDetails(userDetails)
-        .then(() => this.setState({isLoaded: true, errorMessage: '' , successMessage: 'Account details updated successfully'}))
+        .then(() =>  this.synchAccountDetails())
+        .then(() =>
+          this.setState({
+            isLoaded: true,
+            errorMessage: '',
+            successMessage: 'Account details updated successfully'}))
         .then(() => resetApiKeyName())
         .catch(e => {
           this.setState({errorMessage: e.toString(), isLoaded: true , successMessage: ''})
+          this.synchAccountDetails();
         });
   };
 
