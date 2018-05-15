@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react'
 import {Button, Form, Label, Message, Modal} from 'semantic-ui-react'
 import { Redirect } from 'react-router-dom'
 import { register } from '../../services/self'
+import { validateEmail, validateNonEmpty } from '../../services/validation'
 import { confirmMarketplaceSubscription } from '../../services/api-catalog'
 import Recaptcha from 'react-recaptcha'
 
@@ -46,58 +47,27 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
     .catch((e) => this.setState({errorMessage: e.message, isSubmitting: false}))
   }
 
-  validateEmail = (event) => {
-    const email = event.target.value.trim();
-    const atSymbolIndex = email.indexOf('@');
-    const dotSymbolIndex = email.lastIndexOf('.');
-
-    let { errorMessage } = this.state;
-    const validValues = Object.assign({}, this.state.validValues);
-
-    validValues['email'] = true;
-
-    if (email.length < 5) {
-      validValues['email'] = false;
-      errorMessage =  'Email address invalid.';
-    } else if (email.length > 255) {
-      validValues['email'] = false;
-      errorMessage =  'Email address too long.';
-    } else if (atSymbolIndex === -1 || email.lastIndexOf('@') !== atSymbolIndex) {
-      validValues['email'] = false;
-      errorMessage = '@-symbol placement invalid.';
-    } else if (dotSymbolIndex === -1 || atSymbolIndex > dotSymbolIndex) {
-      validValues['email'] = false;
-      errorMessage = 'Domain dot (.) placement invalid.';
-    }
-
-    this.updateValidity({ validValues, errorMessage, email})
-  };
-
   updateValidity = (args) => {
+
     if (Object.values(args.validValues).every(v => v === true)) {
       args.errorMessage = '';
     }
     this.setState(args);
   };
 
-  validateNonEmpty = (element) => {
-    return event => {
-      const val = event.target.value.trim();
+  validateEmail = (email) => {
+    const validValues = Object.assign({}, this.state.validValues)
+    const {isValid , errorMessage } = validateEmail(email)
+    validValues['email'] = isValid
+    this.updateValidity({validValues , errorMessage , email })
+  };
 
-      let { errorMessage } = this.state;
-      const validValues = Object.assign({}, this.state.validValues);
+  validateName = (event) => {
+    const validValues = Object.assign({}, this.state.validValues)
+    const {isValid , errorMessage , val } = validateNonEmpty(event.target.name , event.target.value)
+    validValues[event.target.name] = isValid
+    this.updateValidity({validValues , errorMessage , val });
 
-      validValues[element] = true;
-
-      if (val.length === 0) {
-        validValues[element] = false;
-        errorMessage = element + ' may not be empty';
-      } else if (val.length > 254) {
-        validValues[element] = false;
-        errorMessage = element + ' is too long';
-      }
-      this.updateValidity({validValues, errorMessage});
-    }
   };
 
   validatePassword = (event) => {
@@ -165,8 +135,8 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
         <Modal.Header>Register</Modal.Header>
         <Modal.Content>
           <Form onSubmit={this.handleRegister} error={!!this.state.errorMessage} loading={this.state.isSubmitting} noValidate>
-            <Form.Input type='email' label='Email' name='email' error={this.isError('email')} onBlur={this.validateEmail} />
-            <Form.Input label='Name' name='name' error={this.isError('name')}  onBlur={this.validateNonEmpty('name')} required />
+            <Form.Input type='email' label='Email' name='email' error={this.isError('email')} onBlur={e => this.validateEmail(e.target.value)} />
+            <Form.Input label='Name' name='name' error={this.isError('name')}  onBlur={this.validateNonEmpty} required />
             <Form.Input label='Organisation' name='organisation' error={this.isError('organisation')} />
             <Form.Input label='API client' name='apiClient' error={this.isError('apiClient')} onBlur={this.validateApiClient}>
               <input/>
