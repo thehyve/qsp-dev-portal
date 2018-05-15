@@ -24,7 +24,7 @@ export default class ApisPage extends PureComponent {
   render() {
     return (<div>
       <QspBreadcrumb {...this.props} />
-      {this.state.catalog && (!isAuthenticated() || this.state.subscriptions) ? <ApiCatalog catalog={this.state.catalog} /> : (<Dimmer active>
+      {this.state.catalog && (!isAuthenticated() || this.state.subscriptions) ? <ApiCatalog catalog={this.state.catalog} /> : (<Dimmer active inverted>
         <Loader content='Loading' />
       </Dimmer>)}
     </div>)
