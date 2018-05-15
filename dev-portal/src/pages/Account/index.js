@@ -14,7 +14,8 @@ export default class AccountDetails extends PureComponent {
       name: '',
       organisation: '',
       apiClient: '',
-      errorMessage: ''
+      errorMessage: '',
+      successMessage: ''
     };
   }
 
@@ -33,7 +34,8 @@ export default class AccountDetails extends PureComponent {
         name,
         organisation,
         apiClient,
-        errorMessage: ''
+        errorMessage: '',
+        successMessage: ''
       })
     });
   }
@@ -45,9 +47,9 @@ export default class AccountDetails extends PureComponent {
       name ,
       'custom:organisation':organisation ,
       'custom:apiClient':apiClient})
-    .then(() => this.setState({isLoaded: true, errorMessage: ''}))
+    .then(() => this.setState({isLoaded: true, errorMessage: '', successMessage: 'Account details updated successfully'}))
     .catch((e) => {
-      this.setState({errorMessage: e.message, isLoaded: true})
+      this.setState({errorMessage: e.message, isLoaded: true , successMessage: ''})
     });
   }
 
@@ -57,7 +59,8 @@ export default class AccountDetails extends PureComponent {
       <div>
         <QspBreadcrumb {...this.props} />
         <h2>Account Details</h2>
-        <Form noValidate loading={!this.state.isLoaded} onSubmit={this.handleSubmit} error={!!this.state.errorMessage}>
+        <Form noValidate loading={!this.state.isLoaded} onSubmit={this.handleSubmit} error={!!this.state.errorMessage} success={!!this.state.successMessage}>
+          <Message success content={this.state.successMessage}/>
           <Form.Input type='email' label='Email' name='email'  value={email} readOnly/>
           <Form.Input label='Name' name='name' value={name} onChange={this.handleChanges}/>
           <Form.Input label='Organisation' name='organisation' value={organisation} onChange={this.handleChanges}/>
