@@ -141,8 +141,12 @@ export function getAccountDetails() {
   });
 }
 
-export function updateUserDetails(userAttributes) {
+export function updateUserDetails(input) {
   return new Promise((resolve, reject) => {
+    let userAttributes = []
+    Object.entries(input).forEach(([key, value]) => {
+      userAttributes.push({"Name": key , "Value": value})
+    })
     cognitoUser.updateAttributes( userAttributes , (err, result) => {
       if (err) {
         reject({message: err.message }|| JSON.stringify(err));

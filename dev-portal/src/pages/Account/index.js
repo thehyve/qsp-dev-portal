@@ -16,11 +16,9 @@ export default class AccountDetails extends PureComponent {
       apiClient: '',
       errorMessage: ''
     };
-    this.handleChanges = (e) => this._handleChanges(e);
-    this.handleSubmit = this._handleSubmit.bind(this);
   }
 
-  _handleChanges(event ) {
+  handleChanges = (event ) => {
     event.preventDefault();
     const {name:key, value} = event.target;
     this.setState({[key]: value})
@@ -31,23 +29,23 @@ export default class AccountDetails extends PureComponent {
       const {email, name, 'custom:organisation':organisation , 'custom:apiClient':apiClient} = d;
       this.setState({
         isLoaded: true,
-        email: email,
-        name: name,
-        organisation: organisation,
-        apiClient: apiClient,
+        email,
+        name,
+        organisation,
+        apiClient,
         errorMessage: ''
       })
     });
   }
 
-  _handleSubmit() {
+  handleSubmit = () => {
     this.setState({isLoaded: false,});
-    updateUserDetails([
-      {Name: 'name', Value: this.state.name.trim()},
-      {Name: 'custom:organisation', Value: this.state.organisation},
-      {Name: 'custom:apiClient', Value: this.state.apiClient},
-      ])
-    .then((d) => this.setState({isLoaded: true, errorMessage: ''}))
+    const {name, organisation, apiClient} = this.state
+    updateUserDetails({
+      name ,
+      'custom:organisation':organisation ,
+      'custom:apiClient':apiClient})
+    .then(() => this.setState({isLoaded: true, errorMessage: ''}))
     .catch((e) => {
       this.setState({errorMessage: e.message, isLoaded: true})
     });
