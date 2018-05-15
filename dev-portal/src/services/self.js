@@ -8,6 +8,10 @@ import {
   cognitoSignUp, cognitoUpdateAccountDetails, getCognitoUser
 } from "./cognito";
 
+export function isAuthenticated() {
+  return !!getCognitoUser();
+}
+
 export function init() {
   cognitoInitSession()
       .then(cognitoRefreshCredentials)
@@ -56,8 +60,4 @@ export function getApiKey() {
 
 export function resetApiKeyName() {
   return apiGatewayClient.post('/apikey/reset-name', {}, {}, {});
-}
-
-export function isAuthenticated() {
-  return !!getCognitoUser();
 }
