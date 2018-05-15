@@ -22,7 +22,7 @@ export default class ApiDetailsPage extends PureComponent {
       <QspBreadcrumb {...this.props} />
       <section className="swagger-section" style={{overflow: 'auto'}}>
         {this.state.api ? <SwaggerUI spec={this.state.api.swagger}/> : (
-          <Dimmer active>
+          <Dimmer active inverted>
             <Loader content='Loading' />
           </Dimmer>)}
       </section>
