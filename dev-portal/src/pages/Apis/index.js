@@ -2,22 +2,20 @@ import React, { PureComponent } from 'react'
 import { Dimmer, Loader } from 'semantic-ui-react'
 import ApiCatalog from '../../components/ApiCatalog'
 import { isAuthenticated } from '../../services/self'
-import { getCatalog, fetchSubscriptions } from '../../services/api-catalog'
+import { loopkupCatalog, lookupSubscriptions } from '../../services/api-catalog'
 import QspBreadcrumb from '../../components/QspBreadcrumb'
 
 export default class ApisPage extends PureComponent {
   constructor(props) {
-    super(props)
-    this.state = {}
+    super(props);
+    this.state = {};
 
-    getCatalog().then(catalog => {
-      this.setState({ catalog })
-    })
+    loopkupCatalog()
+        .then(catalog => this.setState({ catalog }));
 
     if (isAuthenticated()) {
-      fetchSubscriptions().then(subscriptions => {
-        this.setState({ subscriptions })
-      })
+      lookupSubscriptions()
+          .then(subscriptions => this.setState({ subscriptions }));
     }
   }
 

@@ -50,12 +50,12 @@ export default class AccountDetails extends PureComponent {
     };
     updateUserDetails(userDetails)
         .then(() => this.setState({isLoaded: true, errorMessage: '' , successMessage: 'Account details updated successfully'}))
-        .catch(e => this.setState({isLoaded: true, errorMessage: e.toString(), successMessage: ''}))
+        .catch(e => this.setState({isLoaded: true, errorMessage: e.message, successMessage: ''}))
         .then(() => resetApiKeyName())
   };
 
   render() {
-    const { name, email, organisation, apiClient } = this.state
+    const { name, email, organisation, apiClient } = this.state;
     return (
       <div>
         <QspBreadcrumb {...this.props} />

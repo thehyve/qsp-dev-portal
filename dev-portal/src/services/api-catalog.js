@@ -1,46 +1,50 @@
-import { getApiGatewayClient } from './api'
-export let subscriptions
-let catalog
+import {lookupApiGatewayClient} from './api'
 
-export function getCatalog() {
+let subscriptions;
+let catalog;
+
+export function loopkupCatalog() {
   if (catalog) return Promise.resolve(catalog)
 
   return fetchCatalog()
-  .then(({data}) => {
-    catalog = data
-    return data
-  })
+      .then(({data}) => {
+        catalog = data;
+        return data
+      })
 }
 
 export function getApi(apiId) {
-  return getCatalog()
-  .then(() => {
-    let _api
-
-    catalog.forEach(c => {
-      if (_api) return
-      _api = c.apis.find(a => a.id === apiId)
-    })
-
-    return _api
-  })
+  return loopkupCatalog()
+      .then(catalog => catalog
+          .map(c => c.apis.find(a => a.id === apiId))
+          .find());
 }
 
-export function fetchCatalog() {
-  return getApiGatewayClient().then(apiGatewayClient => {
-    return apiGatewayClient.get('/catalog', {}, {}, {})
-  })
+function fetchCatalog() {
+  return lookupApiGatewayClient()
+      .then(client => client.get('/catalog', {}, {}, {}));
 }
 
-export function fetchSubscriptions() {
-    // get subscribed usage plans
-  return getApiGatewayClient().then(apiGatewayClient => {
-    return apiGatewayClient.get('/subscriptions', {}, {}, {}).then(({data}) => {
-      subscriptions = data
+export function lookupSubscriptions() {
+  if (subscriptions) {
+    return Promise.resolve(subscriptions);
+  }
 
-      return subscriptions
-    })
-  })
+  return fetchSubscriptions()
+      .then(({data}) => {
+        subscriptions = data;
+        return subscriptions;
+      });
+}
+
+function fetchSubscriptions() {
+  if (subscriptions) {
+    return Promise.resolve(subscriptions);
+  }
+
+  // get subscribed usage plans
+  return lookupApiGatewayClient()
+      .then(client => client.get('/subscriptions', {}, {}, {}));
 }
 
 export function clearSubscriptions() {
@@ -58,86 +62,71 @@ export function isSubscribed(usagePlanId) {
 // }
 
 export function getSubscribedUsagePlan(usagePlanId) {
-  const subscribedUsagePlan = subscriptions && subscriptions.find && subscriptions.find(s => s.id === usagePlanId)
-  return subscribedUsagePlan
+  return subscriptions && subscriptions.find && subscriptions.find(s => s.id === usagePlanId)
 }
 
 export function addSubscription(usagePlanId) {
-    return getApiGatewayClient().then(apiGatewayClient => {
-        return apiGatewayClient.put('/subscriptions/' + usagePlanId, {}, {}).then((result) => {
-          window.location.reload()
-      })
-    })
+  return lookupApiGatewayClient()
+      .then(client => client.put('/subscriptions/' + usagePlanId, {}, {}))
+      .then(() => window.location.reload());
 }
 
 export function confirmMarketplaceSubscription(usagePlanId, token) {
-    if (!usagePlanId) {
-      return
-    }
+  if (!usagePlanId) {
+    return
+  }
 
-    return getApiGatewayClient().then(apiGatewayClient => {
-        return apiGatewayClient.put('/marketplace-subscriptions/' + usagePlanId, {}, {"token" : token})
-    })
+  return lookupApiGatewayClient()
+      .then(client => client.put('/marketplace-subscriptions/' + usagePlanId, {}, {"token": token}))
 }
 
 export function unsubscribe(usagePlanId) {
-    return getApiGatewayClient().then(apiGatewayClient => {
-        return apiGatewayClient.delete(`/subscriptions/${usagePlanId}`, {}, {}).then(function(result) {
-          window.location.reload()
-      })
-    })
+  return lookupApiGatewayClient()
+      .then(client => client.delete(`/subscriptions/${usagePlanId}`, {}, {}))
+      .then(() => window.location.reload());
 }
 
-export function fetchUsage(usagePlanId , endDate) {
-    const startDate = new Date(endDate);
-    startDate.setDate(startDate.getDate() - 31);
-    const start = startDate.toJSON().split('T')[0]
-    const end = endDate.toJSON().split('T')[0]
-    return getApiGatewayClient().then(apiGatewayClient => {
-        return apiGatewayClient.get('/subscriptions/' + usagePlanId + '/usage', { start, end }, {})
-    })
+export function fetchUsage(usagePlanId, endDate) {
+  const startDate = new Date(endDate);
+  startDate.setDate(startDate.getDate() - 31);
+  const start = startDate.toJSON().split('T')[0];
+  const end = endDate.toJSON().split('T')[0];
+  return lookupApiGatewayClient()
+      .then(client => client.get('/subscriptions/' + usagePlanId + '/usage', {start, end}, {}));
 }
 
 export function mapUsageByDate(usage, usedOrRemaining) {
-    const apiKeyDates = {}
-    Object.keys(usage.items).forEach(apiKeyId => {
-        apiKeyDates[apiKeyId] = mapApiKeyUsageByDate(usage.items[apiKeyId], usage.startDate, usedOrRemaining)
+  const dates = {};
+
+  Object.values(usage.items).forEach(apiKey => {
+    mapApiKeyUsageByDate(apiKey, usage.startDate, usedOrRemaining).forEach(([date, value]) => {
+      if (!dates[date]) {
+        dates[date] = 0;
+      }
+
+      dates[date] += value;
     })
+  });
 
-    const dates = {}
-    Object.keys(apiKeyDates).forEach((apiKeyId, index) => {
-        const apiKeyUsage = apiKeyDates[apiKeyId]
-        apiKeyUsage.forEach(dailyUsage => {
-            const date = dailyUsage[0]
-            const value = dailyUsage[1]
-
-            if (!dates[date])
-                dates[date] = 0
-            dates[date] += value
-        })
-    })
-
-  return Object.keys(dates).sort().map(date => [date, dates[date]])
+  return Object.keys(dates)
+      .sort()
+      .map(date => [date, dates[date]])
 }
 
 function mapApiKeyUsageByDate(apiKeyUsage, startDate, usedOrRemaining) {
-    const dateParts = startDate.split('-')
-    const year = dateParts[0]
-    const month = dateParts[1]
-    const day = dateParts[2]
-    const apiKeyDate = new Date(year, month - 1, day)
-    apiKeyDate.setHours(0, 0, 0, 0)
-    const usedOrRemainingIndex = usedOrRemaining === 'used'
-        ? 0
-        : 1
+  const [year, month, day] = startDate.split('-');
+  const apiKeyDate = new Date(year, month - 1, day);
+  apiKeyDate.setHours(0, 0, 0, 0);
+  const usedOrRemainingIndex = usedOrRemaining === 'used' ? 0 : 1;
 
-    if (apiKeyUsage && !Array.isArray(apiKeyUsage[0]))
-        apiKeyUsage = [apiKeyUsage]
+  if (apiKeyUsage && !Array.isArray(apiKeyUsage[0])) {
+    apiKeyUsage = [apiKeyUsage];
+  }
 
-    return apiKeyUsage.map((usage) => {
-        const date = apiKeyDate.setDate(apiKeyDate.getDate())
-        const item = [date, usage[usedOrRemainingIndex]]
-        apiKeyDate.setDate(apiKeyDate.getDate() + 1)
-        return item
-    })
+  return apiKeyUsage.map((usage) => {
+    const date = new Date();
+    date.setDate(apiKeyDate.getDate());
+    apiKeyDate.setDate(apiKeyDate.getDate() + 1);
+    return [date, usage[usedOrRemainingIndex]]
+  })
 }

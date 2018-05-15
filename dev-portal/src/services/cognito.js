@@ -21,7 +21,7 @@ function getCognitoLoginKey() {
 function callbackToPromise(resolve, reject) {
   return (err, result) => {
     if (err) {
-      reject(err.message || JSON.stringify(err));
+      reject({message: err.message || JSON.stringify(err)});
     }
     resolve(result);
   };

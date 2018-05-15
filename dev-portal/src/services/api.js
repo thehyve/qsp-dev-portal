@@ -1,5 +1,5 @@
 import { awsRegion } from './aws'
-export let apiGatewayClient;
+let apiGatewayClient;
 
 export function initApiGatewayClient({ accessKeyId, secretAccessKey, sessionToken } = {}) {
   apiGatewayClient = window.apigClientFactory.newClient({
@@ -11,7 +11,7 @@ export function initApiGatewayClient({ accessKeyId, secretAccessKey, sessionToke
   return apiGatewayClient;
 }
 
-export function getApiGatewayClient() {
+export function lookupApiGatewayClient() {
   if (apiGatewayClient) {
     return Promise.resolve(apiGatewayClient);
   }

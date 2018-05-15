@@ -1,4 +1,4 @@
-import { initApiGatewayClient, apiGatewayClient } from './api'
+import {initApiGatewayClient, lookupApiGatewayClient} from './api'
 import { clearSubscriptions } from './api-catalog'
 import {
   cognitoAuthenticate, cognitoGetAccountDetails,
@@ -54,10 +54,12 @@ export function logout() {
 }
 
 export function getApiKey() {
-  return apiGatewayClient.get('/apikey', {}, {}, {})
+  return lookupApiGatewayClient()
+      .then(client => client.get('/apikey', {}, {}, {}))
       .then(({data}) => data);
 }
 
 export function resetApiKeyName() {
-  return apiGatewayClient.post('/apikey/reset-name', {}, {}, {});
+  return lookupApiGatewayClient()
+      .then(client => client.post('/apikey/reset-name', {}, {}, {}));
 }
