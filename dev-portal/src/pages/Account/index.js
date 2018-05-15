@@ -50,8 +50,8 @@ export default class AccountDetails extends PureComponent {
     };
     updateUserDetails(userDetails)
         .then(() => this.setState({isLoaded: true, errorMessage: '' , successMessage: 'Account details updated successfully'}))
-        .catch(e => this.setState({isLoaded: true, errorMessage: e.message, successMessage: ''}))
         .then(() => resetApiKeyName())
+        .catch(e => this.setState({isLoaded: true, errorMessage: e.message, successMessage: ''}));
   };
 
   render() {
