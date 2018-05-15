@@ -55,12 +55,6 @@ export function isSubscribed(usagePlanId) {
   return !!getSubscribedUsagePlan(usagePlanId)
 }
 
-// export function getUsagePlanApiStages(usagePlanId) {
-//   const subscribedUsagePlan = getSubscribedUsagePlan(usagePlanId)
-//
-//   return (subscribedUsagePlan && subscribedUsagePlan.apiStages) || []
-// }
-
 export function getSubscribedUsagePlan(usagePlanId) {
   return subscriptions && subscriptions.find && subscriptions.find(s => s.id === usagePlanId)
 }
@@ -99,13 +93,14 @@ export function mapUsageByDate(usage, usedOrRemaining) {
   const dates = {};
 
   Object.values(usage.items).forEach(apiKey => {
-    mapApiKeyUsageByDate(apiKey, usage.startDate, usedOrRemaining).forEach(([date, value]) => {
-      if (!dates[date]) {
-        dates[date] = 0;
-      }
+    mapApiKeyUsageByDate(apiKey, usage.startDate, usedOrRemaining)
+        .forEach(([date, value]) => {
+          if (!dates[date]) {
+            dates[date] = 0;
+          }
 
-      dates[date] += value;
-    })
+          dates[date] += value;
+        })
   });
 
   return Object.keys(dates)
