@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react'
 import {Button, Form, Label, Message, Modal} from 'semantic-ui-react'
 import { Redirect } from 'react-router-dom'
 import { register } from '../../services/self'
-import { validateEmail, validateNonEmpty } from '../../services/validation'
+import { validateEmail, validateNonEmpty, validatePassword, validateConfirmPassword, validateApiClient} from '../../services/validation'
 import { confirmMarketplaceSubscription } from '../../services/api-catalog'
 import Recaptcha from 'react-recaptcha'
 
@@ -23,9 +23,8 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
 
   open = () => this.setState({ isSubmitting: false, errorMessage: '', validValues: {}, isOpen: true, password: '', confirmPassword: '', isValidCaptcha: false, email: ''});
   close = () => this.setState({ isOpen: false });
-  handleRegister = (...args) => this._handleRegister(...args);
 
-  _handleRegister(event) {
+  handleRegister = (event) => {
     event.preventDefault();
     this.setState({isSubmitting: true});
 
@@ -45,20 +44,19 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
       this.props.onChange({signedIn: true});
     })
     .catch((e) => this.setState({errorMessage: e.message, isSubmitting: false}))
-  }
+  };
 
   updateValidity = (args) => {
-
     if (Object.values(args.validValues).every(v => v === true)) {
       args.errorMessage = '';
     }
     this.setState(args);
   };
 
-  validateEmail = (email) => {
+  validateEmail = (event) => {
     const validValues = Object.assign({}, this.state.validValues)
-    const {isValid , errorMessage } = validateEmail(email)
-    validValues['email'] = isValid
+    const {isValid , errorMessage , email} = validateEmail(event.target.value)
+    validValues[event.target.name] = isValid
     this.updateValidity({validValues , errorMessage , email })
   };
 
@@ -67,45 +65,27 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
     const {isValid , errorMessage , val } = validateNonEmpty(event.target.name , event.target.value)
     validValues[event.target.name] = isValid
     this.updateValidity({validValues , errorMessage , val });
-
   };
 
   validatePassword = (event) => {
-    const password = event.target.value;
-    let {errorMessage, confirmPassword} = this.state;
     const validValues = Object.assign({}, this.state.validValues);
-
-    validValues['password'] = true;
-
-    if (password.length < 8) {
-      validValues['password'] = false;
-      errorMessage = 'Password must be longer than 8 characters.';
-    } else {
-      validValues['confirmPassword'] = password === confirmPassword;
-    }
+    const {isValid , errorMessage , password } = validatePassword(event.target.value)
+    validValues[event.target.name] = isValid
     this.updateValidity({validValues, errorMessage, password})
   };
 
-
   validateConfirmPassword = (event) => {
-    const confirmPassword = event.target.value;
-    let {password} = this.state;
     const validValues = Object.assign({}, this.state.validValues);
-    validValues['confirmPassword'] = password === confirmPassword;
-    this.updateValidity({validValues, confirmPassword})
+    const {isValid , errorMessage , confirmPassword} = validateConfirmPassword(this.state.password, event.target.value)
+    validValues[event.target.name] = isValid
+    this.updateValidity({validValues , errorMessage, confirmPassword})
   };
 
   validateApiClient = (event) => {
-    const client = event.target.value;
-    let {errorMessage} = this.state;
     const validValues = Object.assign({}, this.state.validValues);
-    if (!/^[0-9a-zA-Z_-]{0,254}$/.test(client)) {
-      validValues['apiClient'] = false;
-      errorMessage = 'API client should contain only alphanumeric characters, dashes or underscores.'
-    } else {
-      validValues['apiClient'] = true;
-    }
-    this.updateValidity({validValues, errorMessage})
+    const {isValid , errorMessage , apiClientName} = validateApiClient(event.target.value)
+    validValues[event.target.name] = isValid
+    this.updateValidity({validValues , errorMessage, apiClientName})
   };
 
   isError = (element) => {
@@ -135,8 +115,8 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
         <Modal.Header>Register</Modal.Header>
         <Modal.Content>
           <Form onSubmit={this.handleRegister} error={!!this.state.errorMessage} loading={this.state.isSubmitting} noValidate>
-            <Form.Input type='email' label='Email' name='email' error={this.isError('email')} onBlur={e => this.validateEmail(e.target.value)} />
-            <Form.Input label='Name' name='name' error={this.isError('name')}  onBlur={this.validateNonEmpty} required />
+            <Form.Input type='email' label='Email' name='email' error={this.isError('email')} onBlur={this.validateEmail} />
+            <Form.Input label='Name' name='name' error={this.isError('name')}  onBlur={this.validateName} required />
             <Form.Input label='Organisation' name='organisation' error={this.isError('organisation')} />
             <Form.Input label='API client' name='apiClient' error={this.isError('apiClient')} onBlur={this.validateApiClient}>
               <input/>
