@@ -44,12 +44,20 @@ export function lookupApiGatewayClient() {
     return Promise.resolve(apiGatewayClient);
   }
 
-  return new Promise(resolve => {
+  const pollMs = 100;
+  let retries = 50; // 5 seconds
+
+  return new Promise((resolve, reject) => {
     const poller = window.setInterval(() => {
       if (apiGatewayClient) {
         window.clearInterval(poller);
         resolve(apiGatewayClient)
+      } else {
+        retries--;
+        if (retries === 0) {
+          reject({message: 'Failed to update session'});
+        }
       }
-    }, 100)
+    }, pollMs);
   })
 }
