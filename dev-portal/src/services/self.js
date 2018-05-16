@@ -36,6 +36,10 @@ export function isAuthenticated() {
 export function init() {
   return cognitoInitSession()
       .then(cognitoRefreshCredentials)
+      .catch(e => {
+        logout();
+        throw e;
+      })
       .then(initApiGatewayClient);
 }
 

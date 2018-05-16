@@ -70,6 +70,11 @@ export function cognitoRefreshCredentials(session) {
   if (!session) {
     return Promise.resolve();
   }
+  return refreshSession(session)
+      .then(() => AWS.config.credentials);
+}
+
+function refreshSession(session) {
   return new Promise((resolve, reject) => {
     const cognitoLoginKey = getCognitoLoginKey();
     const Logins = {};
