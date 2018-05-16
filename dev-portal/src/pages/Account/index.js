@@ -1,11 +1,6 @@
 import React, {PureComponent} from 'react'
 import {Button, Form, Modal, Message} from 'semantic-ui-react'
-import {
-  getAccountDetails,
-  isAuthenticated,
-  resetApiKeyName,
-  updateUserDetails
-} from "../../services/self";
+import {getAccountDetails, isAuthenticated, updateUserDetails} from "../../services/self";
 import QspBreadcrumb from "../../components/QspBreadcrumb";
 
 export default class AccountDetails extends PureComponent {
@@ -49,7 +44,6 @@ export default class AccountDetails extends PureComponent {
     };
     updateUserDetails(userDetails)
         .then(this.syncAccountDetails)
-        .then(resetApiKeyName)
         .then(() => this.setState({errorMessage: '' , successMessage: 'Account details updated successfully'}))
         .catch(e => this.setState({errorMessage: e.message, successMessage: ''}));
   };
@@ -74,5 +68,3 @@ export default class AccountDetails extends PureComponent {
       </div>)
   }
 }
-
-

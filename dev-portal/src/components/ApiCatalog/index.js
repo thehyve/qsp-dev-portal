@@ -6,15 +6,17 @@ import { isAuthenticated } from '../../services/self'
 import Usage from '../Usage'
 
 function handleSubscribe(event, usagePlan) {
-  event.preventDefault()
+  event.preventDefault();
 
   addSubscription(usagePlan.id)
+      .then(() => window.location.reload());
 }
 
 function handleUnsubscribe(event, usagePlan) {
-  event.preventDefault()
+  event.preventDefault();
 
   unsubscribe(usagePlan.id)
+      .then(() => window.location.reload());
 }
 
 const SubscribedApiActionsDropdown = ({usagePlan, api}) => (
