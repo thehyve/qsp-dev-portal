@@ -14,10 +14,11 @@ import "react-datepicker/dist/react-datepicker.css";
      errorMessage: '',
      isOpen: false,
      startDate: moment(),
-     chart: undefined
+     chart: undefined,
+     infoMessage: ''
    };
 
-   open = () => this.setState({ isLoading: false, errorMessage: '', isOpen: true , startDate: moment()});
+   open = () => this.setState({ isLoading: false, errorMessage: '', infoMessage: '', isOpen: true , startDate: moment()});
    close = () => this.setState({ isOpen: false });
    handleChange = (date) => {
      this.setState({startDate: date}, this.loadUsageChart);
@@ -79,7 +80,11 @@ import "react-datepicker/dist/react-datepicker.css";
            }
          }
        });
-       this.setState({chart: _chart, isLoading: false, errorMessage: ''})
+       this.setState({chart: _chart, isLoading: false, errorMessage: '', infoMessage: ''})
+
+       if(usedData.length ===0) {
+         this.setState({infoMessage: 'No usage data available at the moment.'})
+       }
      })
      .catch((e) => this.setState({errorMessage: e, isLoading: false}))
    }
@@ -111,7 +116,8 @@ import "react-datepicker/dist/react-datepicker.css";
         </Modal.Description>
         <DatePicker selected={this.state.startDate} onChange={this.handleChange} maxDate={moment()}/>
         {this.state.errorMessage ? <Message error content={this.state.errorMessage.toString()} /> : ''}
-        <canvas id='api-usage-chart-container' width='400' height='400'/>
+        {this.state.infoMessage ? <Message info content={this.state.infoMessage.toString()} /> : ''}
+        <canvas id='api-usage-chart-container' width='400' height='300'/>
       </Modal.Content>
       <Modal.Actions style={{textAlign: 'right'}}>
         <Button type='button' onClick={this.close}>Close</Button>
