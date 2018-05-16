@@ -12,8 +12,8 @@ info:
     \  decision trees. "
   version: "1.0.0"
   title: "Personalized Dietary Advice Service"
-host: "j3ctrwbieg.execute-api.eu-central-1.amazonaws.com"
-basePath: "/beta"
+host: "qsp-api.thehyve.net"
+basePath: "/pdas/beta"
 schemes:
 - "https"
 paths:
