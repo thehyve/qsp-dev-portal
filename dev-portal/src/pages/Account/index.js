@@ -32,10 +32,10 @@ export default class AccountDetails extends PureComponent {
 
   componentDidMount() {
     getAccountDetails()
-        .then(this.loadAccountDetails);
+        .then(this.syncAccountDetails);
   }
 
-  loadAccountDetails({email, name, 'custom:organisation':organisation, 'custom:apiClient':apiClient}) {
+  syncAccountDetails({email, name, 'custom:organisation':organisation, 'custom:apiClient':apiClient}) {
     this.setState({email, name, organisation, apiClient, isLoaded: true});
   }
 
@@ -48,8 +48,8 @@ export default class AccountDetails extends PureComponent {
       'custom:apiClient': apiClient,
     };
     updateUserDetails(userDetails)
-        .then(this.loadAccountDetails)
-        .then(() => resetApiKeyName())
+        .then(this.syncAccountDetails)
+        .then(resetApiKeyName)
         .then(() => this.setState({errorMessage: '' , successMessage: 'Account details updated successfully'}))
         .catch(e => this.setState({errorMessage: e.message, successMessage: ''}));
   };

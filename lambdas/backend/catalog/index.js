@@ -8,9 +8,11 @@ const fs = require('fs');
 const drvDef = loadYaml('./drv.yaml');
 const foodTransport = loadYaml('./FoodTransport.yaml');
 const harmonisedQuisper = loadYaml('./HarmonizedQuisper.yaml');
+const pdasDoc = loadYaml('./PDAS.yaml');
 const hq = '/pdfs/HarmonizedQuisper.pdf';
 const drv = '/pdfs/drv.pdf';
 const ft = '/pdfs/FoodTransport.pdf';
+const pdasPdf = '/pdfs/pdas.pdf';
 
 const usagePlans = [{
   id: 'b04or5',
@@ -33,6 +35,12 @@ const usagePlans = [{
       image: '/sam-logo.png',
       swagger: harmonisedQuisper,
       extraDoc: hq
+    },
+    {
+      id: 'j3ctrwbieg',
+      image: '/sam-logo.png',
+      swagger: pdasDoc,
+      extraDoc: pdasPdf
     }
   ]
 }];
