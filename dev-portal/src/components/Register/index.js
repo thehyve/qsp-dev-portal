@@ -6,8 +6,6 @@ import { validateEmail, validateNonEmpty, validatePassword, validateConfirmPassw
 import { confirmMarketplaceSubscription } from '../../services/api-catalog'
 import Recaptcha from 'react-recaptcha'
 
-const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
-
  export default class Register extends PureComponent {
   state = {
     isSubmitting: false,
@@ -18,7 +16,8 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
     validValues: {},
     password: '',
     confirmPassword: '',
-    isValidCaptcha: false
+    isValidCaptcha: false,
+    sitekey: '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
   };
 
   open = () => this.setState({ isSubmitting: false, errorMessage: '', validValues: {}, isOpen: true, password: '', confirmPassword: '', isValidCaptcha: false, email: ''});
@@ -60,6 +59,9 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
         return validateConfirmPassword(this.state.password, value);
       case 'apiClient':
         return validateApiClient(value);
+      default:
+        // no validation
+        return {isValid:true , errorMessage:''}
     }
   };
 
@@ -117,7 +119,7 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
             <Form.Input type='password' label='Password' name='password' autoComplete='false' error={this.isError('password')} onBlur={this.validate} />
             <Form.Input type='password' label='Confirm password' name='confirmPassword' autoComplete='false' error={this.isError('confirmPassword')} onChange={this.validate}/>
             <Recaptcha
-              sitekey={sitekey}
+              sitekey={this.state.sitekey}
               verifyCallback={ this.verifyCaptcha } />
             <Message error content={this.state.errorMessage} />
             <Modal.Actions style={{textAlign: 'right'}}>
