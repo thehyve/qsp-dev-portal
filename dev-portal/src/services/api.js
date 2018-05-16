@@ -36,7 +36,7 @@ export function initApiGatewayClient({ accessKeyId, secretAccessKey, sessionToke
 
 /**
  * Get the initialized client to the backend lambda. This will poll until the api gateway client is
- * initialized.
+ * initialized, or 5 seconds is reached.
  * @returns {Promise} api gateway client.
  */
 export function lookupApiGatewayClient() {
