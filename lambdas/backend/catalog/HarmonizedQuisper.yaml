@@ -2,10 +2,10 @@
 swagger: "2.0"
 info:
   description: "An XML web service that provides a single-point access to QSP webservices."
-  version: "2018-04-18T09:47:05Z"
+  version: "1.0.0"
   title: "HarmonizedQuisper"
-host: "tnrl2m4nkf.execute-api.eu-central-1.amazonaws.com"
-basePath: "/beta"
+host: "qsp-api.thehyve.net"
+basePath: "/harmonized/beta"
 schemes:
 - "https"
 paths:
@@ -88,3 +88,6 @@ definitions:
     description: "More information about QDQL sentence can be found in the technical\
       \ report of the HarmonizedQusiper."
     example: "<DQL_Sentence><MetaData><SchemaVersion>1.2</SchemaVersion><Schema>QDQL_Sentence_version_1_0.xsd</Schema></MetaData><SelectClause><FieldName>FoodName</FieldName></SelectClause></DQL_Sentence>"
+externalDocs:
+  description: "PDF documentation"
+  url: /pdfs/HarmonizedQuisper.pdf
