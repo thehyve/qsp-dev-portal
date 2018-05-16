@@ -96,8 +96,8 @@ export default class AccountDetails extends PureComponent {
           <Form.Input label='API Client' name='apiClient' error={this.isError('apiClient')} value={apiClient} onChange={this.handleChanges} />
           <Message error content={this.state.errorMessage}/>
           <Modal.Actions style={{textAlign: 'center'}}>
-            <Button primary type='submit' >Save</Button>
             <ChangePassword/>
+            <Button primary type='submit' >Save</Button>
           </Modal.Actions>
         </Form>
       </div>)
