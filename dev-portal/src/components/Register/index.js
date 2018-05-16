@@ -2,10 +2,9 @@ import React, { PureComponent } from 'react'
 import {Button, Form, Label, Message, Modal} from 'semantic-ui-react'
 import { Redirect } from 'react-router-dom'
 import { register } from '../../services/self'
+import { validateEmail, validateNonEmpty, validatePassword, validateConfirmPassword, validateApiClient} from '../../services/validation'
 import { confirmMarketplaceSubscription } from '../../services/api-catalog'
 import Recaptcha from 'react-recaptcha'
-
-const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
 
  export default class Register extends PureComponent {
   state = {
@@ -17,14 +16,14 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
     validValues: {},
     password: '',
     confirmPassword: '',
-    isValidCaptcha: false
+    isValidCaptcha: false,
+    sitekey: '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
   };
 
   open = () => this.setState({ isSubmitting: false, errorMessage: '', validValues: {}, isOpen: true, password: '', confirmPassword: '', isValidCaptcha: false, email: ''});
   close = () => this.setState({ isOpen: false });
-  handleRegister = (...args) => this._handleRegister(...args);
 
-  _handleRegister(event) {
+  handleRegister = (event) => {
     event.preventDefault();
     this.setState({isSubmitting: true});
 
@@ -44,33 +43,26 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
       this.props.onChange({signedIn: true});
     })
     .catch((e) => this.setState({errorMessage: e.message, isSubmitting: false}))
-  }
+  };
 
-  validateEmail = (event) => {
-    const email = event.target.value.trim();
-    const atSymbolIndex = email.indexOf('@');
-    const dotSymbolIndex = email.lastIndexOf('.');
 
-    let { errorMessage } = this.state;
-    const validValues = Object.assign({}, this.state.validValues);
-
-    validValues['email'] = true;
-
-    if (email.length < 5) {
-      validValues['email'] = false;
-      errorMessage =  'Email address invalid.';
-    } else if (email.length > 255) {
-      validValues['email'] = false;
-      errorMessage =  'Email address too long.';
-    } else if (atSymbolIndex === -1 || email.lastIndexOf('@') !== atSymbolIndex) {
-      validValues['email'] = false;
-      errorMessage = '@-symbol placement invalid.';
-    } else if (dotSymbolIndex === -1 || atSymbolIndex > dotSymbolIndex) {
-      validValues['email'] = false;
-      errorMessage = 'Domain dot (.) placement invalid.';
+  getValidator = (event) => {
+    const {name, value} = event.target;
+    switch(name) {
+      case 'email':
+        return validateEmail(value);
+      case 'name':
+        return validateNonEmpty(name, value);
+      case 'password':
+        return validatePassword(value);
+      case 'confirmPassword':
+        return validateConfirmPassword(this.state.password, value);
+      case 'apiClient':
+        return validateApiClient(value);
+      default:
+        // no validation
+        return {isValid:true , errorMessage:''}
     }
-
-    this.updateValidity({ validValues, errorMessage, email})
   };
 
   updateValidity = (args) => {
@@ -80,62 +72,14 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
     this.setState(args);
   };
 
-  validateNonEmpty = (element) => {
-    return event => {
-      const val = event.target.value.trim();
-
-      let { errorMessage } = this.state;
-      const validValues = Object.assign({}, this.state.validValues);
-
-      validValues[element] = true;
-
-      if (val.length === 0) {
-        validValues[element] = false;
-        errorMessage = element + ' may not be empty';
-      } else if (val.length > 254) {
-        validValues[element] = false;
-        errorMessage = element + ' is too long';
-      }
-      this.updateValidity({validValues, errorMessage});
-    }
-  };
-
-  validatePassword = (event) => {
-    const password = event.target.value;
-    let {errorMessage, confirmPassword} = this.state;
-    const validValues = Object.assign({}, this.state.validValues);
-
-    validValues['password'] = true;
-
-    if (password.length < 8) {
-      validValues['password'] = false;
-      errorMessage = 'Password must be longer than 8 characters.';
-    } else {
-      validValues['confirmPassword'] = password === confirmPassword;
-    }
-    this.updateValidity({validValues, errorMessage, password})
-  };
-
-
-  validateConfirmPassword = (event) => {
-    const confirmPassword = event.target.value;
-    let {password} = this.state;
-    const validValues = Object.assign({}, this.state.validValues);
-    validValues['confirmPassword'] = password === confirmPassword;
-    this.updateValidity({validValues, confirmPassword})
-  };
-
-  validateApiClient = (event) => {
-    const client = event.target.value;
-    let {errorMessage} = this.state;
-    const validValues = Object.assign({}, this.state.validValues);
-    if (!/^[0-9a-zA-Z_-]{0,254}$/.test(client)) {
-      validValues['apiClient'] = false;
-      errorMessage = 'API client should contain only alphanumeric characters, dashes or underscores.'
-    } else {
-      validValues['apiClient'] = true;
-    }
-    this.updateValidity({validValues, errorMessage})
+  validate = (event) => {
+    event.preventDefault();
+    const {name:key, value} = event.target;
+    this.setState({[key]: value})
+    const validValues = Object.assign({}, this.state.validValues)
+    const {isValid , errorMessage , val } = this.getValidator(event)
+    validValues[key] = isValid
+    this.updateValidity({validValues , errorMessage , val});
   };
 
   isError = (element) => {
@@ -165,17 +109,17 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
         <Modal.Header>Register</Modal.Header>
         <Modal.Content>
           <Form onSubmit={this.handleRegister} error={!!this.state.errorMessage} loading={this.state.isSubmitting} noValidate>
-            <Form.Input type='email' label='Email' name='email' error={this.isError('email')} onBlur={this.validateEmail} />
-            <Form.Input label='Name' name='name' error={this.isError('name')}  onBlur={this.validateNonEmpty('name')} required />
+            <Form.Input type='email' label='Email' name='email' error={this.isError('email')} onBlur={this.validate} />
+            <Form.Input label='Name' name='name' error={this.isError('name')}  onBlur={this.validate} required />
             <Form.Input label='Organisation' name='organisation' error={this.isError('organisation')} />
-            <Form.Input label='API client' name='apiClient' error={this.isError('apiClient')} onBlur={this.validateApiClient}>
+            <Form.Input label='API client' name='apiClient' error={this.isError('apiClient')} onBlur={this.validate}>
               <input/>
               <Label basic>:{this.state.email ? this.state.email : 'me@example.com'}</Label>
             </Form.Input>
-            <Form.Input type='password' label='Password' name='password' autoComplete='false' error={this.isError('password')} onBlur={this.validatePassword} />
-            <Form.Input type='password' label='Confirm password' name='confirmPassword' autoComplete='false' error={this.isError('confirmPassword')} onChange={this.validateConfirmPassword}/>
+            <Form.Input type='password' label='Password' name='password' autoComplete='false' error={this.isError('password')} onBlur={this.validate} />
+            <Form.Input type='password' label='Confirm password' name='confirmPassword' autoComplete='false' error={this.isError('confirmPassword')} onChange={this.validate}/>
             <Recaptcha
-              sitekey={sitekey}
+              sitekey={this.state.sitekey}
               verifyCallback={ this.verifyCaptcha } />
             <Message error content={this.state.errorMessage} />
             <Modal.Actions style={{textAlign: 'right'}}>
