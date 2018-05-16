@@ -46,6 +46,23 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
     .catch((e) => this.setState({errorMessage: e.message, isSubmitting: false}))
   };
 
+
+  getValidator = (event) => {
+    const {name, value} = event.target;
+    switch(name) {
+      case 'email':
+        return validateEmail(value);
+      case 'name':
+        return validateNonEmpty(name, value);
+      case 'password':
+        return validatePassword(value);
+      case 'confirmPassword':
+        return validateConfirmPassword(this.state.password, value);
+      case 'apiClient':
+        return validateApiClient(value);
+    }
+  };
+
   updateValidity = (args) => {
     if (Object.values(args.validValues).every(v => v === true)) {
       args.errorMessage = '';
@@ -53,39 +70,14 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
     this.setState(args);
   };
 
-  validateEmail = (event) => {
+  validate = (event) => {
+    event.preventDefault();
+    const {name:key, value} = event.target;
+    this.setState({[key]: value})
     const validValues = Object.assign({}, this.state.validValues)
-    const {isValid , errorMessage , email} = validateEmail(event.target.value)
-    validValues[event.target.name] = isValid
-    this.updateValidity({validValues , errorMessage , email })
-  };
-
-  validateName = (event) => {
-    const validValues = Object.assign({}, this.state.validValues)
-    const {isValid , errorMessage , val } = validateNonEmpty(event.target.name , event.target.value)
-    validValues[event.target.name] = isValid
-    this.updateValidity({validValues , errorMessage , val });
-  };
-
-  validatePassword = (event) => {
-    const validValues = Object.assign({}, this.state.validValues);
-    const {isValid , errorMessage , password } = validatePassword(event.target.value)
-    validValues[event.target.name] = isValid
-    this.updateValidity({validValues, errorMessage, password})
-  };
-
-  validateConfirmPassword = (event) => {
-    const validValues = Object.assign({}, this.state.validValues);
-    const {isValid , errorMessage , confirmPassword} = validateConfirmPassword(this.state.password, event.target.value)
-    validValues[event.target.name] = isValid
-    this.updateValidity({validValues , errorMessage, confirmPassword})
-  };
-
-  validateApiClient = (event) => {
-    const validValues = Object.assign({}, this.state.validValues);
-    const {isValid , errorMessage , apiClientName} = validateApiClient(event.target.value)
-    validValues[event.target.name] = isValid
-    this.updateValidity({validValues , errorMessage, apiClientName})
+    const {isValid , errorMessage , val } = this.getValidator(event)
+    validValues[key] = isValid
+    this.updateValidity({validValues , errorMessage , val});
   };
 
   isError = (element) => {
@@ -115,15 +107,15 @@ const sitekey = '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
         <Modal.Header>Register</Modal.Header>
         <Modal.Content>
           <Form onSubmit={this.handleRegister} error={!!this.state.errorMessage} loading={this.state.isSubmitting} noValidate>
-            <Form.Input type='email' label='Email' name='email' error={this.isError('email')} onBlur={this.validateEmail} />
-            <Form.Input label='Name' name='name' error={this.isError('name')}  onBlur={this.validateName} required />
+            <Form.Input type='email' label='Email' name='email' error={this.isError('email')} onBlur={this.validate} />
+            <Form.Input label='Name' name='name' error={this.isError('name')}  onBlur={this.validate} required />
             <Form.Input label='Organisation' name='organisation' error={this.isError('organisation')} />
-            <Form.Input label='API client' name='apiClient' error={this.isError('apiClient')} onBlur={this.validateApiClient}>
+            <Form.Input label='API client' name='apiClient' error={this.isError('apiClient')} onBlur={this.validate}>
               <input/>
               <Label basic>:{this.state.email ? this.state.email : 'me@example.com'}</Label>
             </Form.Input>
-            <Form.Input type='password' label='Password' name='password' autoComplete='false' error={this.isError('password')} onBlur={this.validatePassword} />
-            <Form.Input type='password' label='Confirm password' name='confirmPassword' autoComplete='false' error={this.isError('confirmPassword')} onChange={this.validateConfirmPassword}/>
+            <Form.Input type='password' label='Password' name='password' autoComplete='false' error={this.isError('password')} onBlur={this.validate} />
+            <Form.Input type='password' label='Confirm password' name='confirmPassword' autoComplete='false' error={this.isError('confirmPassword')} onChange={this.validate}/>
             <Recaptcha
               sitekey={sitekey}
               verifyCallback={ this.verifyCaptcha } />

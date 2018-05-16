@@ -1,24 +1,24 @@
-export function validateEmail(email) {
-  const atSymbolIndex = email.indexOf('@');
-  const dotSymbolIndex = email.lastIndexOf('.');
+export function validateEmail(val) {
+  const atSymbolIndex = val.indexOf('@');
+  const dotSymbolIndex = val.lastIndexOf('.');
 
   let  errorMessage  = '';
   let isValid =true;
 
-  if (email.length < 5) {
+  if (val.length < 5) {
     isValid = false;
     errorMessage =  'Email address invalid.';
-  } else if (email.length > 255) {
+  } else if (val.length > 255) {
     isValid = false;
     errorMessage =  'Email address too long.';
-  } else if (atSymbolIndex === -1 || email.lastIndexOf('@') !== atSymbolIndex) {
+  } else if (atSymbolIndex === -1 || val.lastIndexOf('@') !== atSymbolIndex) {
     isValid = false;
     errorMessage = '@-symbol placement invalid.';
   } else if (dotSymbolIndex === -1 || atSymbolIndex > dotSymbolIndex) {
     isValid = false;
     errorMessage = 'Domain dot (.) placement invalid.';
   }
-  return { isValid, errorMessage, email}
+  return { isValid, errorMessage, val}
 }
 
 
@@ -36,35 +36,35 @@ export function validateNonEmpty(key , val) {
   return {isValid, errorMessage , val};
 }
 
-export function validatePassword(password) {
+export function validatePassword(val) {
   let errorMessage = '';
   let isValid = true;
 
-  if (password.length < 8) {
+  if (val.length < 8) {
     isValid = false;
     errorMessage = 'Password must be longer than 8 characters.';
   }
-  return{isValid, errorMessage, password};
+  return{isValid, errorMessage, val};
 
 }
 
-export function validateConfirmPassword(password, confirmPassword) {
+export function validateConfirmPassword(password, val) {
   let isValid = true;
   let errorMessage = '';
-  if(password !== confirmPassword)
+  if(password !== val)
   {
     isValid = false;
     errorMessage = 'Confirmed password does not match the password provided';
   }
-  return {isValid, errorMessage, confirmPassword};
+  return {isValid, errorMessage, val};
 }
 
-export function validateApiClient(apiClientName) {
+export function validateApiClient(val) {
   let errorMessage = '';
   let isValid = true;
-  if (!/^[0-9a-zA-Z_-]{0,254}$/.test(apiClientName)) {
+  if (!/^[0-9a-zA-Z_-]{0,254}$/.test(val)) {
     isValid = false;
     errorMessage = 'API client should contain only alphanumeric characters, dashes or underscores.'
   }
-  return {isValid, errorMessage , apiClientName};
+  return {isValid, errorMessage , val};
 }
