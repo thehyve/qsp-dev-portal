@@ -92,8 +92,6 @@ export function login(email, password) {
       cognitoUser.authenticateUser(authenticationDetails, {
         onSuccess: (result) => {
           // cognitoUser = result.user
-          console.log('access token + ' + result.getAccessToken().getJwtToken());
-
           const cognitoLoginKey = getCognitoLoginKey();
           const Logins = {};
           Logins[cognitoLoginKey] = result.getIdToken().getJwtToken();
@@ -106,7 +104,6 @@ export function login(email, password) {
             if (error) {
               console.error(error)
             } else {
-              console.log('Successfully logged in');
 
               initApiGatewayClient(AWS.config.credentials);
 
@@ -129,16 +126,30 @@ export function login(email, password) {
 export function getAccountDetails() {
   return new Promise((resolve, reject) => {
     cognitoUser.getUserAttributes((err, result) => {
-      let userCredentials = {};
       if (err) {
         reject(err.message || JSON.stringify(err));
       }
+      let userCredentials = {};
       result.forEach(d => {
         userCredentials[d.getName()] = d.getValue();
       });
       resolve(userCredentials);
     });
   });
+}
+
+export function updateUserDetails(input) {
+  return new Promise((resolve, reject) => {
+    let userAttributes = Object.entries(input)
+        .map(([key, value]) => ({Name: key , Value: value}));
+
+    cognitoUser.updateAttributes(userAttributes , (err, result) => {
+      if (err) {
+        reject(err.message || JSON.stringify(err));
+      }
+      resolve(result);
+    });
+  })
 }
 
 export function logout() {
