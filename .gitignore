@@ -8,7 +8,6 @@ package-lock.json
 # misc
 .DS_Store
 packaged-sam.yaml
-cognito.js
 .env*
 
 # Editors

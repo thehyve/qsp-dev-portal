@@ -1,11 +1,6 @@
 import React, {PureComponent} from 'react'
 import {Button, Form, Modal, Message} from 'semantic-ui-react'
-import {
-  getAccountDetails,
-  isAuthenticated,
-  resetApiKeyName,
-  updateUserDetails
-} from "../../services/self";
+import {getAccountDetails, isAuthenticated, updateUserDetails} from "../../services/self";
 import QspBreadcrumb from "../../components/QspBreadcrumb";
 import {
   validateApiClient,
@@ -40,21 +35,16 @@ export default class AccountDetails extends PureComponent {
   };
 
   componentDidMount() {
-    this.synchAccountDetails();
+    getAccountDetails()
+        .then(this.syncAccountDetails);
   }
 
-  synchAccountDetails = () => {
-    getAccountDetails().then((d) => {
-      const {email, name, 'custom:organisation':organisation , 'custom:apiClient':apiClient} = d;
-      this.setState({
-        email, name, organisation, apiClient,
-        isLoaded: true, errorMessage: '',successMessage: ''
-      })
-    });
-  };
+  syncAccountDetails({email, name, 'custom:organisation':organisation, 'custom:apiClient':apiClient}) {
+    this.setState({email, name, organisation, apiClient, isLoaded: true});
+  }
 
   handleSubmit = () => {
-    this.setState({isLoaded: false,});
+    this.setState({isLoaded: false});
     const {name, organisation, apiClient} = this.state;
     let userDetails = {
       name,
@@ -62,17 +52,9 @@ export default class AccountDetails extends PureComponent {
       'custom:apiClient': apiClient,
     };
     updateUserDetails(userDetails)
-        .then(() =>  this.synchAccountDetails())
-        .then(() =>
-          this.setState({
-            isLoaded: true,
-            errorMessage: '',
-            successMessage: 'Account details updated successfully'}))
-        .then(() => resetApiKeyName())
-        .catch(e => {
-          this.setState({errorMessage: e.toString(), isLoaded: true , successMessage: ''})
-          this.synchAccountDetails();
-        });
+        .then(this.syncAccountDetails)
+        .then(() => this.setState({errorMessage: '' , successMessage: 'Account details updated successfully'}))
+        .catch(e => this.setState({errorMessage: e.message, successMessage: ''}));
   };
 
   getValidator = (event) => {
@@ -100,7 +82,7 @@ export default class AccountDetails extends PureComponent {
   };
 
   render() {
-    const { name, email, organisation, apiClient } = this.state
+    const { name, email, organisation, apiClient } = this.state;
     return (
       <div>
         <QspBreadcrumb {...this.props} />
@@ -119,5 +101,3 @@ export default class AccountDetails extends PureComponent {
       </div>)
   }
 }
-
-

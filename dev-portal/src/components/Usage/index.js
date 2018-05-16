@@ -19,18 +19,11 @@ import "react-datepicker/dist/react-datepicker.css";
 
    open = () => this.setState({ isLoading: false, errorMessage: '', isOpen: true , startDate: moment()});
    close = () => this.setState({ isOpen: false });
-   handleChange = this.handleChange.bind(this);
-
-   handleChange(date) {
-     this.setState({
-       startDate: date
-     }, () => {
-       this.loadUsageChart()
-     });
-   }
+   handleChange = (date) => {
+     this.setState({startDate: date}, this.loadUsageChart);
+   };
 
    loadUsageChart() {
-
      this.setState({isLoading: true});
      fetchUsage(this.props.usagePlanId , this.state.startDate.toDate())
      .then((result) => {
@@ -44,11 +37,11 @@ import "react-datepicker/dist/react-datepicker.css";
        let _chart = new Chart(ctx, {
          type: 'bar',
          data: {
-           labels: usedData.map(d => new Date(parseInt(d[0], 10)).toLocaleDateString()),
+           labels: usedData.map(d => d.date.toLocaleDateString()),
            datasets: [
              {
                label: 'Used',
-               data: usedData.map(d => d[1]),
+               data: usedData.map(d => d.usage),
                backgroundColor: 'rgba(255, 99, 132, 0.2)',
                borderColor: 'rgba(255,99,132,1)',
                borderWidth: 1,
@@ -57,7 +50,7 @@ import "react-datepicker/dist/react-datepicker.css";
              },
              {
                label: 'Remaining',
-               data: remainingData.map(d => d[1]),
+               data: remainingData.map(d => d.usage),
                type: 'bar',
                yAxisID: 'B',
              }
