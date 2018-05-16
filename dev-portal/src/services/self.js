@@ -104,6 +104,7 @@ export function login(email, password) {
             if (error) {
               console.error(error)
             } else {
+
               initApiGatewayClient(AWS.config.credentials);
 
               apiGatewayClient.post('/signin', {}, {}, {}).then((result) => {
@@ -125,10 +126,10 @@ export function login(email, password) {
 export function getAccountDetails() {
   return new Promise((resolve, reject) => {
     cognitoUser.getUserAttributes((err, result) => {
-      let userCredentials = {};
       if (err) {
         reject(err.message || JSON.stringify(err));
       }
+      let userCredentials = {};
       result.forEach(d => {
         userCredentials[d.getName()] = d.getValue();
       });
@@ -137,11 +138,14 @@ export function getAccountDetails() {
   });
 }
 
-export function updateUserDetails(userAttributes) {
+export function updateUserDetails(input) {
   return new Promise((resolve, reject) => {
-    cognitoUser.updateAttributes( userAttributes , (err, result) => {
+    let userAttributes = Object.entries(input)
+        .map(([key, value]) => ({Name: key , Value: value}));
+
+    cognitoUser.updateAttributes(userAttributes , (err, result) => {
       if (err) {
-        reject({message: err.message }|| JSON.stringify(err));
+        reject(err.message || JSON.stringify(err));
       }
       resolve(result);
     });

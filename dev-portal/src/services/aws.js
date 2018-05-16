@@ -2,8 +2,8 @@ import AWS from 'aws-sdk/global';
 
 export const awsRegion = 'eu-central-1';
 export const cognitoRegion = 'eu-central-1';
-export const cognitoUserPoolId = 'eu-central-1_r8GFpSaUO';
-export const cognitoIdentityPoolId = 'eu-central-1:f2d185a1-16d9-4961-9a1c-e31f6581cab7';
-export const cognitoClientId = '7chtqnlmmubd28t6v7bo74511h';
+export const cognitoUserPoolId = 'eu-central-1_HKw63q04h';
+export const cognitoIdentityPoolId = 'eu-central-1:4c2f83da-5d98-44ca-b64e-8854dc58656c';
+export const cognitoClientId = '3df4nk6fg157s71k0qf5po7ldd';
 
 AWS.config.region = cognitoRegion;
