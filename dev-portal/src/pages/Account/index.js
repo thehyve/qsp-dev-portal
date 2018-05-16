@@ -27,11 +27,11 @@ export default class AccountDetails extends PureComponent {
   handleChanges = (event ) => {
     event.preventDefault();
     const {name:key, value} = event.target;
-    this.setState({[key]: value})
-    const validValues = Object.assign({}, this.state.validValues)
-    const {isValid , errorMessage , val } = this.getValidator(event)
-    validValues[key] = isValid
-    this.updateValidity({validValues , errorMessage , val});
+    this.setState({[key]: value});
+    const validValues = Object.assign({}, this.state.validValues);
+    const {isValid, errorMessage, val} = this.getValidator(event);
+    validValues[key] = isValid;
+    this.updateValidity({validValues, errorMessage, val});
   };
 
   componentDidMount() {
@@ -39,9 +39,9 @@ export default class AccountDetails extends PureComponent {
         .then(this.syncAccountDetails);
   }
 
-  syncAccountDetails({email, name, 'custom:organisation':organisation, 'custom:apiClient':apiClient}) {
+  syncAccountDetails = ({email, name, 'custom:organisation':organisation, 'custom:apiClient':apiClient}) => {
     this.setState({email, name, organisation, apiClient, isLoaded: true});
-  }
+  };
 
   handleSubmit = () => {
     this.setState({isLoaded: false});
