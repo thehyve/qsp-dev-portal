@@ -6,6 +6,7 @@ import {
   validateApiClient,
   validateNonEmpty,
 } from "../../services/validation";
+import ChangePassword from "../../components/ChangePassword";
 
 export default class AccountDetails extends PureComponent {
 
@@ -96,6 +97,7 @@ export default class AccountDetails extends PureComponent {
           <Message error content={this.state.errorMessage}/>
           <Modal.Actions style={{textAlign: 'center'}}>
             <Button primary type='submit' >Save</Button>
+            <ChangePassword/>
           </Modal.Actions>
         </Form>
       </div>)
