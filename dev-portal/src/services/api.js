@@ -55,6 +55,7 @@ export function lookupApiGatewayClient() {
       } else {
         retries--;
         if (retries === 0) {
+          window.clearInterval(poller);
           reject({message: 'Failed to update session'});
         }
       }
