@@ -1,23 +1,22 @@
 import React, { PureComponent } from 'react'
-import { Modal, Dropdown, Message, Button } from 'semantic-ui-react'
+import { Button, Dropdown, Message, Modal } from 'semantic-ui-react'
 import Chart from 'chart.js'
 import { fetchUsage, mapUsageByDate } from '../../services/api-catalog'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import "react-datepicker/dist/react-datepicker.css";
 
-
-
- export default class Usage extends PureComponent {
+export default class Usage extends PureComponent {
    state = {
      isLoading: false,
      errorMessage: '',
      isOpen: false,
      startDate: moment(),
-     chart: undefined
+     chart: undefined,
+     infoMessage: ''
    };
 
-   open = () => this.setState({ isLoading: false, errorMessage: '', isOpen: true , startDate: moment()});
+   open = () => this.setState({ isLoading: false, errorMessage: '', infoMessage: '', isOpen: true , startDate: moment()});
    close = () => this.setState({ isOpen: false });
    handleChange = (date) => {
      this.setState({startDate: date}, this.loadUsageChart);
@@ -79,7 +78,11 @@ import "react-datepicker/dist/react-datepicker.css";
            }
          }
        });
-       this.setState({chart: _chart, isLoading: false, errorMessage: ''})
+       this.setState({chart: _chart, isLoading: false, errorMessage: '', infoMessage: ''})
+
+       if (usedData.length === 0) {
+         this.setState({infoMessage: 'No usage data available at the moment.'})
+       }
      })
      .catch((e) => this.setState({errorMessage: e, isLoading: false}))
    }
@@ -110,8 +113,9 @@ import "react-datepicker/dist/react-datepicker.css";
           Select the latest date here
         </Modal.Description>
         <DatePicker selected={this.state.startDate} onChange={this.handleChange} maxDate={moment()}/>
-        {this.state.errorMessage ? <Message error content={this.state.errorMessage.toString()} /> : ''}
-        <canvas id='api-usage-chart-container' width='400' height='400'/>
+        <Message error content={this.state.errorMessage.toString()} hidden={!this.state.errorMessage}/>
+        <Message info content={this.state.infoMessage.toString()} hidden={!this.state.infoMessage}/>
+        <canvas id='api-usage-chart-container' width='400' height='300'/>
       </Modal.Content>
       <Modal.Actions style={{textAlign: 'right'}}>
         <Button type='button' onClick={this.close}>Close</Button>
