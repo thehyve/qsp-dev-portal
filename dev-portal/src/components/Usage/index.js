@@ -1,14 +1,12 @@
 import React, { PureComponent } from 'react'
-import { Modal, Dropdown, Message, Button } from 'semantic-ui-react'
+import { Button, Dropdown, Message, Modal } from 'semantic-ui-react'
 import Chart from 'chart.js'
 import { fetchUsage, mapUsageByDate } from '../../services/api-catalog'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import "react-datepicker/dist/react-datepicker.css";
 
-
-
- export default class Usage extends PureComponent {
+export default class Usage extends PureComponent {
    state = {
      isLoading: false,
      errorMessage: '',
@@ -82,7 +80,7 @@ import "react-datepicker/dist/react-datepicker.css";
        });
        this.setState({chart: _chart, isLoading: false, errorMessage: '', infoMessage: ''})
 
-       if(usedData.length ===0) {
+       if (usedData.length === 0) {
          this.setState({infoMessage: 'No usage data available at the moment.'})
        }
      })
@@ -115,8 +113,8 @@ import "react-datepicker/dist/react-datepicker.css";
           Select the latest date here
         </Modal.Description>
         <DatePicker selected={this.state.startDate} onChange={this.handleChange} maxDate={moment()}/>
-        {this.state.errorMessage ? <Message error content={this.state.errorMessage.toString()} /> : ''}
-        {this.state.infoMessage ? <Message info content={this.state.infoMessage.toString()} /> : ''}
+        <Message error content={this.state.errorMessage.toString()} hidden={!this.state.errorMessage}/>
+        <Message info content={this.state.infoMessage.toString()} hidden={!this.state.infoMessage}/>
         <canvas id='api-usage-chart-container' width='400' height='300'/>
       </Modal.Content>
       <Modal.Actions style={{textAlign: 'right'}}>
