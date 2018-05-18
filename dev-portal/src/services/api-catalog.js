@@ -44,7 +44,7 @@ export function getApi(apiId) {
   return loopkupCatalog()
       .then(catalog => catalog
           .map(c => c.apis.find(a => a.id === apiId))  // find the api in all usage plans
-          .find());  // return the first found api
+          .find(api => !!api));  // return the first found api
 }
 
 function fetchCatalog() {
