@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-import { awsRegion } from './aws'
+import { awsRegion, apigInvokeUrl } from './aws'
+import apigClientFactory from './apigateway-sdk'
+
 let apiGatewayClient;
 
 /**
@@ -25,12 +27,13 @@ let apiGatewayClient;
  * @returns api gateway client.
  */
 export function initApiGatewayClient({ accessKeyId, secretAccessKey, sessionToken } = {}) {
-  apiGatewayClient = window.apigClientFactory.newClient({
-      accessKey: accessKeyId,
-      secretKey: secretAccessKey,
-      sessionToken: sessionToken,
-      region: awsRegion
-    });
+  apiGatewayClient = apigClientFactory.newClient({
+    invokeUrl: apigInvokeUrl,
+    accessKey: accessKeyId,
+    secretKey: secretAccessKey,
+    sessionToken: sessionToken,
+    region: awsRegion,
+  });
   return apiGatewayClient;
 }
 

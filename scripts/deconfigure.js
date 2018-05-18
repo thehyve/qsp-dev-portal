@@ -13,33 +13,19 @@ const packageJson = require(`${rootDir}/package.json`)
 const config = packageJson.config
 
 module.exports = function() {
-  modifyApigClient(config.apiGatewayApiId, config.primaryAwsRegion)
-  modifyDevPortalAwsService(config.cognitoIdentityPoolId, config.primaryAwsRegion, config.cognitoRegion, config.cognitoUserPoolId, config.cognitoClientId)
-  // modifySwaggerFile(config.accountId, config.primaryAwsRegion, config.apiGatewayApiName)
-  // modifyExpressServer(config.siteS3Bucket, config.primaryAwsRegion, config.apiGatewayApiId)
+  modifyDevPortalAwsService(config.cognitoIdentityPoolId, config.primaryAwsRegion, config.cognitoRegion, config.cognitoUserPoolId, config.cognitoClientId, config.apiGatewayApiId)
   modifyPackageFile(config)
   modifyUiPackageFile(config.siteS3Bucket, config.primaryAwsRegion)
 }
 
-function modifyApigClient(apiGatewayApiId, primaryAwsRegion) {
-    const apigClientPath = `${rootDir}/dev-portal/public/apigateway-js-sdk/apigClient.js`
-    const apigClient = fs.readFileSync(apigClientPath, 'utf8')
-    const invokeUrlRegex = new RegExp(`var invokeUrl = 'https://${apiGatewayApiId}.execute-api.${primaryAwsRegion}.amazonaws.com/prod';`, 'g')
-    const primaryAwsRegionRegex = new RegExp(`config.region = '${primaryAwsRegion}';`, 'g')
-    const apigClientModified = apigClient
-      .replace(invokeUrlRegex, 'var invokeUrl = \'https://YOUR_API_GATEWAY_API_ID.execute-api.YOUR_PRIMARY_AWS_REGION.amazonaws.com/prod\';')
-      .replace(primaryAwsRegionRegex, 'config.region = \'YOUR_PRIMARY_AWS_REGION\';')
-
-    fs.writeFileSync(apigClientPath, apigClientModified, 'utf8')
-}
-
-function modifyDevPortalAwsService(cognitoIdentityPoolId, primaryAwsRegion, cognitoRegion, cognitoUserPoolId, cognitoClientId) {
-    const htmlPath = `${rootDir}/dev-portal/src/services/aws.js`
+function modifyDevPortalAwsService(cognitoIdentityPoolId, primaryAwsRegion, cognitoRegion, cognitoUserPoolId, cognitoClientId, apiGatewayApiId) {
+    const htmlPath = `${rootDir}/dev-portal/src/services/aws.js`;
     const html = fs.readFileSync(htmlPath, 'utf8')
     const cognitoIdentityPoolIdRegex = new RegExp(`export const cognitoIdentityPoolId = '${cognitoIdentityPoolId}'`, 'g')
     const cognitoRegionRegex = new RegExp(`export const cognitoRegion = '${cognitoRegion}'`, 'g')
     const primaryAwsRegionRegex = new RegExp(`export const awsRegion = '${primaryAwsRegion}'`, 'g')
     const cognitoUserPoolIdRegex = new RegExp(`export const cognitoUserPoolId = '${cognitoUserPoolId}'`, 'g')
+    const apigInvokeUrlRegex = new RegExp(`export const apigInvokeUrl = 'https://${apiGatewayApiId}.execute-api.${primaryAwsRegion}.amazonaws.com/prod';`, 'g')
     const cognitoClientIdRegex = new RegExp(`export const cognitoClientId = '${cognitoClientId}'`, 'g')
     const htmlModified = html
       .replace(cognitoIdentityPoolIdRegex, 'export const cognitoIdentityPoolId = \'YOUR_COGNITO_IDENTITY_POOL_ID\'')
@@ -47,33 +33,10 @@ function modifyDevPortalAwsService(cognitoIdentityPoolId, primaryAwsRegion, cogn
       .replace(cognitoClientIdRegex, 'export const cognitoClientId = \'YOUR_COGNITO_CLIENT_ID\'')
       .replace(primaryAwsRegionRegex, `export const awsRegion = 'YOUR_PRIMARY_AWS_REGION'`)
       .replace(cognitoRegionRegex, `export const cognitoRegion = 'YOUR_COGNITO_REGION'`)
+      .replace(apigInvokeUrlRegex, 'export const apigInvokeUrl = \'https://YOUR_API_GATEWAY_API_ID.execute-api.YOUR_PRIMARY_AWS_REGION.amazonaws.com/prod\';');
 
     fs.writeFileSync(htmlPath, htmlModified, 'utf8')
 }
-
-/*function modifySwaggerFile(accountId, primaryAwsRegion, apiGatewayApiName) {
-    const swaggerDefinitionPath = `${rootDir}/lambdas/backend/dev-portal-express-proxy-api.yaml`
-    const swaggerDefinition = fs.readFileSync(swaggerDefinitionPath, 'utf8')
-    const accountIdRegex = new RegExp(accountId, 'g')
-    const apiGatewayApiNameRegex = new RegExp(`title: ${apiGatewayApiName}`, 'g')
-    const lambdaArnRegex = new RegExp(`uri: arn:aws:apigateway:${primaryAwsRegion}:lambda:path/2015-03-31/functions/arn:aws:lambda:${primaryAwsRegion}:${accountId}`, 'g')
-    const simpleProxyApiModified = swaggerDefinition
-      .replace(apiGatewayApiNameRegex, 'title: YOUR_API_GATEWAY_API_NAME')
-      .replace(lambdaArnRegex, 'uri: arn:aws:apigateway:YOUR_PRIMARY_AWS_REGION:lambda:path/2015-03-31/functions/arn:aws:lambda:YOUR_PRIMARY_AWS_REGION:YOUR_ACCOUNT_ID')
-
-    fs.writeFileSync(swaggerDefinitionPath, simpleProxyApiModified, 'utf8')
-}
-
-function modifyExpressServer(siteS3Bucket, primaryAwsRegion, apiGatewayApiId) {
-    const expressServerPath = `${rootDir}/lambdas/backend/express-server.js`
-    const expressServer = fs.readFileSync(expressServerPath, 'utf8')
-    const domainRegex = new RegExp(`const domain = '${siteS3Bucket}.s3-website.${primaryAwsRegion}.amazonaws.com'`)
-
-    const expressServerModified = expressServer
-      .replace(domainRegex, 'const domain = \'YOUR_CLIENT_BUCKET_NAME.s3-website.YOUR_PRIMARY_AWS_REGION.amazonaws.com\'')
-
-    fs.writeFileSync(expressServerPath, expressServerModified, 'utf8')
-}*/
 
 function modifyPackageFile(config) {
     const packageJsonPath = `${rootDir}/package.json`
