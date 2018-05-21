@@ -288,7 +288,9 @@ function getApiKeyId(identity, error, callback) {
 function resetApiKeyName(identity, error, callback) {
   ensureApiKey(identity, error, key => {
     constructApiKeyName(identity, error, name => {
-      if (key.name !== name) {
+      if (key.name === name) {
+        callback(key);
+      } else {
         const params = {
           apiKey: key.id,
           patchOperations: [
