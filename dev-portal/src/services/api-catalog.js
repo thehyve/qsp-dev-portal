@@ -149,49 +149,53 @@ export function fetchUsage(usagePlanId, endDate) {
 /**
  * Map usage data, retrieved with fetchUsage(), to an array with usage per date.
  * @param usage usage data from fetchUsage.
- * @param {string} usedOrRemaining if 'used', map the used data, otherwise, maps the remaining data.
- * @returns {({date: Date, usage: number})[]} an array of usage per date, sorted by UTC timestamp in seconds.
+ * @returns {({date: Date, used: number, remaining: number})[]} an array of usage per date, sorted by UTC timestamp in seconds.
  */
-export function mapUsageByDate(usage, usedOrRemaining) {
-  const usagePerDate = {};
+export function mapUsageByDate(usage) {
+  const usedPerDate = {};
+  const remainingPerDate = {};
 
   Object.values(usage.items).forEach(apiKeyUsage => {
-    mapApiKeyUsageByDate(apiKeyUsage, usage.startDate, usedOrRemaining)
-        .forEach(({date, usage}) => {
+    mapApiKeyUsageByDate(apiKeyUsage, usage.endDate)
+        .forEach(({date, used, remaining}) => {
           const dateString = date.toISOString();
-          if (!usagePerDate[dateString]) {
-            usagePerDate[dateString] = 0;
+          if (!usedPerDate[dateString]) {
+            usedPerDate[dateString] = 0;
+            remainingPerDate[dateString] = 0
           }
-          usagePerDate[dateString] += usage;
+          usedPerDate[dateString] += used;
+          remainingPerDate[dateString] += remaining;
         })
   });
 
-  return Object.keys(usagePerDate)
+  return Object.keys(usedPerDate)
       .sort()
-      .map(dateString => ({date: new Date(dateString), usage: usagePerDate[dateString]}));
+      .map(dateString => ({
+        date: new Date(dateString),
+        used: usedPerDate[dateString],
+        remaining: remainingPerDate[dateString]
+      }));
 }
 
 /**
  * Maps the usage data of a single API key to an array with usage per date.
  * @param apiKeyUsage usage data of a single API key
  * @param {string} startDate date to start counting from, format 'yyyy-mm-dd'
- * @param usedOrRemaining  if 'used', map the used data, otherwise, maps the remaining data.
- * @returns {({date: Date, usage: number})[]} array of usage per date.
+ * @returns {({date: Date, used: number, remaining})[]} array of usage per date.
  */
-function mapApiKeyUsageByDate(apiKeyUsage, startDate, usedOrRemaining) {
+function mapApiKeyUsageByDate(apiKeyUsage, startDate) {
   const [year, month, day] = startDate.split('-');
   const apiKeyDate = new Date(year, month - 1, day);
   apiKeyDate.setHours(0, 0, 0, 0);
-  const usedOrRemainingIndex = usedOrRemaining === 'used' ? 0 : 1;
 
   if (apiKeyUsage && !Array.isArray(apiKeyUsage[0])) {
     apiKeyUsage = [apiKeyUsage];
   }
 
-  return apiKeyUsage.map((usage) => {
+  return apiKeyUsage.map(([used, remaining]) => {
     const date = new Date();
     date.setDate(apiKeyDate.getDate());
     apiKeyDate.setDate(apiKeyDate.getDate() + 1);
-    return {date, usage: usage[usedOrRemainingIndex]};
+    return {date, used, remaining};
   })
 }

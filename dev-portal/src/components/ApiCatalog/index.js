@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Button, Card, Image, Dropdown } from 'semantic-ui-react'
 import { addSubscription, unsubscribe, isSubscribed } from '../../services/api-catalog'
 import { isAuthenticated } from '../../services/self'
-import Usage from '../Usage'
+import UsageModal from '../UsageModal'
 
 function handleSubscribe(event, usagePlan) {
   event.preventDefault();
@@ -22,10 +22,10 @@ function handleUnsubscribe(event, usagePlan) {
 const SubscribedApiActionsDropdown = ({usagePlan, api}) => (
   <Dropdown text='Actions' button>
     <Dropdown.Menu>
-      <Usage usagePlanId={usagePlan.id} />
+      <UsageModal usagePlanId={usagePlan.id} />
       <Dropdown.Item onClick={event => handleUnsubscribe(event, usagePlan)}>Unsubscribe</Dropdown.Item>
     </Dropdown.Menu>
-  </Dropdown>)
+  </Dropdown>);
 
 
 const ApiCard = ({usagePlan, api}) => (
