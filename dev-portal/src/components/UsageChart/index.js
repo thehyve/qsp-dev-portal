@@ -1,7 +1,6 @@
 import React from 'react'
 import Loadable from 'react-loadable'
-import {Dimmer} from "semantic-ui-react";
-import Loader from "semantic-ui-react/dist/es/elements/Loader/Loader";
+import {Dimmer, Loader} from "semantic-ui-react";
 
 export default Loadable({
   loader: () => import('./ActualUsageChart'),
