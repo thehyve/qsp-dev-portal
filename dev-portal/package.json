@@ -1,6 +1,6 @@
 {
   "name": "dev-portal",
-  "homepage": "http://qsp-dev-dev-portal.s3-website.eu-central-1.amazonaws.com/",
+  "homepage": "https://qsp-dev-portal.thehyve.net/",
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
@@ -14,9 +14,12 @@
     "axios": "^0.18.0",
     "chart.js": "^2.4.0",
     "crypto-js": "^3.1.9-1",
+    "moment": "^2.22.1",
+    "prop-types": "^15.6.1",
     "react": "^16.3.0",
     "react-datepicker": "^1.4.1",
     "react-dom": "^16.3.0",
+    "react-loadable": "^5.4.0",
     "react-recaptcha": "^2.3.7",
     "react-router-dom": "^4.2.2",
     "semantic-ui-css": "^2.3.1",

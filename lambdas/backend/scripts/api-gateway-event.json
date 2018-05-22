@@ -31,9 +31,9 @@
     "stage": "prod",
     "requestId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
     "identity": {
-      "cognitoIdentityPoolId": "eu-central-1_r8GFpSaUO",
+      "cognitoIdentityPoolId": "eu-central-1_HKw63q04h",
       "accountId": "",
-      "cognitoIdentityId": "eu-central-1:796ba4ba-5275-47d3-89e3-683a9b7f05ae",
+      "cognitoIdentityId": "eu-central-1:bd38cbb6-f1f4-4e11-bbae-dacaa93d4231",
       "caller": "",
       "apiKey": "",
       "sourceIp": "11.111.111.111",
@@ -41,7 +41,7 @@
       "cognitoAuthenticationProvider": "",
       "userArn": "",
       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36",
-      "user": "joris@thehyve.nl"
+      "user": "something_hard"
     },
     "resourcePath": "/{proxy+}",
     "httpMethod": "GET",
