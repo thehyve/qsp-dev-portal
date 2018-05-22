@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/thehyve/qsp-dev-portal.svg?branch=master)](https://travis-ci.org/thehyve/qsp-dev-portal)
+
 ## Introduction
 
 aws-serverless-developer-portal is a reference implementation for a developer portal application that allows users to register, discover, and subscribe to your API Products (API Gateway Usage Plans), manage their API Keys, and view their usage metrics for your APIs.
