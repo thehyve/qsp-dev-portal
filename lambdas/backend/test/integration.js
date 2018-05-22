@@ -50,7 +50,6 @@ function makeRequest(apiGatewayUpdate) {
 function testPromise(name, callback) {
   tap.test(name, test => {
     callback(test)
-        // .then(() => new Promise(resolve => setTimeout(resolve, 500)))
         .then(() => test.end())
         .catch((v) => {
           test.fail(v);
@@ -145,7 +144,19 @@ testPromise('subscriptions unsubscribe', test => {
     path: '/subscriptions/b04or5',
   };
   return makeRequest(request)
-      .then(res => test.equal(res.statusCode, 200, "delete subscription failed", res));
+      .then(res => test.equal(res.statusCode, 204, "delete subscription failed", res));
+});
+
+testPromise('reset API key', test => {
+  let request = {
+    httpMethod: 'POST',
+    path: '/apikey/reset-name',
+  };
+  return makeRequest(request)
+      .then(res => {
+        test.equal(res.statusCode, 200, 'reset API key name failed', res);
+        test.match(JSON.parse(res.body).name, /^.+:.+@.+$/, 'API key name does not contain username', res);
+      });
 });
 
 testPromise('close server', () => Promise.resolve(server.close()));

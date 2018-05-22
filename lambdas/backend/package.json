@@ -6,7 +6,7 @@
   "config": {
     "region": "eu-central-1",
     "accountId": "qsp",
-    "s3BucketName": "QspTestDevPortalArtifacts"
+    "s3BucketName": "qsp-dev-portal-artifacts.thehyve.net"
   },
   "scripts": {
     "local": "node scripts/express-server-local",

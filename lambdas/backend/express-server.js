@@ -48,24 +48,14 @@ app.get('/catalog', (req, res) => {
 });
 
 app.get('/apikey', (req, res) => {
-  customersController.ensureApiKey(getIdentity(req), error(res), (key) => {
-    const data = {
-      id: key.id,
-      name: key.name,
-      value: key.value,
-    };
-    res.status(200).json(data)
+  customersController.ensureApiKey(getIdentity(req), error(res), ({id, name, value}) => {
+    res.status(200).json({id, name, value})
   });
 });
 
 app.post('/apikey/reset-name', (req, res) => {
-  customersController.resetApiKeyName(getIdentity(req), error(res), (key) => {
-    const data = {
-      id: key.id,
-      name: key.name,
-      value: key.value,
-    };
-    res.status(200).json(data)
+  customersController.resetApiKeyName(getIdentity(req), error(res), ({id, name, value}) => {
+    res.status(200).json({id, name, value})
   });
 });
 
@@ -105,7 +95,7 @@ app.delete('/subscriptions/:usagePlanId', (req, res) => {
   const usagePlanId = req.params.usagePlanId;
 
   if (getUsagePlanFromCatalog(usagePlanId)) {
-    customersController.unsubscribe(getIdentity(req), usagePlanId, error(res), success(res));
+    customersController.unsubscribe(getIdentity(req), usagePlanId, error(res), () => res.status(204).send());
   } else {
     res.status(404).json('Invalid Usage Plan ID')
   }
