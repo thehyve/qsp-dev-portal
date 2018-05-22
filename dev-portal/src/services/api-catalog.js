@@ -139,9 +139,9 @@ export function unsubscribe(usagePlanId) {
  */
 export function fetchUsage(usagePlanId, endDate) {
   const startDate = new Date(endDate);
-  startDate.setDate(startDate.getDate() - 31);
-  const start = startDate.toJSON().split('T')[0];
-  const end = endDate.toJSON().split('T')[0];
+  startDate.setMonth(startDate.getMonth() - 1);
+  const start = startDate.toISOString().split('T')[0];
+  const end = endDate.split('T')[0];
   return lookupApiGatewayClient()
       .then(client => client.get('/subscriptions/' + usagePlanId + '/usage', {start, end}, {}));
 }

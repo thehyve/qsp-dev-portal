@@ -1,28 +1,29 @@
-import React, { PureComponent } from 'react'
-import { Button, Dropdown, Modal } from 'semantic-ui-react'
+import React, {PureComponent} from 'react'
+import {Button, Modal} from 'semantic-ui-react'
 import UsageChart from "../UsageChart";
+import './index.css'
 
 export default class UsageModal extends PureComponent {
-   state = {
-     isOpen: false,
-   };
+  state = {
+    isOpen: false,
+  };
 
-   open = () => this.setState({ isOpen: true });
-   close = () => this.setState({ isOpen: false });
+  open = () => this.setState({isOpen: true});
+  close = () => this.setState({isOpen: false});
 
   render() {
-    const { isOpen } = this.state;
+    const {isOpen} = this.state;
 
     return <Modal
         size='small'
         open={isOpen}
         onOpen={this.open}
         onClose={this.close}
-        trigger={<Dropdown.Item onClick={this.loadUsage}>Show Usage</Dropdown.Item>} >
+        trigger={this.props.trigger}>
       <Modal.Header>Used and Remaining API Usage</Modal.Header>
       <Modal.Content>
         <Modal.Description>
-          <p>You can view usage details for last 31 days from selected date.</p>
+          <p>API usage in the month prior to the selected date.</p>
         </Modal.Description>
         <UsageChart usagePlanId={this.props.usagePlanId}/>
       </Modal.Content>

@@ -22,7 +22,7 @@ function handleUnsubscribe(event, usagePlan) {
 const SubscribedApiActionsDropdown = ({usagePlan, api}) => (
   <Dropdown text='Actions' button>
     <Dropdown.Menu>
-      <UsageModal usagePlanId={usagePlan.id} />
+      <UsageModal usagePlanId={usagePlan.id} trigger={<Dropdown.Item>Show Usage</Dropdown.Item>}/>
       <Dropdown.Item onClick={event => handleUnsubscribe(event, usagePlan)}>Unsubscribe</Dropdown.Item>
     </Dropdown.Menu>
   </Dropdown>);

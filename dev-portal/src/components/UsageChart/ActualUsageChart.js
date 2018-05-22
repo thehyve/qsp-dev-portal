@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import {Dimmer, Loader, Message} from 'semantic-ui-react'
+import {Dimmer, Input, Loader, Message} from 'semantic-ui-react'
 import ReactChart from '../ReactChart';
 import { fetchUsage, mapUsageByDate } from '../../services/api-catalog'
 import DatePicker from 'react-datepicker';
@@ -26,9 +26,9 @@ export default class UsageChart extends PureComponent {
 
   loadChart = () => {
     this.setState({isLoading: true});
-    fetchUsage(this.props.usagePlanId , this.state.endDate.toDate())
-        .then((result) => {
-          const usageData = mapUsageByDate(result.data);
+    fetchUsage(this.props.usagePlanId , this.state.endDate.toISOString(false))
+        .then(({data}) => mapUsageByDate(data))
+        .then(usageData => {
           this.setState({
             isLoading: false, errorMessage: '', infoMessage: '', chart: {
               type: 'bar',
@@ -91,7 +91,7 @@ export default class UsageChart extends PureComponent {
 
   render() {
     return <div>
-      <DatePicker selected={this.state.endDate} onChange={this.handleDateChange} maxDate={moment()}/>
+      <DatePicker customInput={<Input label='Chart end date' type='text'/>} selected={this.state.endDate} onChange={this.handleDateChange} maxDate={moment()} popperPlacement='bottom-end'/>
       <Message error content={this.state.errorMessage.toString()} hidden={!this.state.errorMessage}/>
       <Message info content={this.state.infoMessage.toString()} hidden={!this.state.infoMessage}/>
       <Dimmer.Dimmable>
