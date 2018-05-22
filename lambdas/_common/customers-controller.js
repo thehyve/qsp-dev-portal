@@ -193,12 +193,11 @@ function createApiKey(identity, error, callback) {
  * @param callback api key object callback, id, name and value.
  */
 function ensureApiKey(identity, error, callback) {
-  console.log(`Getting API Key for customer ${identity.cognitoIdentityId}`);
-
   getApiKeyId(identity, error, (keyId) => {
     if (keyId) {
       apigateway.getApiKey({apiKey: keyId, includeValue: true}, (err, data) => {
         if (data) {
+          console.log(`Got API key ${keyId}`);
           callback(data);
         } else if (err.code === 'NotFoundException') {
           console.log(`API key ${keyId} for id ${identity.cognitoIdentityId} not found`);
@@ -289,8 +288,10 @@ function resetApiKeyName(identity, error, callback) {
   ensureApiKey(identity, error, key => {
     constructApiKeyName(identity, error, name => {
       if (key.name === name) {
+        console.log(`Name ${name} already fine`);
         callback(key);
       } else {
+        console.log(`Resetting API key name to ${name}`);
         const params = {
           apiKey: key.id,
           patchOperations: [
@@ -439,10 +440,8 @@ function updateCustomerMarketplaceId(identity, marketplaceCustomerId, error, suc
           console.log(`Failed to update marketplace customer ID ${marketplaceCustomerId} in database item for user ${identity.cognitoIdentityId}`, err);
           error(err)
         } else {
-            ensureApiKey(identity, error, (key) => {
-                console.log(`Got API key with ID ${key.id}`);
-
-                updateApiKeyCustomerId(key.id, marketplaceCustomerId, error, success);
+            ensureApiKey(identity, error, key => {
+              updateApiKeyCustomerId(key.id, marketplaceCustomerId, error, success);
             });
         }
     })
@@ -486,12 +485,23 @@ function updateApiKeyCustomerId(apiKeyId, marketplaceCustomerId, error, success)
  * @param callback string callback
  */
 function constructApiKeyName(identity, error, callback) {
-  getUserAttributes(identity, {Username: 'user', 'custom:apiClient': 'apiClient'}, error, (attrs) => {
-    if (!attrs || !attrs.user) {
-      callback(identity.cognitoIdentityId)
+  getUserAttributes(identity, {username: 'username', 'custom:apiClient': 'apiClient'}, error, ({username, apiClient} = {}) => {
+    if (!username) {
+      callback(identity.cognitoIdentityId);
     }
-    callback(attrs.apiClient ? `${attrs.apiClient}:${attrs.user}` : attrs.user);
+    callback(apiClient ? `${apiClient}:${username}` : username);
   });
+}
+
+function attributesToObject(attrs, keyMap) {
+  return attrs.reduce((obj, {Name, Value}) => {
+    if (!keyMap) {
+      obj[Name] = Value;
+    } else if (Name in keyMap) {
+      obj[keyMap[Name]] = Value;
+    }
+    return obj;
+  }, {});
 }
 
 /**
@@ -505,32 +515,25 @@ function constructApiKeyName(identity, error, callback) {
  * @param callback string callback
  */
 function getUserAttributes(identity, keyMap, error, callback) {
-  if (identity.cognitoUserPoolId && identity.user) {
+  if (identity.cognitoIdentityPoolId) {
+    const attrsToGet = keyMap ? Object.keys(keyMap).filter(k => k !== 'username') : null;
     const params = {
-      UserPoolId: identity.cognitoUserPoolId,
-      Username: identity.user,
+      UserPoolId: identity.cognitoIdentityPoolId,
+      AttributesToGet: attrsToGet ? attrsToGet : null,
+      Filter: `sub="${identity.cognitoIdentityId.split(':')[1]}"`,
     };
-    cognitoClient.adminGetUser(params, (err, data) => {
-      if (err) {
-        callback({user: identity.user});
+    cognitoClient.listUsers(params, (err, data) => {
+      if (err || !data.Users || !data.Users[0]) {
+        console.log(`No users found with identity id ${identity.cognitoIdentityId} ${err}`);
+        callback();
       } else {
-        let userAttrs = Object.assign({}, data.UserAttributes, {Username: data.Username});
-        if (!userAttrs) {
-          callback(null);
-        }
-        let attrs = {};
-        for (let i = 0; i < userAttrs.length; i++) {
-          if (!keyMap) {
-            attrs[userAttrs[i].Name] = userAttrs[i].Value
-          } else if (userAttrs[i].Name in keyMap) {
-            attrs[keyMap[userAttrs[i].Name]] = userAttrs[i].Value;
-          }
-        }
-        callback(attrs);
+        const user = data.Users[0];
+        const userAttrs = [...user.Attributes, {Name: 'username', Value: user.Username}];
+        callback(attributesToObject(userAttrs, keyMap));
       }
     });
   } else {
-    callback({user: identity.user})
+    callback()
   }
 }
 
