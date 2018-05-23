@@ -58,7 +58,7 @@ const usagePlans = [
   },
 ];
 
-module.exports = usagePlans;
+export default usagePlans;
 
 function loadYaml (path) {
   try {

@@ -16,14 +16,25 @@
 
 'use strict';
 
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const util = require('util');
-const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware');
-const catalog = require('./catalog');
-const customersController = require('common-lambda-assets/customers-controller.js');
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import util from 'util';
+import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
+import catalog from "./catalog";
+import customersController from 'common-lambda-assets/customers-controller.js';
 
+/**
+ * @typedef {Object} Express
+ * @property get
+ * @property post
+ * @property delete
+ * @property use
+ */
+/**
+ *
+ * @type {Express}
+ */
 const app = express();
 
 // replace these to match your site URL. Note: Use TLS, not plain HTTP, for your production site!
@@ -49,13 +60,13 @@ app.get('/catalog', (req, res) => {
 
 app.get('/apikey', (req, res) => {
   customersController.ensureApiKey(getIdentity(req), error(res), ({id, name, value}) => {
-    res.status(200).json({id, name, value})
+    res.status(200).json({id, name, value});
   });
 });
 
 app.post('/apikey/reset-name', (req, res) => {
   customersController.resetApiKeyName(getIdentity(req), error(res), ({id, name, value}) => {
-    res.status(200).json({id, name, value})
+    res.status(200).json({id, name, value});
   });
 });
 
@@ -156,4 +167,4 @@ function success(res) {
 // app.listen(3000)
 
 // Export your express server so you can import it in the lambda function.
-module.exports = app;
+export default app;
