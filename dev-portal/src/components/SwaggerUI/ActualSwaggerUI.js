@@ -32,7 +32,6 @@ class ActualSwaggerUI extends Component {
   }
 
   handleAuth = () => {
-    console.log(`Handling auth for loaded?${this.state.isLoaded}, api key ${this.props.apiKey} in property ${this.props.apiKeyProp}`);
     if (this.state.isLoaded && this.props.apiKey && this.props.apiKeyProp) {
       this.state.swagger.preauthorizeApiKey(this.props.apiKeyProp, this.props.apiKey);
     }
