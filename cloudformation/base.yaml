@@ -268,26 +268,6 @@ Resources:
       Variables:
         DevPortalFunctionName: !Ref DevPortalLambdaFunction
 
-  WebsiteS3Bucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Ref DevPortalSiteS3Bucket
-      AccessControl: PublicRead
-      WebsiteConfiguration:
-        IndexDocument: index.html
-        ErrorDocument: error.html
-        RoutingRules:
-          - RoutingRuleCondition:
-              HttpErrorCodeReturnedEquals: 404
-            RedirectRule:
-              HostName: !Join
-                - ''
-                - - !Ref DevPortalSiteS3Bucket
-                  - .s3-website.
-                  - !Ref 'AWS::Region'
-                  - .amazonaws.com
-              ReplaceKeyPrefixWith: '#!/'
-
   CustomersTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -671,16 +651,6 @@ Outputs:
   DevPortalFunctionName:
     Description: Devleoper Portal Lambda Function Name.
     Value: !Ref DevPortalLambdaFunction
-
-  WebsiteURL:
-    Value: !Join
-      - ''
-      - - http://
-        - !Ref DevPortalSiteS3Bucket
-        - .s3-website.
-        - !Ref 'AWS::Region'
-        - .amazonaws.com
-    Description: URL for website hosted on S3
 
   CognitoUserPoolId:
     Description: Cognito User Pool ID

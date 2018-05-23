@@ -25,12 +25,6 @@ paths:
         \ the /advices or /status webservice calls."
       produces:
       - "application/json"
-      parameters:
-      - name: "format"
-        in: "path"
-        description: "Format in which the data should be returned"
-        required: true
-        type: "string"
       responses:
         200:
           description: "Returns a list of supported properties. Each property will\
@@ -51,21 +45,7 @@ paths:
               type: "string"
       security:
       - api_key: []
-    options:
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "200 response"
-          headers:
-            Access-Control-Allow-Origin:
-              type: "string"
-            Access-Control-Allow-Methods:
-              type: "string"
-            Access-Control-Allow-Headers:
-              type: "string"
+
   /properties/{id}:
     get:
       produces:
@@ -93,21 +73,6 @@ paths:
           description: "Property with given ID is not found."
       security:
       - api_key: []
-    options:
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "200 response"
-          headers:
-            Access-Control-Allow-Origin:
-              type: "string"
-            Access-Control-Allow-Methods:
-              type: "string"
-            Access-Control-Allow-Headers:
-              type: "string"
   /references:
     get:
       summary: "Retrieve the references for one or more properties"
@@ -123,16 +88,13 @@ paths:
         description: "Gender"
         required: false
         type: "string"
-      - name: "format"
-        in: "path"
-        description: "Format in which the data should be returned"
-        required: true
-        type: "string"
+        enum: ["Male", "Female"]
       - name: "generic.age"
         in: "query"
         description: "Age in years"
         required: false
-        type: "string"
+        type: "number"
+        format: "integer"
       - name: "property"
         in: "query"
         description: "Name of the property to return the references for."
@@ -157,21 +119,6 @@ paths:
               type: "string"
       security:
       - api_key: []
-    options:
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "200 response"
-          headers:
-            Access-Control-Allow-Origin:
-              type: "string"
-            Access-Control-Allow-Methods:
-              type: "string"
-            Access-Control-Allow-Headers:
-              type: "string"
   /status:
     get:
       summary: "Retrieve the status based on a set of measurements"
@@ -188,17 +135,14 @@ paths:
         in: "query"
         description: "Age in years"
         required: false
-        type: "string"
+        type: "number"
+        format: "integer"
       - name: "generic.gender"
         in: "query"
         description: "Gender"
         required: false
         type: "string"
-      - name: "format"
-        in: "path"
-        description: "Format in which the data should be returned"
-        required: true
-        type: "string"
+        enum: ["Male", "Female"]
       responses:
         200:
           description: "Returns a list with the status for the given measurements.\
@@ -218,21 +162,6 @@ paths:
               type: "string"
       security:
       - api_key: []
-    options:
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "200 response"
-          headers:
-            Access-Control-Allow-Origin:
-              type: "string"
-            Access-Control-Allow-Methods:
-              type: "string"
-            Access-Control-Allow-Headers:
-              type: "string"
   /units:
     get:
       produces:
@@ -242,18 +171,13 @@ paths:
           description: "200 response"
           schema:
             $ref: "#/definitions/ArrayOfUnits"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
         500:
           description: "500 response"
       security:
       - api_key: []
-    options:
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "200 response"
   /units/{id}:
     get:
       produces:
@@ -276,26 +200,6 @@ paths:
           description: "500 response"
       security:
       - api_key: []
-    options:
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "id"
-        in: "path"
-        required: true
-        type: "string"
-      responses:
-        200:
-          description: "200 response"
-          headers:
-            Access-Control-Allow-Origin:
-              type: "string"
-            Access-Control-Allow-Methods:
-              type: "string"
-            Access-Control-Allow-Headers:
-              type: "string"
   /{language}/advices:
     get:
       produces:
@@ -306,11 +210,13 @@ paths:
         description: "Gender"
         required: false
         type: "string"
+        enum: ["Male", "Female"]
       - name: "generic.age"
         in: "query"
         description: "Age in years"
         required: false
-        type: "string"
+        type: "number"
+        format: "integer"
       - name: "nutrient.protein.from.food"
         in: "query"
         description: "The amount of protein intake from food"
@@ -321,6 +227,7 @@ paths:
         description: "ISO 639-1 language code of the language to return."
         required: true
         type: "string"
+        enum: ["en", "nl"]
       responses:
         200:
           description: "200 response"
@@ -333,26 +240,6 @@ paths:
           description: "500 response"
       security:
       - api_key: []
-    options:
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "language"
-        in: "path"
-        required: true
-        type: "string"
-      responses:
-        200:
-          description: "200 response"
-          headers:
-            Access-Control-Allow-Origin:
-              type: "string"
-            Access-Control-Allow-Methods:
-              type: "string"
-            Access-Control-Allow-Headers:
-              type: "string"
   /{language}/advices/{code}:
     get:
       produces:
@@ -368,34 +255,21 @@ paths:
         description: "ISO 639-1 language code of the language to return."
         required: true
         type: "string"
+        enum: ["en", "nl"]
       responses:
         200:
           description: "200 response"
           schema:
             $ref: "#/definitions/Advice"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
         500:
           description: "500 response"
         404:
           description: "404 response"
       security:
       - api_key: []
-    options:
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - name: "code"
-        in: "path"
-        required: true
-        type: "string"
-      - name: "language"
-        in: "path"
-        required: true
-        type: "string"
-      responses:
-        200:
-          description: "200 response"
 securityDefinitions:
   api_key:
     type: "apiKey"

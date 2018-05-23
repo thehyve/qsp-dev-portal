@@ -1,10 +1,15 @@
 import React, {Component} from 'react';
-import SwaggerUIClass from 'swagger-ui'
-import 'swagger-ui/dist/swagger-ui.css'
+import SwaggerUIBundle from 'swagger-ui-dist/swagger-ui-bundle'
+import 'swagger-ui-dist/swagger-ui.css'
 
 class ActualSwaggerUI extends Component {
+  state = {
+    swagger: null,
+    isLoaded: false,
+  };
+
   componentDidMount() {
-    SwaggerUIClass({
+    const swagger = SwaggerUIBundle({
       dom_id: '#swaggerContainer',
       url: this.props.url ? this.props.url : 'http://petstore.swagger.io/v2/swagger.json',
       spec: this.props.spec,
@@ -17,8 +22,21 @@ class ActualSwaggerUI extends Component {
       defaultModelRendering: 'schema',
       docExpansion: 'list',
       showRequestHeaders: false,
+      onComplete: () => this.setState({isLoaded: true})
     });
+    this.setState({swagger});
   }
+
+  componentDidUpdate() {
+    this.handleAuth();
+  }
+
+  handleAuth = () => {
+    console.log(`Handling auth for loaded?${this.state.isLoaded}, api key ${this.props.apiKey} in property ${this.props.apiKeyProp}`);
+    if (this.state.isLoaded && this.props.apiKey && this.props.apiKeyProp) {
+      this.state.swagger.preauthorizeApiKey(this.props.apiKeyProp, this.props.apiKey);
+    }
+  };
 
   render() {
     return (
