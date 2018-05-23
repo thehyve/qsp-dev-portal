@@ -21,6 +21,7 @@ import {
   cognitoInitSession,
   cognitoLogout,
   cognitoRefreshCredentials,
+  cognitoChangePassword,
   cognitoSignUp, cognitoUpdateAccountDetails, getCognitoUser
 } from "./cognito";
 
@@ -93,6 +94,15 @@ export function updateUserDetails(input) {
   return cognitoUpdateAccountDetails(input)
       .then(resetApiKeyName)
       .then(cognitoGetAccountDetails);
+}
+
+/**
+ * Update the current user's account details.
+ * @param {Object} input attribute map.
+ * @returns {Promise} attribute map after updating.
+ */
+export function changePassword(input) {
+  return (cognitoChangePassword(input));
 }
 
 /**
