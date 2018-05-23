@@ -122,6 +122,13 @@ export function cognitoUpdateAccountDetails(attributes) {
   });
 }
 
+export function cognitoChangePassword(attributes) {
+  return new Promise((resolve, reject) => {
+    let {oldPassword, newPassword } = attributes;
+    cognitoUser.changePassword(oldPassword, newPassword,  callbackToPromise(resolve, reject));
+  });
+}
+
 export function cognitoLogout() {
   cognitoUser.signOut();
   cognitoUser = null;
