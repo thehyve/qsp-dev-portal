@@ -515,26 +515,31 @@ function attributesToObject(attrs, keyMap) {
  * @param callback string callback
  */
 function getUserAttributes(identity, keyMap, error, callback) {
-  if (identity.cognitoIdentityPoolId) {
-    const attrsToGet = keyMap ? Object.keys(keyMap).filter(k => k !== 'username') : null;
-    const params = {
-      UserPoolId: identity.cognitoIdentityPoolId,
-      AttributesToGet: attrsToGet ? attrsToGet : null,
-      Filter: `sub="${identity.cognitoIdentityId.split(':')[1]}"`,
-    };
-    cognitoClient.listUsers(params, (err, data) => {
-      if (err || !data.Users || !data.Users[0]) {
-        console.log(`No users found with identity id ${identity.cognitoIdentityId} ${err}`);
-        callback();
-      } else {
-        const user = data.Users[0];
-        const userAttrs = [...user.Attributes, {Name: 'username', Value: user.Username}];
-        callback(attributesToObject(userAttrs, keyMap));
-      }
-    });
-  } else {
-    callback()
+  if (!identity.cognitoAuthenticationProvider) {
+    callback();
+    return;
   }
+  const match = /\/([^:/]+):CognitoSignIn:(.+)$/.exec(identity.cognitoAuthenticationProvider);
+  if (!match) {
+    callback();
+    return;
+  }
+  const attrsToGet = keyMap ? Object.keys(keyMap).filter(k => k !== 'username') : null;
+  const params = {
+    UserPoolId: match[1],
+    AttributesToGet: attrsToGet ? attrsToGet : null,
+    Filter: `sub="${match[2]}"`,
+  };
+  cognitoClient.listUsers(params, (err, data) => {
+    if (err || !data.Users || !data.Users[0]) {
+      console.log(`No users found with identity id ${identity.cognitoIdentityId} ${err}`);
+      callback();
+    } else {
+      const user = data.Users[0];
+      const userAttrs = [...user.Attributes, {Name: 'username', Value: user.Username}];
+      callback(attributesToObject(userAttrs, keyMap));
+    }
+  });
 }
 
 /**

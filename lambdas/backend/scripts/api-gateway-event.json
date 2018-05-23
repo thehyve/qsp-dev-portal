@@ -31,14 +31,14 @@
     "stage": "prod",
     "requestId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
     "identity": {
-      "cognitoIdentityPoolId": "eu-central-1_HKw63q04h",
-      "accountId": "",
-      "cognitoIdentityId": "eu-central-1:bd38cbb6-f1f4-4e11-bbae-dacaa93d4231",
+      "cognitoIdentityPoolId": "eu-central-1:4c2f83da-5d98-44ca-b64e-8854dc58656c",
+      "accountId": "327376717629",
+      "cognitoIdentityId": "eu-central-1:2ffa14a5-7400-42a3-acde-cdda45aa37c5",
       "caller": "",
       "apiKey": "",
       "sourceIp": "11.111.111.111",
       "cognitoAuthenticationType": "",
-      "cognitoAuthenticationProvider": "",
+      "cognitoAuthenticationProvider": "cognito-idp.eu-central-1.amazonaws.com/eu-central-1_HKw63q04h,cognito-idp.eu-central-1.amazonaws.com/eu-central-1_HKw63q04h:CognitoSignIn:689baa45-952f-4244-a05a-c7ad09b6b5cd",
       "userArn": "",
       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36",
       "user": "something_hard"
