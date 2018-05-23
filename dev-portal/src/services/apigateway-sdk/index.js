@@ -36,10 +36,10 @@ export default {
     let config = Object.assign({}, configBase, clientConfig);
 
     if (!config.invokeUrl) {
-      throw {message: 'Mandatory invokeUrl not passed'};
+      throw new Error('Mandatory invokeUrl not passed');
     }
     if (!config.region) {
-      throw {message: 'Mandatory region not passed'};
+      throw new Error('Mandatory region not passed');
     }
 
     // extract endpoint and path from url

@@ -39,12 +39,14 @@ export function assertParametersDefined(params, keys, ignore) {
 }
 
 export function parseParametersToObject(params, keys) {
-  if (params === undefined) {
+  if (!params) {
     return {};
   }
   let object = {};
   keys.forEach(key => {
-    object[key] = params[key];
+    if (params.hasOwnProperty(key)) {
+      object[key] = params[key];
+    }
   });
   return object;
 }
