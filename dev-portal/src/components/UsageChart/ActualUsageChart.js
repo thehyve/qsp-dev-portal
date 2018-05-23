@@ -4,7 +4,8 @@ import ReactChart from '../ReactChart';
 import { fetchUsage, mapUsageByDate } from '../../services/api-catalog'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import "react-datepicker/dist/react-datepicker.css";
+import 'react-datepicker/dist/react-datepicker.css';
+import './ActualUsageChart.css'
 
 export default class UsageChart extends PureComponent {
   state = {

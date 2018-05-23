@@ -1,0 +1,4 @@
+.react-datepicker-popper {
+  /* over dimmer */
+  z-index: 1002;
+}
