@@ -34,14 +34,36 @@ function getCognitoLoginKey() {
   return `cognito-idp.${cognitoRegion}.amazonaws.com/${cognitoUserPoolId}`
 }
 
-/** Returns callback as (error, result) => () that maps to a promise with (resolve, reject). */
-function callbackToPromise(resolve, reject) {
-  return (err, result) => {
-    if (err) {
-      reject({message: err.message || JSON.stringify(err)});
-    }
-    resolve(result);
-  };
+
+
+/**
+ * This callback type is used by cognito to get responses.
+ *
+ * @callback cognitoCallback
+ * @param {{message: string}} err
+ * @param {*} result
+ */
+
+/**
+ * Function that takes a cognitoCallback and internally calls a cognito function that uses that
+ * callback.
+ *
+ * @callback cognitoPromiseCallback
+ * @param {cognitoCallback} callback
+ */
+
+/** Maps a err, result callback to a promise.
+ * @param {cognitoPromiseCallback} callback
+ * @returns {Promise} promise that will resolve to what cognito returns in the callback. */
+function callbackToPromise(callback) {
+  return new Promise((resolve, reject) => {
+    callback((err, result) => {
+      if (err) {
+        reject({message: err.message || JSON.stringify(err)});
+      }
+      resolve(result)
+    });
+  });
 }
 
 export function cognitoAuthenticate(email, password) {
@@ -67,15 +89,16 @@ export function cognitoAuthenticate(email, password) {
 }
 
 export function cognitoRefreshCredentials(session) {
-  if (!session) {
+  if (session) {
+    return refreshSession(session)
+        .then(() => AWS.config.credentials);
+  } else {
     return Promise.resolve();
   }
-  return refreshSession(session)
-      .then(() => AWS.config.credentials);
 }
 
 function refreshSession(session) {
-  return new Promise((resolve, reject) => {
+  return callbackToPromise(callback => {
     const cognitoLoginKey = getCognitoLoginKey();
     const Logins = {};
     Logins[cognitoLoginKey] = session.getIdToken().getJwtToken();
@@ -84,14 +107,12 @@ function refreshSession(session) {
       Logins: Logins
     });
 
-    AWS.config.credentials.refresh(callbackToPromise(resolve, reject));
+    AWS.config.credentials.refresh(callback);
   });
 }
 
 export function cognitoSignUp(email, password, attributeList) {
-  return new Promise((resolve, reject) => {
-    userPool.signUp(email, password, attributeList, null, callbackToPromise(resolve, reject))
-  });
+  return callbackToPromise(callback => userPool.signUp(email, password, attributeList, null, callback));
 }
 
 export function cognitoInitSession() {
@@ -101,32 +122,25 @@ export function cognitoInitSession() {
   if (!cognitoUser) {
     return Promise.resolve(null);
   } else {
-    return new Promise((resolve, reject) => {
-      cognitoUser.getSession(callbackToPromise(resolve, reject));
-    });
+    return callbackToPromise(callback => cognitoUser.getSession(callback));
   }
 }
 
 export function cognitoGetAccountDetails() {
-  return new Promise((resolve, reject) => {
-    cognitoUser.getUserAttributes(callbackToPromise(resolve, reject));
-  });
+  return callbackToPromise(callback => cognitoUser.getUserAttributes(callback));
 }
 
 export function cognitoUpdateAccountDetails(attributes) {
-  return new Promise((resolve, reject) => {
+  return callbackToPromise(callback => {
     let userAttributes = Object.entries(attributes)
         .map(([key, value]) => ({Name: key , Value: value}));
 
-    cognitoUser.updateAttributes(userAttributes, callbackToPromise(resolve, reject));
+    cognitoUser.updateAttributes(userAttributes, callback);
   });
 }
 
-export function cognitoChangePassword(attributes) {
-  return new Promise((resolve, reject) => {
-    let {oldPassword, newPassword } = attributes;
-    cognitoUser.changePassword(oldPassword, newPassword,  callbackToPromise(resolve, reject));
-  });
+export function cognitoChangePassword(oldPassword, newPassword) {
+  return callbackToPromise(callback => cognitoUser.changePassword(oldPassword, newPassword, callback));
 }
 
 export function cognitoLogout() {
