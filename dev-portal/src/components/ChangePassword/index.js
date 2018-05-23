@@ -20,7 +20,7 @@ import {
   validateConfirmPassword,
   validatePassword
 } from "../../services/validation";
-
+import  {changePassword} from '../../services/self'
 export default class ChangePassword extends PureComponent {
 
   state = {
@@ -30,7 +30,8 @@ export default class ChangePassword extends PureComponent {
     password: '',
     confirmPassword: '',
     validValues: {},
-    isOpen: false
+    isOpen: false,
+    oldPassword: ''
   };
 
   open = () => this.setState({isSubmitting: false, errorMessage: '', isOpen: true});
@@ -59,9 +60,17 @@ export default class ChangePassword extends PureComponent {
     }
   };
 
-  // TODO: Implement backend call
   handleChangePassword = (event) => {
-    console.log(event);
+    event.preventDefault();
+    const {oldPassword, password} = this.state;
+    const input = {
+      oldPassword,
+      'newPassword': password
+    };
+    this.setState({isSubmitting: true})
+    changePassword(input)
+    .then(() => {this.setState({successMessage: 'Password has been changed successfully' , errorMessage: '', isSubmitting: false})})
+    .catch((e) => {this.setState({successMessage: '', errorMessage: e.message , isSubmitting: false})});
   };
 
   validate = (event) => {
@@ -87,18 +96,19 @@ export default class ChangePassword extends PureComponent {
             open={isOpen}
             onOpen={this.open}
             onClose={this.close}
-            trigger={<Button type='button' success>Change Password</Button>}
+            trigger={<Button type='button' >Change Password</Button>}
         >
           <Modal.Header>Change Password</Modal.Header>
           <Modal.Content>
             <Form onSubmit={this.handleChangePassword} error={!!this.state.errorMessage}
-                  loading={this.state.isSubmitting} noValidate>
-              <Form.Input type='password' label='Old Password' name='oldPassword' autoComplete='false'/>
-              <Form.Input type='password' label='New Password' name='password' autoComplete='false'
+                  loading={this.state.isSubmitting} noValidate success>
+              <Form.Input type='password' label='Old Password' name='oldPassword' autoComplete='off' onChange={this.validate}/>
+              <Form.Input type='password' label='New Password' name='password' autoComplete='off'
                           error={this.isError('password')} onBlur={this.validate}/>
-              <Form.Input type='password' label='Repeat New Password' name='confirmPassword' autoComplete='false'
+              <Form.Input type='password' label='Repeat New Password' name='confirmPassword' autoComplete='off'
                           error={this.isError('confirmPassword')} onBlur={this.validate}/>
               <Message error content={this.state.errorMessage}/>
+              <Message success content={this.state.successMessage} hidden={!this.state.successMessage}/>
               <Modal.Actions style={{textAlign: 'right'}}>
                 <Button type='button' onClick={this.close}>Close</Button>
                 <Button primary type='submit'>Submit</Button>
