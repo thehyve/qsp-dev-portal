@@ -513,7 +513,7 @@ function updateApiKeyCustomerId(apiKeyId, marketplaceCustomerId, error, success)
     apigateway.updateApiKey(params, function(err, data) {
         if (err) {
           console.log(`Failed to update customerId of API key ${apiKeyId}`, err);
-          error(err);
+          error(err.message);
         } else {
           success(data)
         }

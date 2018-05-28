@@ -154,7 +154,7 @@ function getUsagePlanFromCatalog(usagePlanId) {
 function error(res) {
   return (data) => {
     console.log(`error: ${data}`);
-    res.status(500).json(data)
+    res.status(500).json({message: data})
   };
 }
 
