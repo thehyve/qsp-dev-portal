@@ -16,13 +16,13 @@
 
 'use strict';
 
-import express from 'express';
-import bodyParser from 'body-parser';
-import cors from 'cors';
-import util from 'util';
-import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
-import catalog from "./catalog";
-import customersController from 'common-lambda-assets/customers-controller.js';
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const util = require('util');
+const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware');
+const catalog = require('./catalog');
+const customersController = require('common-lambda-assets/customers-controller.js');
 
 /**
  * @typedef {Object} Express
