@@ -24,6 +24,7 @@ import {
   cognitoChangePassword,
   cognitoSignUp, cognitoUpdateAccountDetails, getCognitoUser
 } from "./cognito";
+import {arrayToObject} from "./util";
 
 /** Whether the current user is logged in.
  * @returns {boolean} true if user is logged in, false otherwise. */
