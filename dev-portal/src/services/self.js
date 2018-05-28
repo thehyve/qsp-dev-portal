@@ -93,7 +93,7 @@ export function getAccountDetails() {
 export function updateUserDetails(input) {
   return cognitoUpdateAccountDetails(input)
       .then(resetApiKeyName)
-      .then(cognitoGetAccountDetails);
+      .then(getAccountDetails);
 }
 
 /**
