@@ -167,4 +167,4 @@ function success(res) {
 // app.listen(3000)
 
 // Export your express server so you can import it in the lambda function.
-export default app;
+module.exports = app;
