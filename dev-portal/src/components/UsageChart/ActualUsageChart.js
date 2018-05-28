@@ -29,6 +29,7 @@ export default class UsageChart extends PureComponent {
     fetchUsage(this.props.usagePlanId , this.state.endDate.toISOString(false))
         .then(({data}) => mapUsageByDate(data))
         .then(usageData => {
+          console.log('usageData', usageData)
           this.setState({isLoading: false, errorMessage: '', infoMessage: ''});
 
           if (usageData.length === 0) {
