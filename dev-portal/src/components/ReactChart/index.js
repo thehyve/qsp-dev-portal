@@ -25,6 +25,10 @@ export default class ReactChart extends PureComponent {
   }
 
   handleUpdate() {
+    if(this.props.chart === this.state.previousChart) {
+      return;
+    }
+
     if (this.state.chart) {
       this.state.chart.destroy()
     }
@@ -32,7 +36,6 @@ export default class ReactChart extends PureComponent {
     if (this.props.chart && this.props.chart !== this.state.previousChart) {
       const ctx = document.getElementById(this.state.id);
       let chart = new Chart(ctx, this.props.chart);
-
       this.setState({chart, previousChart: this.props.chart});
     } else {
       this.setState({chart: undefined});
