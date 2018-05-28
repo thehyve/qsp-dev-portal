@@ -147,7 +147,7 @@ function getIdentityFromMarketplaceId(marketplaceCustomerId, error, callback) {
  * @param {Identity} identity aws-serverless-express event identity
  * @param {string} usagePlanId usage plan ID in the API Gateway
  * @param {errorCallback} error string callback
- * @param {dataCallback} callback usage plan api key object callback
+ * @param {dataCallback} callback usage plan api key {@link APIGateway.Types.UsagePlanKey}
  */
 function subscribe(identity, usagePlanId, error, callback) {
   ensureApiKey(identity, error, (key) => {
@@ -362,7 +362,7 @@ function resetApiKeyName(identity, error, callback) {
  * Get all usage plans that a user is subscribed to.
  * @param {Identity} identity aws-serverless-express event identity
  * @param {errorCallback} error string callback
- * @param {dataCallback} callback APIGateway.Types.UsagePlans callback
+ * @param {dataCallback} callback {@link APIGateway.Types.UsagePlans} callback
  */
 function getUsagePlansForCustomer(identity, error, callback) {
     console.log(`Getting usage plans for customer ${identity.cognitoIdentityId}`);
@@ -395,7 +395,7 @@ function getUsagePlansForCustomer(identity, error, callback) {
  * @param {string} startDate start date to get the usage from, string as yyyy-mm-dd, required.
  * @param {string} endDate end date, inclusive, to get the usage to, string as yyyy-mm-dd, required.
  * @param {errorCallback} error string callback
- * @param {dataCallback} callback APIGateway.Types.UsagePlans callback
+ * @param {dataCallback} callback {@link APIGateway.Types.UsagePlans} callback
  */
 function getUsage(identity, usagePlanId, startDate, endDate, error, callback) {
   getApiKeyId(identity, error, (keyId) => {
@@ -425,7 +425,7 @@ function getUsage(identity, usagePlanId, startDate, endDate, error, callback) {
  * Get the usage plans corresponding to a AWS Marketplace product.
  * @param {string} productCode AWS Marketplace product code string.
  * @param {errorCallback} error string callback
- * @param {dataCallback} callback APIGateway.Types.UsagePlan callback
+ * @param {dataCallback} callback {@link APIGateway.Types.UsagePlan} callback
  */
 function getUsagePlanForProductCode(productCode, error, callback) {
     console.log(`Getting Usage Plan for product ${productCode}`);
@@ -592,7 +592,7 @@ function getUserAttributes(identity, keyMap, error, callback) {
  * @param {string} marketplaceToken token that marketplace passes when subscribing to a new product
  * @param {string} usagePlanId API gateway usage plan ID to subscribe to.
  * @param {errorCallback} error string callback
- * @param {stringCallback} callback string callback
+ * @param {dataCallback} callback usage plan api key {@link APIGateway.Types.UsagePlanKey}
  */
 function subscribeFromMarketplace(identity, marketplaceToken, usagePlanId, error, callback) {
   const marketplace = new AWS.MarketplaceMetering();
