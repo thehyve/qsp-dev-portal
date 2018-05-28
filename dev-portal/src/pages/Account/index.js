@@ -28,7 +28,7 @@ export default class AccountDetails extends PureComponent {
   handleChanges = (event ) => {
     event.preventDefault();
     const {name:key, value} = event.target;
-    this.setState({[key]: value});
+    this.setState({[key]: value, successMessage: ''});
     const validValues = Object.assign({}, this.state.validValues);
     const {isValid, errorMessage, val} = this.getValidator(event);
     validValues[key] = isValid;
@@ -45,7 +45,7 @@ export default class AccountDetails extends PureComponent {
   };
 
   handleSubmit = () => {
-    this.setState({isLoaded: false});
+    this.setState({isLoaded: false , successMessage: ''});
     const {name, organisation, apiClient} = this.state;
     let userDetails = {
       name,
