@@ -161,7 +161,7 @@ function subscribe(identity, usagePlanId, error, callback) {
     apigateway.createUsagePlanKey(params, (err, data) => {
       if (err) {
         console.log(`Failed to create usage plan key for user ${identity.cognitoIdentityId}, API key ${key.id} and usage plan ${usagePlanId}`, err);
-        error(err);
+        error(err.message);
       } else {
         callback(data)
       }
@@ -188,7 +188,7 @@ function unsubscribe(identity, usagePlanId, error, success) {
     apigateway.deleteUsagePlanKey(params, (err) => {
       if (err) {
         console.log(`Failed to delete usage plan key for user ${identity.cognitoIdentityId}, API key ${keyId} and usage plan ${usagePlanId}`, err);
-        error(err);
+        error(err.message);
       } else {
         success();
       }
@@ -220,7 +220,7 @@ function createApiKey(identity, error, callback) {
     apigateway.createApiKey(params, (err, data) => {
       if (err || !data) {
         console.log(`Failed to create API key for user ${cognitoIdentityId}`, err);
-        error(err)
+        error(err.message)
       } else {
         callback(data);
       }
@@ -246,7 +246,7 @@ function ensureApiKey(identity, error, callback) {
           createAndStoreApiKey(identity, error, callback);
         } else {
           console.log(`Failed to get API key ${keyId} for user ${identity.cognitoIdentityId}`, err);
-          error(err);
+          error(err.message);
         }
       });
     } else {
@@ -311,7 +311,7 @@ function getApiKeyId(identity, error, callback) {
       error(err)
     } else if (data.Item === undefined) {
       console.log(`No API Key found for customer ${cognitoIdentityId}`);
-      callback(null);
+      callback(undefined);
     } else {
       const keyId = data.Item.ApiKeyId;
       console.log(`Got API key ID ${keyId}`);
@@ -347,7 +347,7 @@ function resetApiKeyName(identity, error, callback) {
         apigateway.updateApiKey(params, err => {
           if (err) {
             console.log(`Failed to update name of API key ${key.id}`, err);
-            error(err);
+            error(err.message);
           } else {
             key.name = name;
             callback(key);
@@ -378,7 +378,7 @@ function getUsagePlansForCustomer(identity, error, callback) {
             apigateway.getUsagePlans(params, (err, usagePlansData) => {
                 if (err) {
                   console.log(`Failed to get usage plans for user ${identity.cognitoIdentityId} with API key ${keyId}`, err);
-                  error(err);
+                  error(err.message);
                 } else {
                   callback(usagePlansData)
                 }
@@ -413,7 +413,7 @@ function getUsage(identity, usagePlanId, startDate, endDate, error, callback) {
     apigateway.getUsage(params, (err, data) => {
       if (err) {
         console.log(`Failed to get usage for user ${identity.cognitoIdentityId} with API key ${keyId} in usage plan ${usagePlanId}`, err);
-        error(err);
+        error(err.message);
       } else {
         callback(data);
       }
@@ -437,7 +437,7 @@ function getUsagePlanForProductCode(productCode, error, callback) {
     apigateway.getUsagePlans(params, function(err, data) {
         if (err) {
           console.log(`Failed to get usage plans for product code ${productCode}`, err);
-          error(err)
+          error(err.message)
         } else {
             console.log(`Got usage plans ${JSON.stringify(data.items)}`);
 
@@ -563,7 +563,7 @@ function getUserAttributes(identity, keyMap, error, callback) {
   }
   const match = /\/([^:/]+):CognitoSignIn:(.+)$/.exec(identity.cognitoAuthenticationProvider);
   if (!match) {
-    callback(undefined);
+    error(`No valid sign in for ${identity.cognitoIdentityId}`);
     return;
   }
   const attrsToGet = keyMap ? Object.keys(keyMap).filter(k => k !== 'username') : null;
@@ -573,7 +573,9 @@ function getUserAttributes(identity, keyMap, error, callback) {
     Filter: `sub="${match[2]}"`,
   };
   cognitoClient.listUsers(params, (err, data) => {
-    if (err || !data.Users || !data.Users[0]) {
+    if (err) {
+      error(err.message);
+    } else if (!data.Users || !data.Users[0]) {
       console.log(`No users found with identity id ${identity.cognitoIdentityId} ${err}`);
       callback(undefined);
     } else {
@@ -603,7 +605,7 @@ function subscribeFromMarketplace(identity, marketplaceToken, usagePlanId, error
   marketplace.resolveCustomer(params, (err, data) => {
     if (err) {
       console.log(`Failed to resolve customer from marketplaceToken ${marketplaceToken}`, err);
-      error(err)
+      error(err.message)
     } else {
       // persist the marketplaceCustomerId in DDB
       // this is used when the subscription listener receives the subscribe notification
