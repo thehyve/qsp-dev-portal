@@ -55,24 +55,6 @@ paths:
             $ref: "#/definitions/Empty"
       security:
       - api_key: []
-    options:
-      description: "CORS preflight request."
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "200 response"
-          headers:
-            Access-Control-Allow-Origin:
-              type: "string"
-            Access-Control-Allow-Methods:
-              type: "string"
-            Access-Control-Allow-Headers:
-              type: "string"
-      security:
-      - api_key: []
 securityDefinitions:
   api_key:
     type: "apiKey"
