@@ -55,7 +55,7 @@ export default class AccountDetails extends PureComponent {
     updateUserDetails(userDetails)
         .then(this.syncAccountDetails)
         .then(() => this.setState({errorMessage: '' , successMessage: 'Account details updated successfully'}))
-        .catch(e => this.setState({errorMessage: e.message, successMessage: ''}));
+        .catch(e => this.setState({errorMessage: e.message, successMessage: '', isLoaded: true}));
   };
 
   getValidator = (event) => {
