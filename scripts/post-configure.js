@@ -23,7 +23,7 @@ cloudformation.describeStacks({
   const cognitoUserPoolClientId = getOutputValue(outputs, 'CognitoUserPoolClientId')
   const cognitoUserPoolId = getOutputValue(outputs, 'CognitoUserPoolId')
   modifyPackageFile(apiGatewayApiId, primaryAwsRegion, cognitoUserPoolId, cognitoUserPoolClientId, cognitoIdentityPoolId)
-  modifyDevPortalJs(cognitoIdentityPoolId, primaryAwsRegion, primaryAwsRegion, cognitoUserPoolId, cognitoUserPoolClientId)
+  modifyDevPortalJs(cognitoIdentityPoolId, primaryAwsRegion, primaryAwsRegion, cognitoUserPoolId, cognitoUserPoolClientId, apiGatewayApiId)
   modifyApigClient(apiGatewayApiId, primaryAwsRegion)
 }).catch(e => {console.log(e)})
 
@@ -44,7 +44,7 @@ function modifyPackageFile(apiGatewayApiId, cognitoRegion, cognitoUserPoolId, co
     fs.writeFileSync(packageJsonPath, packageJsonModified, 'utf8')
 }
 
-function modifyDevPortalJs(cognitoIdentityPoolId, primaryAwsRegion, cognitoRegion, cognitoUserPoolId, cognitoUserPoolClientId) {
+function modifyDevPortalJs(cognitoIdentityPoolId, primaryAwsRegion, cognitoRegion, cognitoUserPoolId, cognitoUserPoolClientId, apiGatewayApiId) {
     const htmlPath = `${rootDir}/dev-portal/src/services/aws.js`
     const html = fs.readFileSync(htmlPath, 'utf8')
     const htmlModified = html
@@ -53,15 +53,7 @@ function modifyDevPortalJs(cognitoIdentityPoolId, primaryAwsRegion, cognitoRegio
         .replace(/YOUR_PRIMARY_AWS_REGION/g, primaryAwsRegion)
         .replace(/YOUR_COGNITO_USER_POOL_ID/g, cognitoUserPoolId)
         .replace(/YOUR_COGNITO_CLIENT_ID/g, cognitoUserPoolClientId)
+        .replace(/YOUR_API_GATEWAY_API_ID/g, apiGatewayApiId);
 
     fs.writeFileSync(htmlPath, htmlModified, 'utf8')
-}
-
-function modifyApigClient(apiGatewayApiId, primaryAwsRegion) {
-    const apigClientPath = `${rootDir}/dev-portal/public/apigateway-js-sdk/apigClient.js`
-    const apigClient = fs.readFileSync(apigClientPath, 'utf8')
-    const apigClientModified = apigClient
-        .replace(/YOUR_API_GATEWAY_API_ID/g, apiGatewayApiId)
-        .replace(/YOUR_PRIMARY_AWS_REGION/g, primaryAwsRegion)
-    fs.writeFileSync(apigClientPath, apigClientModified, 'utf8')
 }

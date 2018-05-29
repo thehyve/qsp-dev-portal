@@ -360,6 +360,17 @@ Resources:
                 - :table/
                 - !Ref CustomersTable
                 - /index/MarketplaceCustomerIdIndex
+          - Action:
+            - cognito-idp:ListUsers
+            Effect: Allow
+            Resource: !Join
+              - ''
+              - - 'arn:aws:cognito-idp:'
+                - !Ref 'AWS::Region'
+                - ':'
+                - !Ref 'AWS::AccountId'
+                - ':userpool/'
+                - !Ref CognitoUserPool
 
   ApiGatewayMarketplaceMeteringRole:
     Type: AWS::IAM::Role
@@ -477,28 +488,28 @@ Resources:
       Runtime: nodejs8.10
       Timeout: 30
 
-  # PreSignupLambdaExecutionRole:
-  #   Type: AWS::IAM::Role
-  #   Properties:
-  #     AssumeRolePolicyDocument:
-  #       Version: '2012-10-17'
-  #       Statement:
-  #         Effect: Allow
-  #         Principal:
-  #           Service: lambda.amazonaws.com
-  #         Action: sts:AssumeRole
-  #     Path: '/'
-  #     Policies:
-  #     - PolicyName: root
-  #       PolicyDocument:
-  #         Version: '2012-10-17'
-  #         Statement:
-  #         - Effect: Allow
-  #           Action:
-  #           - logs:CreateLogGroup
-  #           - logs:CreateLogStream
-  #           - logs:PutLogEvents
-  #           Resource: arn:aws:logs:*:*:*
+  PreSignupLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: '/'
+      Policies:
+      - PolicyName: root
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource: arn:aws:logs:*:*:*
 
   PreSignupLambdaFunction:
     Type: AWS::Serverless::Function
@@ -506,7 +517,7 @@ Resources:
       CodeUri: ../lambdas/cognito-user-pools-auto-confirm
       Handler: index.handler
       MemorySize: 128
-      Role: !GetAtt DevPortalLambdaExecutionRole.Arn
+      Role: !GetAtt PreSignupLambdaExecutionRole.Arn
       Runtime: nodejs8.10
       Timeout: 3
 

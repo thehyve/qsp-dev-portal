@@ -24,6 +24,17 @@ const awsServerlessExpressMiddleware = require('aws-serverless-express/middlewar
 const catalog = require('./catalog');
 const customersController = require('common-lambda-assets/customers-controller.js');
 
+/**
+ * @typedef {Object} Express
+ * @property get
+ * @property post
+ * @property delete
+ * @property use
+ */
+/**
+ *
+ * @type {Express}
+ */
 const app = express();
 
 // replace these to match your site URL. Note: Use TLS, not plain HTTP, for your production site!
@@ -49,13 +60,13 @@ app.get('/catalog', (req, res) => {
 
 app.get('/apikey', (req, res) => {
   customersController.ensureApiKey(getIdentity(req), error(res), ({id, name, value}) => {
-    res.status(200).json({id, name, value})
+    res.status(200).json({id, name, value});
   });
 });
 
 app.post('/apikey/reset-name', (req, res) => {
   customersController.resetApiKeyName(getIdentity(req), error(res), ({id, name, value}) => {
-    res.status(200).json({id, name, value})
+    res.status(200).json({id, name, value});
   });
 });
 
@@ -143,7 +154,7 @@ function getUsagePlanFromCatalog(usagePlanId) {
 function error(res) {
   return (data) => {
     console.log(`error: ${data}`);
-    res.status(500).json(data)
+    res.status(500).json({message: data})
   };
 }
 

@@ -24,8 +24,10 @@ import {
   cognitoChangePassword,
   cognitoSignUp, cognitoUpdateAccountDetails, getCognitoUser
 } from "./cognito";
+import {arrayToObject} from "./util";
 
-/** Whether the current user is logged in. */
+/** Whether the current user is logged in.
+ * @returns {boolean} true if user is logged in, false otherwise. */
 export function isAuthenticated() {
   return !!getCognitoUser();
 }
@@ -76,13 +78,7 @@ export function login(email, password) {
  */
 export function getAccountDetails() {
   return cognitoGetAccountDetails()
-      .then(result => {
-        let userCredentials = {};
-        result.forEach(d => {
-          userCredentials[d.getName()] = d.getValue();
-        });
-        return userCredentials;
-      });
+      .then(result => arrayToObject(result, d => d.getName(), d => d.getValue()));
 }
 
 /**
@@ -132,3 +128,4 @@ function resetApiKeyName() {
   return lookupApiGatewayClient()
       .then(client => client.post('/apikey/reset-name', {}, {}, {}));
 }
+
