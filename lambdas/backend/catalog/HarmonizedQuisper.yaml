@@ -55,24 +55,6 @@ paths:
             $ref: "#/definitions/Empty"
       security:
       - api_key: []
-    options:
-      description: "CORS preflight request."
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "200 response"
-          headers:
-            Access-Control-Allow-Origin:
-              type: "string"
-            Access-Control-Allow-Methods:
-              type: "string"
-            Access-Control-Allow-Headers:
-              type: "string"
-      security:
-      - api_key: []
 securityDefinitions:
   api_key:
     type: "apiKey"
@@ -83,11 +65,53 @@ definitions:
     type: "object"
     title: "Empty Schema"
   DQLSentence:
-    type: "string"
-    title: "DQLSentence"
+    type: "object"
     description: "More information about QDQL sentence can be found in the technical\
       \ report of the HarmonizedQusiper."
-    example: "<DQL_Sentence><MetaData><SchemaVersion>1.2</SchemaVersion><Schema>QDQL_Sentence_version_1_0.xsd</Schema></MetaData><SelectClause><FieldName>FoodName</FieldName></SelectClause></DQL_Sentence>"
+    title: "DQL_Sentence"
+    example:
+      MetaData:
+        SchemaVersion: 1.2
+        Schema: QDQL_Sentence_version_1_0.xsd
+      SelectClause:
+        FieldName: FoodName
+    required:
+     - MetaData
+    properties:
+     MetaData:
+      type: object
+      required:
+       - SchemaVersion
+       - Schema
+      properties:
+       SchemaVersion:
+        description: "Version number, e.g., 1.2."
+        type: string
+       Schema:
+        description: "Schema name, e.g. QDQL_Sentence_version_1_0.xsd"
+        type: string
+     SelectClause:
+      type: object
+      properties:
+       FieldName:
+        type: string
+     WhereClause:
+      type: object
+      properties:
+       Condition:
+        type: object
+        properties:
+         ClassificationConditionField:
+          type: string
+         ConditionOperator:
+          type: string
+         ConditionValue:
+          type: string
+     OrderByClause:
+      type: object
+      properties:
+       OrderByField:
+        type: string
 externalDocs:
   description: "PDF documentation"
   url: /pdfs/HarmonizedQuisper.pdf

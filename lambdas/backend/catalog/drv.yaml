@@ -32,6 +32,23 @@ paths:
         description: "ISO 3166 country code of the country to return data from."
         required: true
         type: "string"
+        enum: [
+          "at",
+          "de",
+          "ch",
+          "si",
+          "cz",
+          "uk",
+          "it",
+          "dk",
+          "fi",
+          "is",
+          "no",
+          "se",
+          "fo",
+          "gl",
+          "eu"
+        ]
       responses:
         200:
           description: "Returns a list of dietary reference values"
@@ -50,22 +67,6 @@ paths:
           description: "Unauthorized: provide a valid API key"
         403:
           description: "Forbidden: the provided API key is invalid"
-      security:
-      - api_key: []
-    options:
-      description: "CORS preflight request."
-      consumes:
-      - "application/json"
-      responses:
-        200:
-          description: "200 response"
-          headers:
-            Access-Control-Allow-Origin:
-              type: "string"
-            Access-Control-Allow-Methods:
-              type: "string"
-            Access-Control-Allow-Headers:
-              type: "string"
       security:
       - api_key: []
 securityDefinitions:

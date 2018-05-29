@@ -139,7 +139,7 @@ export function unsubscribe(usagePlanId) {
  */
 export function fetchUsage(usagePlanId, endDate) {
   const startDate = new Date(endDate);
-  startDate.setMonth(startDate.getMonth() - 1);
+  startDate.setDate(startDate.getDate() - 31);
   const start = startDate.toISOString().split('T')[0];
   const end = endDate.split('T')[0];
   return lookupApiGatewayClient()
@@ -154,9 +154,8 @@ export function fetchUsage(usagePlanId, endDate) {
 export function mapUsageByDate(usage) {
   const usedPerDate = {};
   const remainingPerDate = {};
-
   Object.values(usage.items).forEach(apiKeyUsage => {
-    mapApiKeyUsageByDate(apiKeyUsage, usage.endDate)
+    mapApiKeyUsageByDate(apiKeyUsage, usage.startDate)
         .forEach(({date, used, remaining}) => {
           const dateString = date.toISOString();
           if (!usedPerDate[dateString]) {
@@ -184,17 +183,14 @@ export function mapUsageByDate(usage) {
  * @returns {({date: Date, used: number, remaining})[]} array of usage per date.
  */
 function mapApiKeyUsageByDate(apiKeyUsage, startDate) {
-  const [year, month, day] = startDate.split('-');
-  const apiKeyDate = new Date(year, month - 1, day);
-  apiKeyDate.setHours(0, 0, 0, 0);
+  const apiKeyDate = new Date(startDate);
 
   if (apiKeyUsage && !Array.isArray(apiKeyUsage[0])) {
     apiKeyUsage = [apiKeyUsage];
   }
 
   return apiKeyUsage.map(([used, remaining]) => {
-    const date = new Date();
-    date.setDate(apiKeyDate.getDate());
+    const date = new Date(apiKeyDate);
     apiKeyDate.setDate(apiKeyDate.getDate() + 1);
     return {date, used, remaining};
   })
