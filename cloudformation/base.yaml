@@ -549,7 +549,7 @@ Resources:
           Required: false
           Mutable: true
           StringAttributeConstraints:
-            MinLength: 1
+            MinLength: 0
             MaxLength: 256
 
   CognitoUserPoolClient:
