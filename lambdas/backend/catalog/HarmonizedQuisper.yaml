@@ -27,12 +27,12 @@ paths:
         required: true
         type: "string"
       - in: "body"
-        name: "DQLSentence"
+        name: "DQL_Sentence"
         description: "More information about QDQL sentence can be found in the technical\
           \ report of the HarmonizedQusiper."
         required: true
         schema:
-          $ref: "#/definitions/DQLSentence"
+          $ref: "#/definitions/DQL_Sentence"
       responses:
         200:
           description: "200 response"
@@ -64,7 +64,7 @@ definitions:
   Empty:
     type: "object"
     title: "Empty Schema"
-  DQLSentence:
+  DQL_Sentence:
     type: "object"
     description: "More information about QDQL sentence can be found in the technical\
       \ report of the HarmonizedQusiper."
