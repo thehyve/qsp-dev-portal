@@ -569,7 +569,7 @@ function getUserAttributes(identity, keyMap, error, callback) {
   const attrsToGet = keyMap ? Object.keys(keyMap).filter(k => k !== 'username') : null;
   const params = {
     UserPoolId: match[1],
-    AttributesToGet: attrsToGet ? attrsToGet : null,
+    AttributesToGet: null,
     Filter: `sub="${match[2]}"`,
   };
   cognitoClient.listUsers(params, (err, data) => {

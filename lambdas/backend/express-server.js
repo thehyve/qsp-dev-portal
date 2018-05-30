@@ -106,7 +106,7 @@ app.delete('/subscriptions/:usagePlanId', (req, res) => {
   const usagePlanId = req.params.usagePlanId;
 
   if (getUsagePlanFromCatalog(usagePlanId)) {
-    customersController.unsubscribe(getIdentity(req), usagePlanId, error(res), () => res.status(204).send());
+    customersController.unsubscribe(getIdentity(req), usagePlanId, error(res), () => res.status(200).json({}));
   } else {
     res.status(404).json('Invalid Usage Plan ID')
   }
