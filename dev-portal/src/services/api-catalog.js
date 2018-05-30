@@ -42,9 +42,17 @@ export function loopkupCatalog() {
  */
 export function getApi(apiId) {
   return loopkupCatalog()
-      .then(catalog => catalog
-          .map(c => c.apis.find(a => a.id === apiId))  // find the api in all usage plans
-          .find(api => !!api));  // return the first found api
+      .then(catalog => {
+        const usagePlans = catalog
+          .map(c => ({...c, apis: c.apis.filter(a => a.id === apiId)}))
+            .filter(c => c.apis.length !== 0);
+
+        if (usagePlans.length === 0) {
+          throw new Error("Api ID not found");
+        }
+
+        return {usagePlanId: usagePlans[0].id, api: usagePlans[0].apis[0]}
+      });  // return the first found api
 }
 
 function fetchCatalog() {

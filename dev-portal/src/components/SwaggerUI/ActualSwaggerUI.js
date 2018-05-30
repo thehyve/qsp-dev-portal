@@ -8,6 +8,20 @@ class ActualSwaggerUI extends Component {
     isLoaded: false,
   };
 
+  disableTryItOutPlugin = () => {
+    return {
+      statePlugins: {
+        spec: {
+          wrapSelectors: {
+            allowTryItOutFor: () => () => {
+              return this.props.isSubscribed
+            }
+          }
+        }
+      }
+    }
+  };
+
   componentDidMount() {
     const swagger = SwaggerUIBundle({
       dom_id: '#swaggerContainer',
@@ -22,6 +36,9 @@ class ActualSwaggerUI extends Component {
       defaultModelRendering: 'schema',
       docExpansion: 'list',
       showRequestHeaders: false,
+      plugins: [
+        this.disableTryItOutPlugin
+      ],
       onComplete: () => this.setState({isLoaded: true})
     });
     this.setState({swagger});
