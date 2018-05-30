@@ -1,9 +1,12 @@
 ---
 swagger: "2.0"
 info:
-  description: "SOAP web service that provides access to food composition data collected\
-    \ by EU project EuroFIR. See the PDF documentation for more information on syntax\
-    \ and allowed requests."
+  description: 'SOAP web service that provides access to food composition data collected
+    by EU project EuroFIR. See the PDF documentation for more information on syntax
+    and allowed requests.
+
+    The api user id mentioned in the PDF should be set to the literal `quisper` and the
+    api secret key mentioned in the PDF is the literal `e_x|p1nic}fkFg~0oikxoo"$>*2jtPO@|Z@!o^I?`'
   version: "1.0.0"
   title: "EuroFIR-FoodTransport"
 host: "qsp-api.thehyve.net"
