@@ -9,14 +9,22 @@ function handleSubscribe(event, usagePlan) {
   event.preventDefault();
 
   addSubscription(usagePlan.id)
-      .then(() => window.location.reload());
+      .then(() => window.location.reload())
+      .catch(err => {
+          console.log('Failed to unsubscribe; reloading anyway', err);
+          window.location.reload();
+      });
 }
 
 function handleUnsubscribe(event, usagePlan) {
   event.preventDefault();
 
   unsubscribe(usagePlan.id)
-      .then(() => window.location.reload());
+      .then(() => window.location.reload())
+      .catch(err => {
+        console.log('Failed to unsubscribe; reloading anyway', err);
+        window.location.reload();
+      });
 }
 
 const SubscribedApiActionsDropdown = ({usagePlan, api}) => (
