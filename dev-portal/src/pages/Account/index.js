@@ -28,7 +28,7 @@ export default class AccountDetails extends PureComponent {
   handleChanges = (event ) => {
     event.preventDefault();
     const {name:key, value} = event.target;
-    this.setState({[key]: value, successMessage: ''});
+    this.setState({[key]: value, successMessage: '', errorMessage: ''});
     const validValues = Object.assign({}, this.state.validValues);
     const {isValid, errorMessage, val} = this.getValidator(event);
     validValues[key] = isValid;
