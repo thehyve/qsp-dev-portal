@@ -19,30 +19,22 @@ export default class ApiDetailsPage extends PureComponent {
 
     getApi(props.match.params.apiId)
       .then(({usagePlanId, api}) => {
-        this.setState({api, apiKeyProp: Object.keys(api.swagger.securityDefinitions)[0], usagePlanId: usagePlanId});
-        this.updateSubscription();
+        const apiKeyProp = Object.keys(api.swagger.securityDefinitions)[0];
+        this.setState({api, apiKeyProp, usagePlanId}, this.updateSubscription);
       });
 
     if (isAuthenticated()) {
       getApiKey()
-      .then(key => this.setState({apiKey: key.value}));
+          .then(key => this.setState({apiKey: key.value}));
     }
   }
 
-  updateSubscription() {
+  updateSubscription = () => {
     if (this.state.usagePlanId) {
       lookupSubscriptions().then(() => {
         this.setState({isSubscribed: isSubscribed(this.state.usagePlanId) ? true : false})
       });
     }
-  }
-
-  componentDidMount() {
-    this.updateSubscription();
-  }
-
-  componentDidUpdate() {
-    this.updateSubscription()
   }
 
   render() {
