@@ -86,7 +86,7 @@ app.put('/subscriptions/:usagePlanId', (req, res) => {
     customersController.subscribe(getIdentity(req), usagePlanId, error(res),
         (data) => res.status(201).json(data));
   } else {
-    res.status(404).json('Invalid Usage Plan ID')
+    res.status(404).json({message: 'Invalid Usage Plan ID'})
   }
 });
 
@@ -98,7 +98,7 @@ app.get('/subscriptions/:usagePlanId/usage', (req, res) => {
     customersController.getUsage(getIdentity(req), usagePlanId, req.query.start, req.query.end,
       error(res), success(res));
   } else {
-    res.status(404).json('Invalid Usage Plan ID')
+    res.status(404).json({message: 'Invalid Usage Plan ID'})
   }
 });
 
@@ -106,9 +106,9 @@ app.delete('/subscriptions/:usagePlanId', (req, res) => {
   const usagePlanId = req.params.usagePlanId;
 
   if (getUsagePlanFromCatalog(usagePlanId)) {
-    customersController.unsubscribe(getIdentity(req), usagePlanId, error(res), () => res.status(200).json({}));
+    customersController.unsubscribe(getIdentity(req), usagePlanId, error(res), () => res.status(204).send());
   } else {
-    res.status(404).json('Invalid Usage Plan ID')
+    res.status(404).json({message: 'Invalid Usage Plan ID'})
   }
 });
 

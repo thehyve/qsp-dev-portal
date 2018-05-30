@@ -33,12 +33,12 @@
     "identity": {
       "cognitoIdentityPoolId": "eu-central-1:4c2f83da-5d98-44ca-b64e-8854dc58656c",
       "accountId": "327376717629",
-      "cognitoIdentityId": "eu-central-1:2ffa14a5-7400-42a3-acde-cdda45aa37c5",
+      "cognitoIdentityId": "eu-central-1:3142d7aa-50da-497c-a08d-93c2e3142055",
       "caller": "",
       "apiKey": "",
       "sourceIp": "11.111.111.111",
       "cognitoAuthenticationType": "",
-      "cognitoAuthenticationProvider": "cognito-idp.eu-central-1.amazonaws.com/eu-central-1_HKw63q04h,cognito-idp.eu-central-1.amazonaws.com/eu-central-1_HKw63q04h:CognitoSignIn:689baa45-952f-4244-a05a-c7ad09b6b5cd",
+      "cognitoAuthenticationProvider": "cognito-idp.eu-central-1.amazonaws.com/eu-central-1_7kBeRZYMi,cognito-idp.eu-central-1.amazonaws.com/eu-central-1_7kBeRZYMi:CognitoSignIn:7a1e346d-5c2a-4dc4-9ea2-3ccd9175777a",
       "userArn": "",
       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36",
       "user": "something_hard"

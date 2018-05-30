@@ -106,13 +106,17 @@ testPromise('subscriptions', test => {
       .then(res => test.equal(res.statusCode, 200, "get subscriptions failed", res));
 });
 
-testPromise('subscriptions unsubscribe', () => {
+testPromise('subscriptions unsubscribe', test => {
   let request = {
     httpMethod: 'DELETE',
     path: '/subscriptions/b04or5',
   };
   // do not test outcome, we aren't interested in the result.
-  return makeRequest(request);
+  return makeRequest(request)
+      .then(res => {
+        test.equal(res.statusCode, 204, "delete subscription failed", res);
+        console.log(res.headers);
+      });
 });
 
 testPromise('subscriptions subscribe', test => {
@@ -144,7 +148,10 @@ testPromise('subscriptions unsubscribe', test => {
     path: '/subscriptions/b04or5',
   };
   return makeRequest(request)
-      .then(res => test.equal(res.statusCode, 204, "delete subscription failed", res));
+      .then(res => {
+        test.equal(res.statusCode, 204, "delete subscription failed", res);
+        console.log(res);
+      });
 });
 
 testPromise('reset API key', test => {

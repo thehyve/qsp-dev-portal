@@ -84,7 +84,7 @@ function ensureUser(identity, error, callback) {
     dynamoDb.get(params, (err, data) => {
         if (err) {
           console.log(`Failed to get user ${cognitoIdentityId} from DynamoDb`, err);
-          error(err)
+          error(err.message)
         } else if (data.Item === undefined) {
           createApiKey(identity, error, (key) => {
             const putParams = {
@@ -98,7 +98,7 @@ function ensureUser(identity, error, callback) {
             dynamoDb.put(putParams, (customerErr, customerData) => {
               if (customerErr) {
                 console.log(`Failed to insert user DynamoDB item for user ${cognitoIdentityId}`, customerErr);
-                error(customerErr)
+                error(customerErr.message)
               } else {
                 console.log(`Created new customer in ddb with id ${cognitoIdentityId}`);
                 callback(customerData)
@@ -131,7 +131,7 @@ function getIdentityFromMarketplaceId(marketplaceCustomerId, error, callback) {
     dynamoDb.query(params, (err, data) => {
         if (err) {
           console.log(`Failed to query marketplace customer ${marketplaceCustomerId}`, err);
-          error(err)
+          error(err.message)
         } else if (data.Items === undefined || data.Items.length === 0) {
           // no customer matching marketplaceCustomerId - this should be created during marketplace subscription redirect
           error(`No customer is registered in the developer portal for marketplace customer ID ${marketplaceCustomerId}`)
@@ -186,11 +186,14 @@ function unsubscribe(identity, usagePlanId, error, success) {
       usagePlanId
     };
     apigateway.deleteUsagePlanKey(params, (err) => {
-      if (err) {
+      if (!err) {
+        success();
+      } else if (err.code === 'NotFoundException') {
+        console.log(`Already unsubscribed for user ${identity.cognitoIdentityId}, API key ${keyId} and usage plan ${usagePlanId}`);
+        success()
+      } else {
         console.log(`Failed to delete usage plan key for user ${identity.cognitoIdentityId}, API key ${keyId} and usage plan ${usagePlanId}`, err);
         error(err.message);
-      } else {
-        success();
       }
     });
   });
@@ -308,7 +311,7 @@ function getApiKeyId(identity, error, callback) {
   dynamoDb.get(params, (err, data) => {
     if (err) {
       console.log(`Cannot get API key ID from DynamoDB user ${cognitoIdentityId}`);
-      error(err)
+      error(err.message)
     } else if (data.Item === undefined) {
       console.log(`No API Key found for customer ${cognitoIdentityId}`);
       callback(undefined);
@@ -480,7 +483,7 @@ function updateCustomerMarketplaceId(identity, marketplaceCustomerId, error, suc
     dynamoDb.update(params, (err) => {
         if (err) {
           console.log(`Failed to update marketplace customer ID ${marketplaceCustomerId} in database item for user ${identity.cognitoIdentityId}`, err);
-          error(err)
+          error(err.message)
         } else {
             ensureApiKey(identity, error, key => {
               updateApiKeyCustomerId(key.id, marketplaceCustomerId, error, success);
@@ -566,7 +569,6 @@ function getUserAttributes(identity, keyMap, error, callback) {
     error(`No valid sign in for ${identity.cognitoIdentityId}`);
     return;
   }
-  const attrsToGet = keyMap ? Object.keys(keyMap).filter(k => k !== 'username') : null;
   const params = {
     UserPoolId: match[1],
     AttributesToGet: null,
