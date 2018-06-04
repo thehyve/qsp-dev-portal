@@ -11,7 +11,7 @@ function handleSubscribe(event, usagePlan) {
   addSubscription(usagePlan.id)
       .then(() => window.location.reload())
       .catch(err => {
-          console.log('Failed to unsubscribe; reloading anyway', err);
+          console.log('Failed to subscribe; reloading anyway', err);
           window.location.reload();
       });
 }
