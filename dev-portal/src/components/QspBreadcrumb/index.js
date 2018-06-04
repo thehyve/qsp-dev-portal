@@ -26,9 +26,9 @@ export default class QspBreadcrumb extends PureComponent {
 
     if (this.isApiDetailsRoute()) {
       getApi(props.match.params.apiId)
-      .then(api => {
+      .then(data => {
         this.setState({
-          apiName: api.swagger.info.title
+          apiName: data.api.swagger.info.title
         })
       })
     }
@@ -39,23 +39,27 @@ export default class QspBreadcrumb extends PureComponent {
   }
 
   isHomeRoute() {
-    return this.props.pattern === '/'
+    return this.props.match.path === '/'
   }
 
   isGettingStartedRoute() {
-    return this.props.pattern === '/getting-started'
+    return this.props.match.path === '/getting-started'
   }
 
   isCaseStudiesRoute() {
-    return this.props.pattern === '/case-studies'
+    return this.props.match.path === '/case-studies'
   }
 
   isApisListRoute() {
-    return this.props.pattern === '/apis'
+    return this.props.match.path === '/apis'
   }
 
   isApiDetailsRoute() {
-    return this.props.pattern === '/apis/:apiId'
+    return this.props.match.path === '/apis/:apiId'
+  }
+
+  isAccountDetails() {
+    return this.props.match.path === '/account-details'
   }
 
   render() {
@@ -66,6 +70,7 @@ export default class QspBreadcrumb extends PureComponent {
         { this.isCaseStudiesRoute() ? <Breadcrumb.Section active><Breadcrumb.Divider icon='right chevron' />Case Studies</Breadcrumb.Section> : ''}
         { this.isApisListRoute() ? <Breadcrumb.Section active><Breadcrumb.Divider icon='right chevron' />APIs</Breadcrumb.Section> : ''}
         { this.isApiDetailsRoute() ? <Breadcrumb.Section><Breadcrumb.Section><Breadcrumb.Divider icon='right chevron' /><Link to="/apis">APIs</Link></Breadcrumb.Section><Breadcrumb.Section active><Breadcrumb.Divider icon='right chevron' />{ this.state.apiName }</Breadcrumb.Section></Breadcrumb.Section> : ''}
+        { this.isAccountDetails() ? <Breadcrumb.Section active><Breadcrumb.Divider icon='right chevron' />Account</Breadcrumb.Section> : ''}
       </Breadcrumb>
     </section>)
   }
