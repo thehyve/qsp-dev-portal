@@ -44,7 +44,7 @@ const ApiCard = ({usagePlan, api}) => (
     <Card.Meta>
       <span className='date'>Version {api.swagger.info.version}</span>
     </Card.Meta>
-    <Card.Description>{api.swagger.info.description}</Card.Description>
+    <Card.Description>{api.summary ? api.summary : api.swagger.info.description}</Card.Description>
 </Card.Content>
 <Card.Content extra>
   <a href={api.extraDoc} target="_blank" rel="noopener noreferrer">
