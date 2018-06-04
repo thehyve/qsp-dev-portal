@@ -1,15 +1,10 @@
 ---
 swagger: "2.0"
 info:
-  description: 'SOAP web service that provides access to food composition data collected
-    by EU project EuroFIR. See the PDF documentation for more information on syntax
-    and allowed requests.
+  description: |
+    SOAP web service that provides access to food composition data collected by EU project EuroFIR. See the PDF documentation for more information on syntax and allowed requests.
 
-    The accompanied PDF mentions that the content of a request should include an API user ID
-    and a signature made with a secret key. The API user ID is the literal `quisper` and the
-    secret key is the literal `e_x|p1nic}fkFg~0oikxoo"$>*2jtPO@|Z@!o^I?`. An example POST request could
-    be
-
+    The accompanied PDF mentions that the content of a request should include an API user ID and a signature made with a secret key. The API user ID is the literal `quisper` and the secret key is the literal `e_x|p1nic}fkFg~0oikxoo"$>*2jtPO@|Z@!o^I?`. An example POST request could be
     ```
     <?xml version="1.0" encoding="utf-8" ?>
     <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
@@ -26,7 +21,7 @@ info:
     </soap:Envelope>
     ```
 
-    See the PDF for operations other than GetContentInformation.'
+    See the PDF for operations other than GetContentInformation.
   version: "1.0.0"
   title: "EuroFIR-FoodTransport"
 host: "qsp-api.thehyve.net"
