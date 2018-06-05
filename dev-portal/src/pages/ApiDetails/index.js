@@ -1,10 +1,15 @@
 import React, { PureComponent } from 'react'
-import { Dimmer, Loader} from 'semantic-ui-react'
-import { getApi } from '../../services/api-catalog'
+import { Dimmer, Loader, Button, Segment} from 'semantic-ui-react'
+import {
+  addSubscription,
+  getApi,
+  lookupSubscriptions,
+  isSubscribed,
+  unsubscribe
+} from '../../services/api-catalog'
 import SwaggerUI from "../../components/SwaggerUI";
 import QspBreadcrumb from '../../components/QspBreadcrumb'
 import {getApiKey, isAuthenticated} from "../../services/self";
-import {lookupSubscriptions, isSubscribed} from '../../services/api-catalog'
 
 export default class ApiDetailsPage extends PureComponent {
   constructor(props) {
@@ -14,7 +19,8 @@ export default class ApiDetailsPage extends PureComponent {
       apiKey: null,
       apiKeyProp: null,
       isSubscribed: false,
-      usagePlanId: null
+      usagePlanId: null,
+      loading: true
     };
 
     getApi(props.match.params.apiId)
@@ -32,20 +38,49 @@ export default class ApiDetailsPage extends PureComponent {
   updateSubscription = () => {
     if (this.state.usagePlanId) {
       lookupSubscriptions().then(() => {
-        this.setState({isSubscribed: isSubscribed(this.state.usagePlanId) ? true : false})
+        this.setState({isSubscribed: isSubscribed(this.state.usagePlanId) ? true : false , loading: false})
       });
     }
   }
 
+  handleSubscribe = (event, usagePlanId) => {
+    event.preventDefault();
+    this.setState({loading: true});
+
+    addSubscription(usagePlanId)
+    .then(() => this.setState({loading: false, isSubscribed: true}))
+    .catch(err => {
+      console.log('Failed to subscribe; reloading anyway', err);
+      window.location.reload();
+    });
+  };
+
+  handleUnsubscribe = (event, usagePlanId) => {
+    event.preventDefault();
+    this.setState({loading: true});
+
+    unsubscribe(usagePlanId)
+    .then(() => this.setState({loading: false, isSubscribed: false}))
+    .catch(err => {
+      console.log('Failed to unsubscribe; reloading anyway', err);
+      window.location.reload();
+    });
+  };
+
   render() {
-    return (<div>
+    return  this.state.api ? (<div>
       <QspBreadcrumb {...this.props} />
-      <section className="swagger-section" style={{overflow: 'auto'}}>
-        {this.state.api ? <SwaggerUI spec={this.state.api.swagger} apiKey={this.state.apiKey} apiKeyProp={this.state.apiKeyProp} isSubscribed={this.state.isSubscribed}/> : (
-          <Dimmer active inverted>
-            <Loader content='Loading' />
-          </Dimmer>)}
-      </section>
-    </div>)
+
+      <Segment padded loading={this.state.loading}>
+          {this.state.isSubscribed? <Button fluid onClick={event => this.handleUnsubscribe(event, this.state.usagePlanId)}>Unsubscribe</Button>  : <Button primary fluid onClick={event => this.handleSubscribe(event, this.state.usagePlanId)}>Subscribe</Button> }
+
+        <section className="swagger-section" style={{overflow: 'auto'}}>
+               <SwaggerUI spec={this.state.api.swagger} apiKey={this.state.apiKey} apiKeyProp={this.state.apiKeyProp} isSubscribed={this.state.isSubscribed}/>
+        </section>
+      </Segment>
+    </div>) :
+    (<Dimmer active inverted>
+      <Loader content='Loading' />
+    </Dimmer>)
   }
 }
