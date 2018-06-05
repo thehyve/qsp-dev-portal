@@ -20,7 +20,7 @@ export default class ApiDetailsPage extends PureComponent {
       apiKeyProp: null,
       isSubscribed: false,
       usagePlanId: null,
-      loading: true
+      loading: false
     };
 
     getApi(props.match.params.apiId)
@@ -38,10 +38,10 @@ export default class ApiDetailsPage extends PureComponent {
   updateSubscription = () => {
     if (this.state.usagePlanId) {
       lookupSubscriptions().then(() => {
-        this.setState({isSubscribed: isSubscribed(this.state.usagePlanId) ? true : false , loading: false})
+        this.setState({isSubscribed: isSubscribed(this.state.usagePlanId) ? true : false})
       });
     }
-  }
+  };
 
   handleSubscribe = (event, usagePlanId) => {
     event.preventDefault();
@@ -72,7 +72,7 @@ export default class ApiDetailsPage extends PureComponent {
       <QspBreadcrumb {...this.props} />
 
       <Segment padded loading={this.state.loading}>
-          {this.state.isSubscribed? <Button fluid onClick={event => this.handleUnsubscribe(event, this.state.usagePlanId)}>Unsubscribe</Button>  : <Button primary fluid onClick={event => this.handleSubscribe(event, this.state.usagePlanId)}>Subscribe</Button> }
+          {isAuthenticated() && this.state.isSubscribed? <Button fluid onClick={event => this.handleUnsubscribe(event, this.state.usagePlanId)}>Unsubscribe</Button>  : isAuthenticated() ? (<Button primary fluid onClick={event => this.handleSubscribe(event, this.state.usagePlanId)}>Subscribe</Button>) : '' }
 
         <section className="swagger-section" style={{overflow: 'auto'}}>
                <SwaggerUI spec={this.state.api.swagger} apiKey={this.state.apiKey} apiKeyProp={this.state.apiKeyProp} isSubscribed={this.state.isSubscribed}/>
