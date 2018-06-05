@@ -1,9 +1,27 @@
 ---
 swagger: "2.0"
 info:
-  description: "SOAP web service that provides access to food composition data collected\
-    \ by EU project EuroFIR. See the PDF documentation for more information on syntax\
-    \ and allowed requests."
+  description: |
+    SOAP web service that provides access to food composition data collected by EU project EuroFIR. See the PDF documentation for more information on syntax and allowed requests.
+
+    The accompanied PDF mentions that the content of a request should include an API user ID and a signature made with a secret key. The API user ID is the literal `quisper` and the secret key is the literal `e_x|p1nic}fkFg~0oikxoo"$>*2jtPO@|Z@!o^I?`. An example POST request could be
+    ```
+    <?xml version="1.0" encoding="utf-8" ?>
+    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+      <soap:Header></soap:Header>
+      <soap:Body>
+        <GetContentInformation xmlns="http://eurofir.webservice.namespace">
+          <api_permission>uk</api_permission>
+          <api_userid>quisper</api_userid>
+          <fdql_sentence><![CDATA[<?xml version="1.0" encoding="UTF-8"?><FDQL_Sentence><MetaData><SchemaVersion>1.2</SchemaVersion><Schema>EuroFIR_Web_Service_FDQL_Sentence_version_1_2.xsd</Schema></MetaData><SelectClause><FieldName>Content</FieldName></SelectClause></FDQL_Sentence>]]></fdql_sentence>
+          <version>1.2</version>
+          <api_signature>e61ae60dca26a29fb379a0b21f57b6e840f4a2e9</api_signature>
+        </GetContentInformation>
+      </soap:Body>
+    </soap:Envelope>
+    ```
+
+    See the PDF for operations other than GetContentInformation.
   version: "1.0.0"
   title: "EuroFIR-FoodTransport"
 host: "qsp-api.thehyve.net"
@@ -16,48 +34,54 @@ paths:
       description: "Retrieve the WSDL specification of the EuroFIR Food Transport\
         \ SOAP service."
       produces:
-      - "application/xml"
+      - "text/xml"
       responses:
         200:
           description: "200 response"
-          schema:
-            $ref: "#/definitions/Empty"
           headers:
             Access-Control-Allow-Origin:
               type: "string"
     post:
       description: "Execute a SOAP request on the EuroFIR Food Transport SOAP service.\
         \ See the PDF documentation on the developer portal for more information."
+      consumes:
+      - 'text/xml'
       produces:
       - "text/xml"
       - "application/json"
       parameters:
+      - in: body
+        name: SOAP
+        schema:
+          type: "object"
       - name: "Content-Type"
         in: "header"
+        description: 'Mediatype that supports SOAP XML, e.g. text/xml.'
         required: true
         type: "string"
       - name: "Accept"
         in: "header"
+        description: 'Mediatype that includes text/xml.'
         required: true
         type: "string"
       responses:
         200:
           description: "Response data for the service."
-          schema:
-            $ref: "#/definitions/Empty"
           headers:
             Access-Control-Allow-Origin:
               type: "string"
         500:
           description: "Request failed."
-          schema:
-            $ref: "#/definitions/Empty"
         401:
           description: "Unauthorized: no API key was provided."
+          examples:
+            application/json: '{"message": "No API key was provided"}'
           schema:
             $ref: "#/definitions/Error"
         403:
           description: "Forbidden: API key was not authorized for this API."
+          examples:
+            application/json: '{"message": "API key not allowed"}'
           schema:
             $ref: "#/definitions/Error"
       security:
@@ -68,9 +92,6 @@ securityDefinitions:
     name: "x-api-key"
     in: "header"
 definitions:
-  Empty:
-    type: "object"
-    title: "Empty Schema"
   Error:
     type: "object"
     properties:
