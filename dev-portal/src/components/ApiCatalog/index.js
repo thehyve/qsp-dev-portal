@@ -9,7 +9,7 @@ export default class ApiCatalog extends PureComponent {
     const {catalog} = this.props;
     return (
         <Card.Group itemsPerRow={3} stackable doubling>
-          {catalog.map(usagePlan => usagePlan.apis.map(api => <ApiCard  usagePlan={usagePlan} api={api}/>))}
+          {catalog.map(usagePlan => usagePlan.apis.map(api => <ApiCard key={api.id} usagePlan={usagePlan} api={api}/>))}
         </Card.Group>
     );
   }

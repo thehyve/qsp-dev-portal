@@ -1,11 +1,7 @@
 import React, { PureComponent } from 'react'
 import { Link } from 'react-router-dom'
 import { Button, Card, Image, Dropdown, Dimmer, Loader} from 'semantic-ui-react'
-import {
-  addSubscription,
-  unsubscribe,
-  isSubscribed, lookupSubscriptions,
-} from '../../services/api-catalog'
+import {subscribe, unsubscribe, isSubscribed, lookupSubscriptions} from '../../services/api-catalog'
 import { isAuthenticated } from '../../services/self'
 import UsageModal from '../UsageModal'
 
@@ -19,48 +15,27 @@ export default class ApiCard extends PureComponent {
       message: ''
     };
     lookupSubscriptions().then(() => {
-      this.setState({isSubscribed: isSubscribed(this.props.usagePlan.id) ? true : false, isLoading: true})
+      this.setState({isSubscribed: isSubscribed(this.props.usagePlan.id), isLoading: false})
     });
   }
 
-  handleSubscribe = (event, usagePlan) => {
+  handleSubscribe = (event, usagePlan) => this.updateSubscription(event, usagePlan.id, subscribe, 'Subscribing');
+  handleUnsubscribe = (event, usagePlan) => this.updateSubscription(event, usagePlan.id, unsubscribe, 'Unsubscribing');
+
+  updateSubscription = (event, usagePlanId, subscriptionFunc, message) => {
     event.preventDefault();
+    this.setState({isLoading: true, message});
 
-    this.setState({isLoading: true, message: 'Subscribing'});
-    addSubscription(usagePlan.id)
-    .then(() => {
-      this.setState({isSubscribed: true})})
-    .catch(err => {
-      console.log('Failed to subscribe; reloading anyway', err);
-    })
-    .then(() => new Promise((resolve => {
-      window.setTimeout(() => resolve(), 3000);
-      this.setState({isLoading: false});
-    })))
-    .then(() => window.location.reload());
-  };
+    console.log(usagePlanId);
 
-
-  handleUnsubscribe = (event, usagePlan) => {
-    event.preventDefault();
-
-    this.setState({isLoading: true, message: 'Unsubscribing'});
-    unsubscribe(usagePlan.id)
-    .then((res) => {
-      this.setState({isSubscribed: false})})
-    .catch(err => {
-      console.log('Failed to unsubscribe; reloading anyway', err);
-    })
-    .then(() => new Promise((resolve => {
-      window.setTimeout(() => resolve(), 3000);
-      this.setState({isLoading: false});
-    })))
-    .then(() => window.location.reload());
+    subscriptionFunc(usagePlanId)
+        .catch(err => console.log('Failed to update subscription; reloading anyway', err))
+        .then(() => window.setTimeout(() => window.location.reload(), 5000));
   };
 
   render() {
     const {usagePlan, api} = this.props;
-    return  this.state.isLoading ? (
+    return !this.state.isLoading ? (
         <Card key={api.id} style={{textAlign: 'center'}}>
           <Link to={`apis/${api.id}`} style={{background: 'rgba(0, 0, 0, 0)', padding: '1em'}}>{ api.image ? <Image src={api.image} style={{margin: 'auto'}} /> : ''}</Link>
           <Card.Content>

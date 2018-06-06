@@ -108,7 +108,7 @@ export function isSubscribed(usagePlanId) {
  * @param {string} usagePlanId usage plan ID from the API Gateway.
  * @returns {Promise} subscription details from backend lambda.
  */
-export function addSubscription(usagePlanId) {
+export function subscribe(usagePlanId) {
   return lookupApiGatewayClient()
       .then(client => client.put('/subscriptions/' + usagePlanId, {}, {}));
 }
