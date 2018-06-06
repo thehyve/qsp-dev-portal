@@ -23,7 +23,7 @@ const usagePlans = [
         id: 'gms327o2ak',
         image: '/sam-logo.png',
         swagger: loadYaml('./FoodTransport.yaml'),
-        summary: 'SOAP web service that provides access to food composition data collected by EU project EuroFIR.',
+        summary: 'Food composition data, linking foods and nutrients, collected by EU project EuroFIR.',
         extraDoc: '/pdfs/FoodTransport.pdf'
       },
     ],
