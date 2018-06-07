@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react'
 import { Link } from 'react-router-dom'
 import { Button, Card, Image, Dropdown, Dimmer, Loader} from 'semantic-ui-react'
-import {subscribe, unsubscribe, isSubscribed, lookupSubscriptions} from '../../services/api-catalog'
+import {subscribe, unsubscribe, isSubscribed} from '../../services/api-catalog'
 import { isAuthenticated } from '../../services/self'
 import UsageModal from '../UsageModal'
 
@@ -13,32 +13,28 @@ export default class ApiCard extends PureComponent {
   };
 
   componentDidMount() {
-    if(isAuthenticated()) {
-      lookupSubscriptions()
-          .then(() => {
-            this.setState({
-              isSubscribed: isSubscribed(this.props.usagePlan.id),
-              isLoading: false
-            })
-          })
+    if (isAuthenticated()) {
+      isSubscribed(this.props.usagePlan.id)
+          .then(subscription => this.setState({isSubscribed: subscription, isLoading: false}))
           .catch(() => this.setState({isLoading: false}));
     } else {
       this.setState({isLoading: false})
     }
   }
 
-  handleSubscribe = (event, usagePlan) => this.updateSubscription(event, usagePlan.id, subscribe, 'Subscribing');
-  handleUnsubscribe = (event, usagePlan) => this.updateSubscription(event, usagePlan.id, unsubscribe, 'Unsubscribing');
+  handleSubscribe = (event) => this.updateSubscription(event, subscribe, 'Subscribing');
+  handleUnsubscribe = (event) => this.updateSubscription(event, unsubscribe, 'Unsubscribing');
 
-  updateSubscription = (event, usagePlanId, subscriptionFunc, message) => {
+  updateSubscription = (event, subscriptionFunc, message) => {
     event.preventDefault();
     this.setState({isLoading: true, message});
 
-    console.log(usagePlanId);
-
-    subscriptionFunc(usagePlanId)
-        .catch(err => console.log('Failed to update subscription; reloading anyway', err))
-        .then(() => window.setTimeout(() => window.location.reload(), 5000));
+    subscriptionFunc(this.props.usagePlan.id)
+        .then(this.setState({isSubscribed: !this.state.isSubscribed, isLoading: false}))
+        .catch(err => {
+          console.log('Failed to update subscription; reloading page', err);
+          window.setTimeout(() => window.location.reload(), 5000);
+        });
   };
 
   render() {

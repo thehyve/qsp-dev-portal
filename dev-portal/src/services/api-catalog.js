@@ -78,11 +78,6 @@ export function lookupSubscriptions() {
 }
 
 function fetchSubscriptions() {
-  if (subscriptions) {
-    return Promise.resolve(subscriptions);
-  }
-
-  // get subscribed usage plans
   return lookupApiGatewayClient()
       .then(client => client.get('/subscriptions', {}, {}, {}));
 }
@@ -97,10 +92,11 @@ export function clearSubscriptions() {
 /**
  * Whether the current user is subscribed to given usage plan.
  * @param {string} usagePlanId usage plan ID from the API Gateway.
- * @returns {boolean} whether the user is subscribed.
+ * @returns {Promise} whether the current user is subscribed to given usage plan.
  */
 export function isSubscribed(usagePlanId) {
-  return subscriptions && subscriptions.find && subscriptions.find(s => s.id === usagePlanId)
+  return lookupSubscriptions()
+      .then(subscriptions => subscriptions.find && subscriptions.find(s => s.id === usagePlanId))
 }
 
 /**

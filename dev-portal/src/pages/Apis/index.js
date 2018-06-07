@@ -6,10 +6,12 @@ import { loopkupCatalog, lookupSubscriptions } from '../../services/api-catalog'
 import QspBreadcrumb from '../../components/QspBreadcrumb'
 
 export default class ApisPage extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {};
+  state = {
+    catalog: null,
+    subscriptions: null,
+  };
 
+  componentDidMount() {
     loopkupCatalog()
         .then(catalog => this.setState({ catalog }));
 
