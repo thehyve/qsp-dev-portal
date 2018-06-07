@@ -24,17 +24,17 @@ export default class QspBreadcrumb extends PureComponent {
   constructor(props) {
     super(props);
 
-    if (this.isApiDetailsRoute()) {
-      getApi(props.match.params.apiId)
-      .then(data => {
-        this.setState({
-          apiName: data.api.swagger.info.title
-        })
-      })
-    }
-
     this.state = {
       isAuthenticated: isAuthenticated(),
+    }
+  }
+
+  componentDidMount() {
+    if (this.isApiDetailsRoute()) {
+      getApi(this.props.match.params.apiId)
+          .then(data => this.setState({
+              apiName: data.api.swagger.info.title
+            }))
     }
   }
 

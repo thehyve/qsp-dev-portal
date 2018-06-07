@@ -41,7 +41,7 @@ export default class QspHeader extends PureComponent {
     const {usagePlanId, token} = getQueryString();
 
     if (usagePlanId && token) {
-      this.state = {usagePlanId, token};
+      this.state = {isAuthenticated: isAuthenticated(), usagePlanId, token};
       if (this.state.isAuthenticated) {
         confirmMarketplaceSubscription(usagePlanId, token).then(() => {
           window.location.href = '/apis'
