@@ -73,7 +73,7 @@ export default class ApiCard extends PureComponent {
                     <Dropdown.Item onClick={event => this.handleUnsubscribe(event, usagePlan)}>Unsubscribe</Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>) :
-                <Button onClick={event => this.handleSubscribe(event, usagePlan)}>Subscribe</Button>}
+                <Button primary onClick={event => this.handleSubscribe(event, usagePlan)}>Subscribe</Button>}
             </Card.Content>) :
               ''}
         </Card>) :
