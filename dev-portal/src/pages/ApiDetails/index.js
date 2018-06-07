@@ -36,9 +36,9 @@ export default class ApiDetailsPage extends PureComponent {
   }
 
   lookupSubscription = () => {
-    if (this.state.usagePlanId) {
+    if (this.state.usagePlanId && isAuthenticated()) {
       lookupSubscriptions()
-          .then(() => this.setState({subscriptionStatus: isSubscribed(this.state.usagePlanId) ? 'subscribed' : 'unsubscribed'}))
+          .then(() => this.setState({subscriptionStatus: isSubscribed(this.state.usagePlanId)}))
     }
   };
 
@@ -55,9 +55,9 @@ export default class ApiDetailsPage extends PureComponent {
   };
 
   subscriptionButton() {
-    if (!this.state.subscriptionStatus) {
+    if (!isAuthenticated()) {
       return '';
-    } else if (this.state.subscriptionStatus === 'subscribed') {
+    } else if (this.state.subscriptionStatus) {
       return <Button fluid onClick={this.handleUnsubscribe}>Unsubscribe</Button>
     } else {
       return <Button primary fluid onClick={this.handleSubscribe}>Subscribe</Button>
@@ -71,7 +71,7 @@ export default class ApiDetailsPage extends PureComponent {
       <Segment padded>
         {this.subscriptionButton()}
         <section className="swagger-section" style={{overflow: 'auto'}}>
-               <SwaggerUI spec={this.state.api.swagger} apiKey={this.state.apiKey} apiKeyProp={this.state.apiKeyProp} isSubscribed={this.state.subscriptionStatus === 'subscribed'}/>
+          <SwaggerUI spec={this.state.api.swagger} apiKey={this.state.apiKey} apiKeyProp={this.state.apiKeyProp} isSubscribed={this.state.subscriptionStatus}/>
         </section>
       </Segment>
     </div>) :

@@ -6,17 +6,25 @@ import { isAuthenticated } from '../../services/self'
 import UsageModal from '../UsageModal'
 
 export default class ApiCard extends PureComponent {
+  state = {
+    isSubscribed: false,
+    isLoading: true,
+    message: ''
+  };
 
-  constructor(props) {
-    super();
-    this.state = {
-      isSubscribed: false,
-      isLoading: true,
-      message: ''
-    };
-    lookupSubscriptions().then(() => {
-      this.setState({isSubscribed: isSubscribed(this.props.usagePlan.id), isLoading: false})
-    });
+  componentDidMount() {
+    if(isAuthenticated()) {
+      lookupSubscriptions()
+          .then(() => {
+            this.setState({
+              isSubscribed: isSubscribed(this.props.usagePlan.id),
+              isLoading: false
+            })
+          })
+          .catch(() => this.setState({isLoading: false}));
+    } else {
+      this.setState({isLoading: false})
+    }
   }
 
   handleSubscribe = (event, usagePlan) => this.updateSubscription(event, usagePlan.id, subscribe, 'Subscribing');
@@ -61,7 +69,7 @@ export default class ApiCard extends PureComponent {
                     <Dropdown.Item onClick={event => this.handleUnsubscribe(event, usagePlan)}>Unsubscribe</Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>) :
-                <Button onClick={event => this.handleSubscribe(event, usagePlan)}>Subscribe</Button>}
+                <Button primary onClick={event => this.handleSubscribe(event, usagePlan)}>Subscribe</Button>}
             </Card.Content>) :
               ''}
         </Card>) :
