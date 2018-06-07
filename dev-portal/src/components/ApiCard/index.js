@@ -6,26 +6,22 @@ import { isAuthenticated } from '../../services/self'
 import UsageModal from '../UsageModal'
 
 export default class ApiCard extends PureComponent {
-
-  constructor(props) {
-    super();
-    this.state = {
-      isSubscribed: false,
-      isLoading: true,
-      message: ''
-    };
-  }
+  state = {
+    isSubscribed: false,
+    isLoading: true,
+    message: ''
+  };
 
   componentDidMount() {
     if(isAuthenticated()) {
       lookupSubscriptions()
-      .then(() => {
-        this.setState({
-          isSubscribed: isSubscribed(this.props.usagePlan.id),
-          isLoading: false
-        })
-      })
-      .catch(() => this.setState({isLoading: false}));
+          .then(() => {
+            this.setState({
+              isSubscribed: isSubscribed(this.props.usagePlan.id),
+              isLoading: false
+            })
+          })
+          .catch(() => this.setState({isLoading: false}));
     } else {
       this.setState({isLoading: false})
     }
