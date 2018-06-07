@@ -14,9 +14,21 @@ export default class ApiCard extends PureComponent {
       isLoading: true,
       message: ''
     };
-    lookupSubscriptions().then(() => {
-      this.setState({isSubscribed: isSubscribed(this.props.usagePlan.id), isLoading: false})
-    });
+  }
+
+  componentDidMount() {
+    if(isAuthenticated()) {
+      lookupSubscriptions()
+      .then(() => {
+        this.setState({
+          isSubscribed: isSubscribed(this.props.usagePlan.id),
+          isLoading: false
+        })
+      })
+      .catch(() => this.setState({isLoading: false}));
+    } else {
+      this.setState({isLoading: false})
+    }
   }
 
   handleSubscribe = (event, usagePlan) => this.updateSubscription(event, usagePlan.id, subscribe, 'Subscribing');
