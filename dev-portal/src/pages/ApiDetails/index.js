@@ -55,7 +55,7 @@ export default class ApiDetailsPage extends PureComponent {
   };
 
   subscriptionButton() {
-    if (!this.state.subscriptionStatus) {
+    if (this.state.subscriptionStatus === null) {
       return '';
     } else if (this.state.subscriptionStatus === 'subscribed') {
       return <Button fluid onClick={this.handleUnsubscribe}>Unsubscribe</Button>
