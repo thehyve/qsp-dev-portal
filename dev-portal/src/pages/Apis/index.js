@@ -7,6 +7,7 @@ import QspBreadcrumb from '../../components/QspBreadcrumb'
 
 export default class ApisPage extends PureComponent {
   state = {
+    isAuthenticated: isAuthenticated(),
     catalog: null,
     subscriptions: null,
   };
@@ -15,16 +16,17 @@ export default class ApisPage extends PureComponent {
     loopkupCatalog()
         .then(catalog => this.setState({ catalog }));
 
-    if (isAuthenticated()) {
+    if (this.state.isAuthenticated) {
       lookupSubscriptions()
-          .then(subscriptions => this.setState({ subscriptions }));
+          .then(subscriptions => this.setState({ subscriptions: subscriptions.map(s => s.id) }));
     }
   }
 
   render() {
+    const {catalog, isAuthenticated, subscriptions} = this.state;
     return (<div>
       <QspBreadcrumb {...this.props} />
-      {this.state.catalog && (!isAuthenticated() || this.state.subscriptions) ? <ApiCatalog catalog={this.state.catalog} /> : (<Dimmer active inverted>
+      {catalog && (!isAuthenticated || subscriptions) ? <ApiCatalog catalog={catalog} subscriptions={subscriptions}/> : (<Dimmer active inverted>
         <Loader content='Loading' />
       </Dimmer>)}
     </div>)
