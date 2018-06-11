@@ -9,7 +9,7 @@ import Recaptcha from 'react-recaptcha'
  export default class Register extends PureComponent {
   state = {
     isSubmitting: false,
-    signedIn: false,
+    isAuthenticated: false,
     errorMessage: '',
     email: '',
     isOpen: false,
@@ -35,12 +35,12 @@ import Recaptcha from 'react-recaptcha'
       {Name: "custom:apiClient", Value: data.get('apiClient').trim()},
     ])
     .then(() => {
-      this.setState({signedIn: true, isSubmitting: false, errorMessage: ''});
+      this.setState({isAuthenticated: true, isSubmitting: false, errorMessage: ''});
       const {usagePlanId, token} = this.props;
       if (usagePlanId && token) {
         return confirmMarketplaceSubscription(usagePlanId, token)
       }
-      this.props.onChange({signedIn: true});
+      this.props.onChange({isAuthenticated: true});
     })
     .catch((e) => this.setState({errorMessage: e.message, isSubmitting: false}))
   };
@@ -98,7 +98,7 @@ import Recaptcha from 'react-recaptcha'
  render() {
     const { isOpen } = this.state;
 
-    return this.state.signedIn ? <Redirect to='/apis' /> : (
+    return this.state.isAuthenticated ? <Redirect to='/apis' /> : (
       <Modal
         size='small'
         open={isOpen}

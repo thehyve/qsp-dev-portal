@@ -21,13 +21,9 @@ import { isAuthenticated } from '../../services/self'
 import { getApi } from '../../services/api-catalog'
 
 export default class QspBreadcrumb extends PureComponent {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      isAuthenticated: isAuthenticated(),
-    }
-  }
+  state = {
+    isAuthenticated: isAuthenticated(),
+  };
 
   componentDidMount() {
     if (this.isApiDetailsRoute()) {

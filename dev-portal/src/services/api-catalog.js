@@ -96,7 +96,7 @@ export function clearSubscriptions() {
  */
 export function isSubscribed(usagePlanId) {
   return lookupSubscriptions()
-      .then(subscriptions => subscriptions.find && subscriptions.find(s => s.id === usagePlanId))
+      .then(subscriptions => subscriptions.find && subscriptions.find(s => s.id === usagePlanId) !== undefined)
 }
 
 /**

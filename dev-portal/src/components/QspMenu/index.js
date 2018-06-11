@@ -23,14 +23,13 @@ import {isAuthenticated, logout, getApiKey} from "../../services/self"
 
 
 export default class QspMenu extends PureComponent {
-
-  constructor(props) {
-    super(props);
-    this.state = {signedIn: isAuthenticated(), apiKey: {}};
-  }
+  state = {
+    isAuthenticated: isAuthenticated(),
+    apiKey: {}
+  };
 
   handleLogout() {
-    const _state = {signedIn: false, apiKey: {}};
+    const _state = {isAuthenticated: false, apiKey: {}};
     logout();
     this.setState(_state);
     this.props.onChange(_state);
@@ -54,7 +53,7 @@ export default class QspMenu extends PureComponent {
   }
 
   render() {
-    return !this.state.signedIn ? <Redirect to='/'/> : (
+    return !this.state.isAuthenticated ? <Redirect to='/'/> : (
       <Menu className='QspMenu' secondary>
         <Menu.Item name='browse'>
           <Link to="/"><Image src={logo} wrapped/></Link>
@@ -64,7 +63,7 @@ export default class QspMenu extends PureComponent {
           <Menu.Item href='/apis'>
             API Directory
           </Menu.Item>
-          {!this.state.signedIn ? '' : (
+          {!this.state.isAuthenticated ? '' : (
             <Dropdown item text='My Account'>
               <Dropdown.Menu>
                 <Dropdown.Item href='/account-details'>

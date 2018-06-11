@@ -5,15 +5,11 @@ import "react-datepicker/dist/react-datepicker.css";
 let chartId = 0;
 
 export default class ReactChart extends PureComponent {
-
-  constructor(props) {
-    super(props);
-    this.state = state = {
-      chart: undefined,
-      id: 'react-chart-' + (chartId++),
-      previousChart: undefined,
-    };
-  }
+  state = {
+    chart: undefined,
+    id: 'react-chart-' + (chartId++),
+    previousChart: undefined,
+  };
 
   componentDidMount() {
     this.handleUpdate();
