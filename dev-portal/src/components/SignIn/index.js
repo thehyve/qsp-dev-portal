@@ -21,10 +21,9 @@ import {login} from '../../services/self'
 import {confirmMarketplaceSubscription} from '../../services/api-catalog'
 
 export default class SignIn extends PureComponent {
-
   state = {
     isSubmitting: false,
-    signedIn: false,
+    isAuthenticated: false,
     errorMessage: '',
     isOpen: false
   };
@@ -40,7 +39,7 @@ export default class SignIn extends PureComponent {
 
     login(data.get('email'), data.get('password'))
       .then(() => {
-        this.setState({signedIn: true, isSubmitting: false, errorMessage: ''});
+        this.setState({isAuthenticated: true, isSubmitting: false, errorMessage: ''});
 
         const {usagePlanId, token} = this.props;
 
@@ -48,7 +47,7 @@ export default class SignIn extends PureComponent {
           return confirmMarketplaceSubscription(usagePlanId, token)
         }
 
-        this.props.onChange({signedIn: true});
+        this.props.onChange({isAuthenticated: true});
       })
       .catch((e) => this.setState({errorMessage: e.message, isSubmitting: false}))
   }
@@ -56,7 +55,7 @@ export default class SignIn extends PureComponent {
   render() {
     const {isOpen} = this.state;
 
-    return this.state.signedIn ? <Redirect to='/'/> : (
+    return this.state.isAuthenticated ? <Redirect to='/'/> : (
       <Modal
         size='small'
         open={isOpen}

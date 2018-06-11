@@ -86,7 +86,7 @@ function fetchSubscriptions() {
  * Clear subscriptions cache.
  */
 export function clearSubscriptions() {
-  subscriptions = null
+  subscriptions = null;
 }
 
 /**
@@ -96,7 +96,7 @@ export function clearSubscriptions() {
  */
 export function isSubscribed(usagePlanId) {
   return lookupSubscriptions()
-      .then(subscriptions => subscriptions.find && subscriptions.find(s => s.id === usagePlanId))
+      .then(subscriptions => subscriptions.find && subscriptions.find(s => s.id === usagePlanId) !== undefined)
 }
 
 /**
@@ -106,7 +106,11 @@ export function isSubscribed(usagePlanId) {
  */
 export function subscribe(usagePlanId) {
   return lookupApiGatewayClient()
-      .then(client => client.put('/subscriptions/' + usagePlanId, {}, {}));
+      .then(client => client.put('/subscriptions/' + usagePlanId, {}, {}))
+      .then(res => {
+        clearSubscriptions();
+        return res;
+      });
 }
 
 /**
@@ -132,7 +136,11 @@ export function confirmMarketplaceSubscription(usagePlanId, token) {
  */
 export function unsubscribe(usagePlanId) {
   return lookupApiGatewayClient()
-      .then(client => client.delete(`/subscriptions/${usagePlanId}`, {}, {}));
+      .then(client => client.delete(`/subscriptions/${usagePlanId}`, {}, {}))
+      .then(res => {
+        clearSubscriptions();
+        return res;
+      });
 }
 
 /**

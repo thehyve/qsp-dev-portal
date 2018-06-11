@@ -9,21 +9,17 @@ import {
 import ChangePassword from "../../components/ChangePassword";
 
 export default class AccountDetails extends PureComponent {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      isAuthenticated: isAuthenticated(),
-      isLoaded: false,
-      email: '',
-      name: '',
-      organisation: '',
-      apiClient: '',
-      errorMessage: '',
-      successMessage: '',
-      validValues: {},
-    };
-  }
+  state = {
+    isAuthenticated: isAuthenticated(),
+    isLoaded: false,
+    email: '',
+    name: '',
+    organisation: '',
+    apiClient: '',
+    errorMessage: '',
+    successMessage: '',
+    validValues: {},
+  };
 
   handleChanges = (event ) => {
     event.preventDefault();

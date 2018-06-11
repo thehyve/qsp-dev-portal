@@ -2,7 +2,12 @@ import React, { PureComponent } from 'react'
 import { Dimmer, Loader } from 'semantic-ui-react'
 import ApiCatalog from '../../components/ApiCatalog'
 import { isAuthenticated } from '../../services/self'
-import { loopkupCatalog, lookupSubscriptions } from '../../services/api-catalog'
+import {
+  loopkupCatalog,
+  lookupSubscriptions,
+  subscribe,
+  unsubscribe
+} from '../../services/api-catalog'
 import QspBreadcrumb from '../../components/QspBreadcrumb'
 
 export default class ApisPage extends PureComponent {
@@ -22,13 +27,20 @@ export default class ApisPage extends PureComponent {
     }
   }
 
+  handleSubscribe = (usagePlan) => subscribe(usagePlan.id)
+      .then(() => this.setState({subscriptions: [...this.state.subscriptions, usagePlan.id]}));
+  handleUnsubscribe = (usagePlan) => unsubscribe(usagePlan.id)
+      .then(() => this.setState({subscriptions: this.state.subscriptions.filter(s => s !== usagePlan.id)}));
+
   render() {
     const {catalog, isAuthenticated, subscriptions} = this.state;
-    return (<div>
+    return <div>
       <QspBreadcrumb {...this.props} />
-      {catalog && (!isAuthenticated || subscriptions) ? <ApiCatalog catalog={catalog} subscriptions={subscriptions}/> : (<Dimmer active inverted>
-        <Loader content='Loading' />
-      </Dimmer>)}
-    </div>)
+      {catalog && (!isAuthenticated || subscriptions) ? (
+          <ApiCatalog catalog={catalog} subscriptions={subscriptions} onSubscribe={this.handleSubscribe} onUnsubscribe={this.handleUnsubscribe}/>) : (
+          <Dimmer active inverted>
+            <Loader content='Loading' />
+          </Dimmer>)}
+    </div>;
   }
 }
