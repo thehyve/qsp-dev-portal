@@ -37,7 +37,7 @@ export default class ApiDetailsPage extends PureComponent {
   lookupSubscription = () => {
     if (this.state.usagePlanId && this.state.isAuthenticated) {
       isSubscribed(this.state.usagePlanId)
-          .then(subscription => this.setState({isSubscribed: subscription}))
+          .then(isSubscribed => this.setState({isSubscribed}))
     }
   };
 
