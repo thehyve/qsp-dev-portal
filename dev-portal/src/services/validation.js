@@ -1,4 +1,7 @@
 export function validateEmail(val) {
+  if (!val) {
+    return {isValid: false, errorMessage: 'No email address provided', val};
+  }
   const atSymbolIndex = val.indexOf('@');
   const dotSymbolIndex = val.lastIndexOf('.');
 
@@ -21,12 +24,11 @@ export function validateEmail(val) {
   return {isValid, errorMessage, val}
 }
 
-
 export function validateNonEmpty(key , val) {
   let  errorMessage  = '';
   let isValid = true;
 
-  if (val.length === 0) {
+  if (!val) {
     isValid = false;
     errorMessage = key + ' may not be empty';
   } else if (val.length > 254) {
@@ -40,7 +42,7 @@ export function validatePassword(val) {
   let errorMessage = '';
   let isValid = true;
 
-  if (val.length < 8) {
+  if (!val || val.length < 8) {
     isValid = false;
     errorMessage = 'Password must contain at least 8 characters.';
   }
@@ -51,8 +53,7 @@ export function validatePassword(val) {
 export function validateConfirmPassword(password, val) {
   let isValid = true;
   let errorMessage = '';
-  if(password !== val)
-  {
+  if(password !== val) {
     isValid = false;
     errorMessage = 'Confirmed password does not match the password provided';
   }
