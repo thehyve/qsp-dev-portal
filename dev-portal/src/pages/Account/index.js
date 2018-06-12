@@ -67,7 +67,7 @@ export default class AccountDetails extends PureComponent {
         return validateApiClient(value);
       default:
         // no validation
-        return {isValid:true , errorMessage:''}
+        return {isValid: true, errorMessage: ''}
     }
   };
 
@@ -90,7 +90,7 @@ export default class AccountDetails extends PureComponent {
         <h2>Account Details</h2>
         <Form noValidate loading={!this.state.isLoaded} onSubmit={this.handleSubmit} error={!!this.state.errorMessage} success={!!this.state.successMessage}>
           <Message success content={this.state.successMessage}/>
-          <Form.Input type='email' label='Email' name='email'  value={email} readOnly/>
+          <Form.Input type='email' label='Email' name='email'  value={email} readOnly transparent/>
           <Form.Input label='Name' name='name' value={name} error={this.isError('name')} onChange={this.handleChanges}/>
           <Form.Input label='Organisation' name='organisation' value={organisation} onChange={this.handleChanges}/>
           <Form.Input label='API Client' name='apiClient' error={this.isError('apiClient')} value={apiClient} onChange={this.handleChanges} />

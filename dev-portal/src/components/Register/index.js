@@ -5,49 +5,67 @@ import { register } from '../../services/self'
 import { validateEmail, validateNonEmpty, validatePassword, validateConfirmPassword, validateApiClient} from '../../services/validation'
 import { confirmMarketplaceSubscription } from '../../services/api-catalog'
 import Recaptcha from 'react-recaptcha'
+import {isEmpty, toObject} from "../../services/util";
 
  export default class Register extends PureComponent {
   state = {
     isSubmitting: false,
     signedIn: false,
     errorMessage: '',
+    errors: {},
     email: '',
     isOpen: false,
-    validValues: {},
     password: '',
-    confirmPassword: '',
     isValidCaptcha: false,
     sitekey: '6LeVj1YUAAAAAIGyrxguyOM0sgeiqpwCGmeIT-hJ'
   };
 
-  open = () => this.setState({ isSubmitting: false, errorMessage: '', validValues: {}, isOpen: true, password: '', confirmPassword: '', isValidCaptcha: false, email: ''});
-  close = () => this.setState({ isOpen: false });
+  open = () => this.setState({isSubmitting: false, errorMessage: '', isOpen: true, password: '', isValidCaptcha: false});
+  close = (event) => {
+    // Ignore escapes: they interact badly with forms
+    if (event.type === 'keydown' && event.keyCode === 27) return;
+    this.setState({ isOpen: false });
+  };
 
   handleRegister = (event) => {
     event.preventDefault();
-    this.setState({isSubmitting: true});
 
-    const data = new FormData(event.target);
-    register(data.get('email').trim(), data.get('password'), [
-      {Name: "email", Value: data.get('email').trim()},
-      {Name: "name", Value: data.get('name').trim()},
-      {Name: "custom:organisation", Value: data.get('organisation').trim()},
-      {Name: "custom:apiClient", Value: data.get('apiClient').trim()},
-    ])
-    .then(() => {
-      this.setState({signedIn: true, isSubmitting: false, errorMessage: ''});
-      const {usagePlanId, token} = this.props;
-      if (usagePlanId && token) {
-        return confirmMarketplaceSubscription(usagePlanId, token)
-      }
-      this.props.onChange({signedIn: true});
-    })
-    .catch((e) => this.setState({errorMessage: e.message, isSubmitting: false}))
+    const errors = ['email', 'name', 'password', 'confirmPassword', 'organisation', 'apiClient']
+        .map(name => ({...this.doValidation(name, this.state[name] || ''), name}))
+        .filter(s => !s.isValid)
+        .reduce(toObject(({name}) => name, ({errorMessage}) => errorMessage), {});
+
+    if (!this.state.isValidCaptcha) {
+      errors.captcha = 'Captcha is not completed';
+    }
+
+    if (!isEmpty(errors)) {
+      this.setState({errors});
+      return;
+    }
+
+    this.setState({errors: {}, errorMessage: '', isSubmitting: true});
+
+    const {email, name, organisation, apiClient, password} = this.state;
+    const cognitoValues = {
+      email, name,
+      'custom:organisation': organisation,
+      'custom:apiClient': apiClient,
+    };
+    register(email.trim(), password, cognitoValues)
+        .then(() => {
+          this.setState({signedIn: true, isSubmitting: false});
+          const {usagePlanId, token} = this.props;
+          if (usagePlanId && token) {
+            return confirmMarketplaceSubscription(usagePlanId, token)
+          }
+          this.props.onChange({signedIn: true});
+        })
+        .catch(e => this.setState({errorMessage: e.message, isSubmitting: false}))
   };
 
 
-  getValidator = (event) => {
-    const {name, value} = event.target;
+  doValidation = (name, value) => {
     switch(name) {
       case 'email':
         return validateEmail(value);
@@ -61,42 +79,43 @@ import Recaptcha from 'react-recaptcha'
         return validateApiClient(value);
       default:
         // no validation
-        return {isValid:true , errorMessage:''}
+        return {isValid: true, errorMessage: ''}
     }
-  };
-
-  updateValidity = (args) => {
-    if (Object.values(args.validValues).every(v => v === true)) {
-      args.errorMessage = '';
-    }
-    this.setState(args);
   };
 
   validate = (event) => {
     event.preventDefault();
     const {name:key, value} = event.target;
-    this.setState({[key]: value})
-    const validValues = Object.assign({}, this.state.validValues)
-    const {isValid , errorMessage , val } = this.getValidator(event)
-    validValues[key] = isValid
-    this.updateValidity({validValues , errorMessage , val});
+    this.setState({[key]: value});
+    let {isValid, errorMessage} = this.doValidation(key, value);
+
+    // valid and error message does not need to change
+    if (isValid && !this.state.errors.hasOwnProperty(key)) {
+      return;
+    }
+
+    const errors = {...this.state.errors};
+    if (isValid) {
+      delete errors[key];
+    } else {
+      errors[key] = errorMessage;
+    }
+    this.setState({errors});
   };
 
-  isError = (element) => {
-    return element in this.state.validValues && !this.state.validValues[element]
-  };
+  isError = (element) => this.state.errors.hasOwnProperty(element);
 
-  isSubmitDisabled = () => {
-    const { email, name, password, confirmPassword } = this.state.validValues;
-    return email !== true || name !== true || password !== true || confirmPassword !== true || this.state.isValidCaptcha !== true;
-  };
+  formHasError = () => this.state.errorMessage.length > 0 || !isEmpty(this.state.errors);
 
   verifyCaptcha = () => {
-    this.setState({isValidCaptcha: true})
+    const errors = {...this.state.errors};
+    delete errors.captcha;
+    this.setState({isValidCaptcha: true, errors})
   };
 
  render() {
-    const { isOpen } = this.state;
+    const { isOpen, errors, errorMessage, isSubmitting, email, sitekey } = this.state;
+    const errorList = Object.values(errors);
 
     return this.state.signedIn ? <Redirect to='/apis' /> : (
       <Modal
@@ -108,23 +127,23 @@ import Recaptcha from 'react-recaptcha'
       >
         <Modal.Header>Register</Modal.Header>
         <Modal.Content>
-          <Form onSubmit={this.handleRegister} error={!!this.state.errorMessage} loading={this.state.isSubmitting} noValidate>
-            <Form.Input type='email' label='Email' name='email' error={this.isError('email')} onBlur={this.validate} />
+          <Form onSubmit={this.handleRegister} error={this.formHasError()} loading={isSubmitting} noValidate>
+            <Form.Input type='email' label='Email' name='email' error={this.isError('email')} onBlur={this.validate} required />
             <Form.Input label='Name' name='name' error={this.isError('name')}  onBlur={this.validate} required />
             <Form.Input label='Organisation' name='organisation' error={this.isError('organisation')} />
             <Form.Input label='API client' name='apiClient' error={this.isError('apiClient')} onBlur={this.validate}>
               <input/>
-              <Label basic>:{this.state.email ? this.state.email : 'me@example.com'}</Label>
+              <Label basic>:{email ? email : 'me@example.com'}</Label>
             </Form.Input>
-            <Form.Input type='password' label='Password' name='password' autoComplete='false' error={this.isError('password')} onBlur={this.validate} />
-            <Form.Input type='password' label='Confirm password' name='confirmPassword' autoComplete='false' error={this.isError('confirmPassword')} onChange={this.validate}/>
+            <Form.Input type='password' label='Password' name='password' autoComplete='false' error={this.isError('password')} onBlur={this.validate} required />
+            <Form.Input type='password' label='Confirm password' name='confirmPassword' autoComplete='false' error={this.isError('confirmPassword')} onFocus={this.validate} onChange={this.validate} required />
             <Recaptcha
-              sitekey={this.state.sitekey}
+              sitekey={sitekey}
               verifyCallback={ this.verifyCaptcha } />
-            <Message error content={this.state.errorMessage} />
+            <Message error header={errorList.length ? 'There are some errors in your form' : undefined} content={errorMessage ? errorMessage : undefined} list={errorList.length ? errorList : undefined} />
             <Modal.Actions style={{textAlign: 'right'}}>
               <Button type='button' onClick={this.close}>Close</Button>
-              <Button primary type='submit' disabled={this.isSubmitDisabled()}>Register</Button>
+              <Button primary type='submit'>Register</Button>
             </Modal.Actions>
           </Form>
         </Modal.Content>
