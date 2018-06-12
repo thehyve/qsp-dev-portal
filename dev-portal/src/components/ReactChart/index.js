@@ -20,12 +20,12 @@ export default class ReactChart extends PureComponent {
     this.handleUpdate();
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
+  componentDidUpdate() {
     this.handleUpdate();
   }
 
   handleUpdate() {
-    if  (this.props.chart === this.state.previousChart) {
+    if (this.props.chart === this.state.previousChart) {
       return;
     }
 
@@ -38,7 +38,7 @@ export default class ReactChart extends PureComponent {
       let chart = new Chart(ctx, this.props.chart);
       this.setState({chart, previousChart: this.props.chart});
     } else {
-      this.setState({chart: undefined});
+      this.setState({chart: undefined, previousChart: this.props.chart});
     }
   }
 
