@@ -67,7 +67,7 @@ export default class AccountDetails extends PureComponent {
         return validateApiClient(value);
       default:
         // no validation
-        return {isValid:true , errorMessage:''}
+        return {isValid: true, errorMessage:''}
     }
   };
 

@@ -18,13 +18,13 @@ export function validateEmail(val) {
     isValid = false;
     errorMessage = 'Domain dot (.) placement invalid.';
   }
-  return { isValid, errorMessage, val}
+  return {isValid, errorMessage, val}
 }
 
 
 export function validateNonEmpty(key , val) {
   let  errorMessage  = '';
-  let isValid =true;
+  let isValid = true;
 
   if (val.length === 0) {
     isValid = false;
@@ -33,7 +33,7 @@ export function validateNonEmpty(key , val) {
     isValid = false;
     errorMessage = key + ' is too long';
   }
-  return {isValid, errorMessage , val};
+  return {isValid, errorMessage, val};
 }
 
 export function validatePassword(val) {
@@ -42,9 +42,9 @@ export function validatePassword(val) {
 
   if (val.length < 8) {
     isValid = false;
-    errorMessage = 'Password must be longer than 8 characters.';
+    errorMessage = 'Password must contain at least 8 characters.';
   }
-  return{isValid, errorMessage, val};
+  return {isValid, errorMessage, val};
 
 }
 
@@ -66,5 +66,5 @@ export function validateApiClient(val) {
     isValid = false;
     errorMessage = 'API client should contain only alphanumeric characters, dashes or underscores.'
   }
-  return {isValid, errorMessage , val};
+  return {isValid, errorMessage, val};
 }

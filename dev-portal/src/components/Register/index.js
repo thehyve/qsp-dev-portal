@@ -25,14 +25,34 @@ import Recaptcha from 'react-recaptcha'
 
   handleRegister = (event) => {
     event.preventDefault();
-    this.setState({isSubmitting: true});
 
     const data = new FormData(event.target);
+    const validations = ['email', 'name', 'password', 'confirmPassword', 'organisation', 'apiClient']
+        .map(name => ({...this.doValidation(name, data.get(name)), name}));
+
+    const {errorMessage} = validations.find(s => !s.isValid);
+
+    if (errorMessage) {
+      const validValues = validations.reduce((obj, {name, isValid}) => {
+        obj[name] = isValid;
+        return obj;
+      }, {});
+      this.setState({errorMessage, validValues});
+      return;
+    }
+
+    if (!this.state.isValidCaptcha) {
+      this.setState({errorMessage: 'Please enter captcha.'});
+      return;
+    }
+
+    this.setState({isSubmitting: true});
+
     register(data.get('email').trim(), data.get('password'), [
-      {Name: "email", Value: data.get('email').trim()},
-      {Name: "name", Value: data.get('name').trim()},
-      {Name: "custom:organisation", Value: data.get('organisation').trim()},
-      {Name: "custom:apiClient", Value: data.get('apiClient').trim()},
+      {Name: 'email', Value: data.get('email').trim()},
+      {Name: 'name', Value: data.get('name').trim()},
+      {Name: 'custom:organisation', Value: data.get('organisation').trim()},
+      {Name: 'custom:apiClient', Value: data.get('apiClient').trim()},
     ])
     .then(() => {
       this.setState({signedIn: true, isSubmitting: false, errorMessage: ''});
@@ -46,8 +66,7 @@ import Recaptcha from 'react-recaptcha'
   };
 
 
-  getValidator = (event) => {
-    const {name, value} = event.target;
+  doValidation = (name, value) => {
     switch(name) {
       case 'email':
         return validateEmail(value);
@@ -61,34 +80,29 @@ import Recaptcha from 'react-recaptcha'
         return validateApiClient(value);
       default:
         // no validation
-        return {isValid:true , errorMessage:''}
+        return {isValid: true, errorMessage: ''}
     }
-  };
-
-  updateValidity = (args) => {
-    if (Object.values(args.validValues).every(v => v === true)) {
-      args.errorMessage = '';
-    }
-    this.setState(args);
   };
 
   validate = (event) => {
     event.preventDefault();
     const {name:key, value} = event.target;
-    this.setState({[key]: value})
-    const validValues = Object.assign({}, this.state.validValues)
-    const {isValid , errorMessage , val } = this.getValidator(event)
-    validValues[key] = isValid
-    this.updateValidity({validValues , errorMessage , val});
+    this.setState({[key]: value});
+    const validValues = {...this.state.validValues};
+    let {isValid, errorMessage} = this.doValidation(key, value);
+    const oldValidity = validValues[key];
+    validValues[key] = isValid;
+
+    // update error message if current value changes validation
+    if (isValid === false || oldValidity === false) {
+      this.setState({validValues, errorMessage});
+    } else {
+      this.setState({validValues});
+    }
   };
 
   isError = (element) => {
-    return element in this.state.validValues && !this.state.validValues[element]
-  };
-
-  isSubmitDisabled = () => {
-    const { email, name, password, confirmPassword } = this.state.validValues;
-    return email !== true || name !== true || password !== true || confirmPassword !== true || this.state.isValidCaptcha !== true;
+    return this.state.validValues[element] === false;
   };
 
   verifyCaptcha = () => {
@@ -109,22 +123,22 @@ import Recaptcha from 'react-recaptcha'
         <Modal.Header>Register</Modal.Header>
         <Modal.Content>
           <Form onSubmit={this.handleRegister} error={!!this.state.errorMessage} loading={this.state.isSubmitting} noValidate>
-            <Form.Input type='email' label='Email' name='email' error={this.isError('email')} onBlur={this.validate} />
+            <Form.Input type='email' label='Email' name='email' error={this.isError('email')} onBlur={this.validate} required />
             <Form.Input label='Name' name='name' error={this.isError('name')}  onBlur={this.validate} required />
             <Form.Input label='Organisation' name='organisation' error={this.isError('organisation')} />
             <Form.Input label='API client' name='apiClient' error={this.isError('apiClient')} onBlur={this.validate}>
               <input/>
               <Label basic>:{this.state.email ? this.state.email : 'me@example.com'}</Label>
             </Form.Input>
-            <Form.Input type='password' label='Password' name='password' autoComplete='false' error={this.isError('password')} onBlur={this.validate} />
-            <Form.Input type='password' label='Confirm password' name='confirmPassword' autoComplete='false' error={this.isError('confirmPassword')} onChange={this.validate}/>
+            <Form.Input type='password' label='Password' name='password' autoComplete='false' error={this.isError('password')} onBlur={this.validate} required />
+            <Form.Input type='password' label='Confirm password' name='confirmPassword' autoComplete='false' error={this.isError('confirmPassword')} onChange={this.validate} required />
             <Recaptcha
               sitekey={this.state.sitekey}
               verifyCallback={ this.verifyCaptcha } />
             <Message error content={this.state.errorMessage} />
             <Modal.Actions style={{textAlign: 'right'}}>
               <Button type='button' onClick={this.close}>Close</Button>
-              <Button primary type='submit' disabled={this.isSubmitDisabled()}>Register</Button>
+              <Button primary type='submit'>Register</Button>
             </Modal.Actions>
           </Form>
         </Modal.Content>
