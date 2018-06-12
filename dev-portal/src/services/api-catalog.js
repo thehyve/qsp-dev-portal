@@ -110,6 +110,10 @@ export function subscribe(usagePlanId) {
       .then(res => {
         clearSubscriptions();
         return res;
+      })
+      .catch(err => {
+        clearSubscriptions();
+        throw err;
       });
 }
 
@@ -140,6 +144,10 @@ export function unsubscribe(usagePlanId) {
       .then(res => {
         clearSubscriptions();
         return res;
+      })
+      .catch(err => {
+        clearSubscriptions();
+        throw err;
       });
 }
 
