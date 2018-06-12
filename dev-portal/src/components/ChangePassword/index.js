@@ -28,14 +28,15 @@ export default class ChangePassword extends PureComponent {
     isAuthenticated: false,
     errorMessage: '',
     password: '',
-    confirmPassword: '',
     validValues: {},
     isOpen: false,
     oldPassword: ''
   };
 
   open = () => this.setState({isSubmitting: false, errorMessage: '', isOpen: true});
-  close = () => {
+  close = event => {
+    // Ignore escapes: they interact badly with forms
+    if (event.type === 'keydown' && event.keyCode === 27) return;
     this.setState({isOpen: false})
   };
 
@@ -63,14 +64,11 @@ export default class ChangePassword extends PureComponent {
   handleChangePassword = (event) => {
     event.preventDefault();
     const {oldPassword, password} = this.state;
-    const input = {
-      oldPassword,
-      'newPassword': password
-    };
-    this.setState({isSubmitting: true})
-    changePassword(input)
-    .then(() => {this.setState({successMessage: 'Password has been changed successfully' , errorMessage: '', isSubmitting: false})})
-    .catch((e) => {this.setState({successMessage: '', errorMessage: e.message , isSubmitting: false})});
+
+    this.setState({isSubmitting: true});
+    changePassword(oldPassword, password)
+      .then(() => {this.setState({successMessage: 'Password has been changed successfully' , errorMessage: '', isSubmitting: false})})
+      .catch(e => {this.setState({successMessage: '', errorMessage: e.message , isSubmitting: false})});
   };
 
   validate = (event) => {

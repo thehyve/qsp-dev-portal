@@ -48,13 +48,15 @@ export function init() {
 
 /**
  * Register a new user.
- * @param email email address used as username
- * @param password user password
- * @param attributeList custom attributes, e.g., email, name, custom:organisation, custom:apiClient
+ * @param {string} email email address used as username
+ * @param {string} password user password
+ * @param {Object.<string, string>} attributes custom properties, e.g., email, name, custom:organisation, custom:apiClient
  * @returns {Promise} backend lambda sign in result.
  */
-export function register(email, password, attributeList) {
+export function register(email, password, attributes) {
   localStorage.clear();
+  const attributeList = Object.keys(attributes)
+      .map(k => ({Name: k, Value: attributes[k].trim()}));
   return cognitoSignUp(email, password, attributeList)
       .then(() => login(email, password));
 }
@@ -97,7 +99,7 @@ export function updateUserDetails(input) {
  * @param {{oldPassword: string, newPassword: string}} input attribute map.
  * @returns {Promise} attribute map after updating.
  */
-export function changePassword({oldPassword, newPassword}) {
+export function changePassword(oldPassword, newPassword) {
   return cognitoChangePassword(oldPassword, newPassword);
 }
 
