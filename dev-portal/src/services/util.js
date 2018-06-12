@@ -9,3 +9,12 @@ export function toObject(keyCallback, valueCallback) {
     return obj;
   }
 }
+
+export function isEmpty(obj) {
+  for (let v in obj) {
+    if (obj.hasOwnProperty(v)) {
+      return false;
+    }
+  }
+  return true;
+}

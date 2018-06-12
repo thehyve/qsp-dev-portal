@@ -5,7 +5,7 @@ import { register } from '../../services/self'
 import { validateEmail, validateNonEmpty, validatePassword, validateConfirmPassword, validateApiClient} from '../../services/validation'
 import { confirmMarketplaceSubscription } from '../../services/api-catalog'
 import Recaptcha from 'react-recaptcha'
-import {toObject} from "../../services/util";
+import {isEmpty, toObject} from "../../services/util";
 
  export default class Register extends PureComponent {
   state = {
@@ -39,7 +39,7 @@ import {toObject} from "../../services/util";
       errors.captcha = 'Captcha is not completed';
     }
 
-    if (errors) {
+    if (!isEmpty(errors)) {
       this.setState({errors});
       return;
     }
@@ -105,7 +105,7 @@ import {toObject} from "../../services/util";
 
   isError = (element) => this.state.errors.hasOwnProperty(element);
 
-  formHasError = () => this.state.errorMessage.length > 0 || Object.getOwnPropertyNames(this.state.errors).length > 0;
+  formHasError = () => this.state.errorMessage.length > 0 || !isEmpty(this.state.errors);
 
   verifyCaptcha = () => {
     const errors = {...this.state.errors};
