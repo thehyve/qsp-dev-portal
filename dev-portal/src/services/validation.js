@@ -53,7 +53,7 @@ export function validatePassword(val) {
 export function validateConfirmPassword(password, val) {
   let isValid = true;
   let errorMessage = '';
-  if(password !== val) {
+  if (password !== val) {
     isValid = false;
     errorMessage = 'Confirmed password does not match the password provided';
   }
