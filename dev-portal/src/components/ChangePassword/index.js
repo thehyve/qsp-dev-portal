@@ -25,7 +25,7 @@ export default class ChangePassword extends PureComponent {
 
   state = {
     isSubmitting: false,
-    signedIn: false,
+    isAuthenticated: false,
     errorMessage: '',
     password: '',
     validValues: {},

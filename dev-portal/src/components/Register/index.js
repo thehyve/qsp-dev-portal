@@ -10,7 +10,7 @@ import {isEmpty, toObject} from "../../services/util";
  export default class Register extends PureComponent {
   state = {
     isSubmitting: false,
-    signedIn: false,
+    isAuthenticated: false,
     errorMessage: '',
     errors: {},
     email: '',
@@ -54,12 +54,12 @@ import {isEmpty, toObject} from "../../services/util";
     };
     register(email.trim(), password, cognitoValues)
         .then(() => {
-          this.setState({signedIn: true, isSubmitting: false});
+          this.setState({isAuthenticated: true, isSubmitting: false});
           const {usagePlanId, token} = this.props;
           if (usagePlanId && token) {
             return confirmMarketplaceSubscription(usagePlanId, token)
           }
-          this.props.onChange({signedIn: true});
+          this.props.onChange({isAuthenticated: true});
         })
         .catch(e => this.setState({errorMessage: e.message, isSubmitting: false}))
   };
@@ -117,7 +117,7 @@ import {isEmpty, toObject} from "../../services/util";
     const { isOpen, errors, errorMessage, isSubmitting, email, sitekey } = this.state;
     const errorList = Object.values(errors);
 
-    return this.state.signedIn ? <Redirect to='/apis' /> : (
+    return this.state.isAuthenticated ? <Redirect to='/apis' /> : (
       <Modal
         size='small'
         open={isOpen}

@@ -7,14 +7,9 @@ let chartId = 0;
 export default class ReactChart extends PureComponent {
   state = {
     chart: undefined,
-    id: '',
+    id: 'react-chart-' + (chartId++),
     previousChart: undefined,
   };
-
-  constructor(props) {
-    super(props);
-    this.state.id = 'react-chart-' + (chartId++);
-  }
 
   componentDidMount() {
     this.handleUpdate();

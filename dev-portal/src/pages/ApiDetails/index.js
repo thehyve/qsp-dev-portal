@@ -3,42 +3,41 @@ import { Dimmer, Loader, Button, Segment} from 'semantic-ui-react'
 import {
   subscribe,
   getApi,
-  lookupSubscriptions,
   isSubscribed,
-  unsubscribe
+  unsubscribe,
 } from '../../services/api-catalog'
 import SwaggerUI from "../../components/SwaggerUI";
 import QspBreadcrumb from '../../components/QspBreadcrumb'
 import {getApiKey, isAuthenticated} from "../../services/self";
 
 export default class ApiDetailsPage extends PureComponent {
-  constructor(props) {
-    super();
-    this.state = {
-      api: null,
-      apiKey: null,
-      apiKeyProp: null,
-      subscriptionStatus: null,
-      usagePlanId: null,
-      isUpdatingSubscription: false
-    };
+  state = {
+    api: null,
+    apiKey: null,
+    apiKeyProp: null,
+    isSubscribed: undefined,
+    usagePlanId: null,
+    isUpdatingSubscription: false,
+    isAuthenticated: isAuthenticated(),
+  };
 
-    getApi(props.match.params.apiId)
+  componentDidMount() {
+    getApi(this.props.match.params.apiId)
         .then(({usagePlanId, api}) => {
           const apiKeyProp = Object.keys(api.swagger.securityDefinitions)[0];
           this.setState({api, apiKeyProp, usagePlanId}, this.lookupSubscription);
         });
 
-    if (isAuthenticated()) {
+    if (this.state.isAuthenticated) {
       getApiKey()
           .then(key => this.setState({apiKey: key.value}));
     }
   }
 
   lookupSubscription = () => {
-    if (this.state.usagePlanId && isAuthenticated()) {
-      lookupSubscriptions()
-          .then(() => this.setState({subscriptionStatus: isSubscribed(this.state.usagePlanId)}))
+    if (this.state.usagePlanId && this.state.isAuthenticated) {
+      isSubscribed(this.state.usagePlanId)
+          .then(isSubscribed => this.setState({isSubscribed}))
     }
   };
 
@@ -47,17 +46,22 @@ export default class ApiDetailsPage extends PureComponent {
 
   updateSubscription = (event, subscriptionFunc) => {
     event.preventDefault();
-    this.setState({isUpdatingSubscription: true});
 
-    subscriptionFunc(this.state.usagePlanId)
-        .catch(err => console.log('Failed to update subscription; reloading anyway', err))
-        .then(() => window.setTimeout(() => window.location.reload(), 5000));
+    this.setState({isUpdatingSubscription: true}, () =>
+        subscriptionFunc(this.state.usagePlanId)
+            .then(() => this.setState({isSubscribed: !this.state.isSubscribed, isUpdatingSubscription: false}))
+            .catch(err => {
+              console.log(this.state);
+              console.log('Failed to update subscription; reloading', err);
+              window.setTimeout(() => window.location.reload(), 10000);
+            }));
   };
 
   subscriptionButton() {
-    if (!isAuthenticated()) {
+    const {isSubscribed} = this.state;
+    if (isSubscribed === undefined) {
       return '';
-    } else if (this.state.subscriptionStatus) {
+    } else if (isSubscribed) {
       return <Button fluid onClick={this.handleUnsubscribe}>Unsubscribe</Button>
     } else {
       return <Button primary fluid onClick={this.handleSubscribe}>Subscribe</Button>
@@ -65,18 +69,24 @@ export default class ApiDetailsPage extends PureComponent {
   }
 
   render() {
-    return this.state.api && !this.state.isUpdatingSubscription ? (<div>
+    const {api, isUpdatingSubscription, apiKey, apiKeyProp, isSubscribed} = this.state;
+
+    return api ? (<div>
       <QspBreadcrumb {...this.props} />
 
       <Segment padded>
+        <Dimmer active={isUpdatingSubscription} inverted verticalAlign='top'>
+          <Loader content='Updating subscription' style={{top: '3rem'}}/>
+        </Dimmer>
+
         {this.subscriptionButton()}
         <section className="swagger-section" style={{overflow: 'auto'}}>
-          <SwaggerUI spec={this.state.api.swagger} apiKey={this.state.apiKey} apiKeyProp={this.state.apiKeyProp} isSubscribed={this.state.subscriptionStatus}/>
+          <SwaggerUI spec={api.swagger} apiKey={apiKey} apiKeyProp={apiKeyProp} isSubscribed={isSubscribed}/>
         </section>
       </Segment>
     </div>) :
     (<Dimmer active inverted>
-      <Loader content={this.state.isUpdatingSubscription ? 'Updating subscription' : 'Loading'} />
+      <Loader content='Loading' style={{top: '6rem'}} />
     </Dimmer>)
   }
 }

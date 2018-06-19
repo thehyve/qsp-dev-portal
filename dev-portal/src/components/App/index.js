@@ -44,8 +44,8 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
 
 export default class App extends PureComponent {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     init();
 
     // We are using an S3 redirect rule to prefix the url path with #!
