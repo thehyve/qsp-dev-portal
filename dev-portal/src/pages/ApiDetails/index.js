@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { Dimmer, Loader, Button, Segment} from 'semantic-ui-react'
+import {Dimmer, Loader, Button, Segment, Container} from 'semantic-ui-react'
 import {
   subscribe,
   getApi,
@@ -71,7 +71,7 @@ export default class ApiDetailsPage extends PureComponent {
   render() {
     const {api, isUpdatingSubscription, apiKey, apiKeyProp, isSubscribed} = this.state;
 
-    return api ? (<div>
+    return api ? (<Container>
       <QspBreadcrumb {...this.props} />
 
       <Segment padded>
@@ -84,7 +84,7 @@ export default class ApiDetailsPage extends PureComponent {
           <SwaggerUI spec={api.swagger} apiKey={apiKey} apiKeyProp={apiKeyProp} isSubscribed={isSubscribed}/>
         </section>
       </Segment>
-    </div>) :
+    </Container>) :
     (<Dimmer active inverted>
       <Loader content='Loading' style={{top: '6rem'}} />
     </Dimmer>)
