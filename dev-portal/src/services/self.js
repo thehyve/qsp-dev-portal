@@ -56,7 +56,7 @@ export function init() {
 export function register(email, password, attributes) {
   localStorage.clear();
   const attributeList = Object.keys(attributes)
-      .map(k => ({Name: k, Value: attributes[k].trim()}));
+      .map(k => ({Name: k, Value: (attributes[k] || '').trim()}));
   return cognitoSignUp(email, password, attributeList)
       .then(() => login(email, password));
 }
