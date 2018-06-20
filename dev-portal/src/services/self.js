@@ -96,8 +96,9 @@ export function updateUserDetails(input) {
 
 /**
  * Update the current user's account details.
- * @param {{oldPassword: string, newPassword: string}} input attribute map.
- * @returns {Promise} attribute map after updating.
+ * @param {string} oldPassword old password
+ * @param {string} newPassword new password
+ * @returns {Promise<string>} promise containing 'SUCCESS'
  */
 export function changePassword(oldPassword, newPassword) {
   return cognitoChangePassword(oldPassword, newPassword);
