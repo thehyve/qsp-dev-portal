@@ -1,6 +1,11 @@
 import React, {PureComponent} from 'react'
-import {Button, Form, Modal, Message} from 'semantic-ui-react'
-import {getAccountDetails, isAuthenticated, updateUserDetails} from "../../services/self";
+import {Button, Form, Modal, Message, Label, Container} from 'semantic-ui-react'
+import {
+  getAccountDetails,
+  getApiKey,
+  isAuthenticated,
+  updateUserDetails
+} from "../../services/self";
 import QspBreadcrumb from "../../components/QspBreadcrumb";
 import {
   validateApiClient,
@@ -19,6 +24,7 @@ export default class AccountDetails extends PureComponent {
     errorMessage: '',
     successMessage: '',
     validValues: {},
+    apiKey: {},
   };
 
   handleChanges = (event ) => {
@@ -34,6 +40,10 @@ export default class AccountDetails extends PureComponent {
   componentDidMount() {
     getAccountDetails()
         .then(this.syncAccountDetails);
+
+    getApiKey()
+        .then(apiKey => this.setState({apiKey}))
+        .catch(() => this.setState({errorMessage: 'Failed to load API key'}));
   }
 
   syncAccountDetails = ({email, name, 'custom:organisation':organisation, 'custom:apiClient':apiClient}) => {
@@ -79,9 +89,9 @@ export default class AccountDetails extends PureComponent {
   };
 
   render() {
-    const { name, email, organisation, apiClient } = this.state;
+    const { name, email, organisation, apiClient, apiKey } = this.state;
     return (
-      <div>
+      <Container>
         <QspBreadcrumb {...this.props} />
         <h2>Account Details</h2>
         <Form noValidate loading={!this.state.isLoaded} onSubmit={this.handleSubmit} error={!!this.state.errorMessage} success={!!this.state.successMessage}>
@@ -89,13 +99,19 @@ export default class AccountDetails extends PureComponent {
           <Form.Input type='email' label='Email' name='email'  value={email} readOnly transparent/>
           <Form.Input label='Name' name='name' value={name} error={this.isError('name')} onChange={this.handleChanges}/>
           <Form.Input label='Organisation' name='organisation' value={organisation} onChange={this.handleChanges}/>
-          <Form.Input label='API Client' name='apiClient' error={this.isError('apiClient')} value={apiClient} onChange={this.handleChanges} />
+          <Form.Input label='API Client' name='apiClient' error={this.isError('apiClient')} value={apiClient} onChange={this.handleChanges}>
+            <input/>
+            <Label basic>:{email}</Label>
+          </Form.Input>
+          <Form.Input label='API key ID' name='apiKeyId'  value={apiKey.id || 'Loading...'} readOnly transparent/>
+          <Form.Input label='API key' name='apiKeyValue' value={apiKey.value || 'Loading...'} readOnly transparent/>
+
           <Message error content={this.state.errorMessage}/>
           <Modal.Actions style={{textAlign: 'center'}}>
             <ChangePassword/>
             <Button primary type='submit' >Save</Button>
           </Modal.Actions>
         </Form>
-      </div>)
+      </Container>)
   }
 }
