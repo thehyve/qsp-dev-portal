@@ -36,20 +36,8 @@ export default class QspMenu extends PureComponent {
   }
 
   showApiKey() {
-    getApiKey().then(apiKey => {
-      this.setState({ apiKey })
-    })
-  }
-
-  apiKeyHeader() {
-    let header = 'API key';
-    if (this.state.apiKey.name) {
-      header += ' for ' + this.state.apiKey.name;
-    }
-    if (this.state.apiKey.id) {
-      header += ' (id ' + this.state.apiKey.id + ')';
-    }
-    return header;
+    getApiKey()
+        .then(apiKey => this.setState({apiKey}))
   }
 
   render() {
@@ -73,7 +61,7 @@ export default class QspMenu extends PureComponent {
                   trigger={<Menu.Item onClick={() => this.showApiKey()}>Show API Key</Menu.Item>}
                   content={this.state.apiKey.value ? this.state.apiKey.value : 'Loading API Key...'}
                   size='large'
-                  header={this.apiKeyHeader()}
+                  header='API key'
                   on='click'
                   position='left center'
                   wide='very'
