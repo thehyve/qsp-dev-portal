@@ -5,7 +5,7 @@
   "main": "lambda.js",
   "config": {
     "artifactsS3Bucket": "qsp-dev-portal-artifacts.thehyve.net",
-    "siteS3Bucket": "qsp-dev-portal.thehyve.net",
+    "siteS3Bucket": "developer.quisper.eu",
     "accountId": "327376717629",
     "primaryAwsRegion": "eu-central-1",
     "cloudFormationStackName": "DeveloperPortal",
