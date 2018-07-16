@@ -12,8 +12,8 @@ info:
     \  decision trees. "
   version: "1.0.0"
   title: "Personalized Dietary Advice Service"
-host: "qsp-api.thehyve.net"
-basePath: "/pdas/beta"
+host: "api.quisper.eu"
+basePath: "/personalized-dietary-advice/beta"
 schemes:
 - "https"
 paths:

@@ -1,6 +1,6 @@
 {
   "name": "dev-portal",
-  "homepage": "https://qsp-dev-portal.thehyve.net/",
+  "homepage": "https://developer.quisper.eu/",
   "version": "0.1.0",
   "private": true,
   "devDependencies": {

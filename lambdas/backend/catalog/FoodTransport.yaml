@@ -34,8 +34,8 @@ info:
     See the PDF for operations other than GetContentInformation.
   version: "1.0.0"
   title: "EuroFIR-FoodTransport"
-host: "qsp-api.thehyve.net"
-basePath: "/foodtransport/beta"
+host: "api.quisper.eu"
+basePath: "/food-transport/beta"
 schemes:
 - "https"
 paths:

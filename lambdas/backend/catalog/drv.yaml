@@ -4,8 +4,8 @@ info:
   description: "Service that provides dietary reference values compiled by EuroFIR."
   version: "1.0.0"
   title: "EuroFIR-DietaryReferenceValues"
-host: "qsp-api.thehyve.net"
-basePath: "/drv/beta"
+host: "api.quisper.eu"
+basePath: "/dietary-reference-values/beta"
 schemes:
 - "https"
 paths:

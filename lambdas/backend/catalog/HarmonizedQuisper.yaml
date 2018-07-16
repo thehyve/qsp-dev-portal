@@ -4,7 +4,7 @@ info:
   description: "An XML web service that provides a single-point access to QSP webservices."
   version: "1.0.0"
   title: "HarmonizedQuisper"
-host: "qsp-api.thehyve.net"
+host: "api.quisper.eu"
 basePath: "/harmonized/beta"
 schemes:
 - "https"
