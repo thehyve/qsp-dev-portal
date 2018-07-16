@@ -4,7 +4,7 @@
   "description": "QSP Developer Portal, running with API Gateway and Lambda",
   "main": "lambda.js",
   "config": {
-    "artifactsS3Bucket": "qsp-dev-portal-artifacts.thehyve.net",
+    "artifactsS3Bucket": "developer-artifacts.quisper.eu",
     "siteS3Bucket": "developer.quisper.eu",
     "accountId": "327376717629",
     "primaryAwsRegion": "eu-central-1",
