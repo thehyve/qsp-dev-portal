@@ -65,6 +65,7 @@ export default class App extends PureComponent {
             <Segment className='App-body' basic>
               <Switch>
                 <Route exact path="/" component={Home}/>
+                <Route exact path="/login" render={() => <Redirect to="/"/>}/>
                 <PrivateRoute path="/account-details" component={Account}/>
                 <Route path="/case-studies" component={CaseStudies}/>
                 <Route path="/getting-started" component={GettingStarted}/>
