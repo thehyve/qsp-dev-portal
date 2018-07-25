@@ -141,6 +141,7 @@ import {isEmpty, toObject} from "../../services/util";
               sitekey={sitekey}
               verifyCallback={ this.verifyCaptcha } />
             <Message error header={errorList.length ? 'There are some errors in your form' : undefined} content={errorMessage ? errorMessage : undefined} list={errorList.length ? errorList : undefined} />
+            <p align="right">By registering, you agree to Quisper's <a href="https://quisper.eu/terms-and-conditions/">Terms and conditions</a> and <a href="http://quisper.eu/privacy-policy/">Privacy policy</a>.</p>
             <Modal.Actions style={{textAlign: 'right'}}>
               <Button type='button' onClick={this.close}>Close</Button>
               <Button primary type='submit'>Register</Button>
