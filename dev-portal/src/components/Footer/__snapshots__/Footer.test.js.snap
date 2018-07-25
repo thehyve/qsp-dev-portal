@@ -5,7 +5,21 @@ exports[`should render Footer without any problem 1`] = `
   className="Footer"
 >
   <small>
-    © 2018 QUISPER
+    © 2018 Quisper
+  </small>
+  <br />
+  <small>
+    <a
+      href="https://quisper.eu/terms-and-conditions/"
+    >
+      Terms and conditions
+    </a>
+     | 
+    <a
+      href="http://quisper.eu/privacy-policy/"
+    >
+      Privacy policy
+    </a>
   </small>
 </footer>
 `;
