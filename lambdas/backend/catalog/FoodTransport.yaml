@@ -8,13 +8,13 @@ info:
 
     The provision of high quality data in the food composition databases (FCDBs) linked with EuroFIR is one of the most important goals of the network. Therefore, skilled and experienced technical experts are continuously working towards improving the content and quality of the data in their national FCDBs. The data are thoroughly documented for best possible transparency, aggregated, validated and compiled following strict and standardised quality evaluation procedures before it can be published in the national FCDBs and be available for all data users. The provision of a quality index for each value will be one of the aims of the FCDBs in the future, increasing the usefulness of the data for all users.
 
-    Data available for use comprise data from the [national FCDBs linked with EuroFIR](http://www.eurofir.org/food-information/food-composition-databases-2/).
+    Data available for use comprise data from the [national FCDBs linked with EuroFIR](http://www.eurofir.org/food-information/food-composition-databases/).
 
     ## Technical information
 
     EuroFIR-FoodTransport is a SOAP/XML web service that provides access to food composition data. See the PDF documentation for more information on syntax and allowed requests.
 
-    The accompanied PDF mentions that the content of a request should include an API user ID and a signature made with a secret key. The API user ID is the literal `quisper` and the secret key is the literal `e_x|p1nic}fkFg~0oikxoo"$>*2jtPO@|Z@!o^I?`, while the `api_permission` maps to the [country codes of the partnering institutions](http://www.eurofir.org/food-information/food-composition-databases-2/). An example POST request could be
+    The accompanied PDF mentions that the content of a request should include an API user ID and a signature made with a secret key. The API user ID is the literal `quisper` and the secret key is the literal `e_x|p1nic}fkFg~0oikxoo"$>*2jtPO@|Z@!o^I?`, while the `api_permission` maps to the [country codes of the partnering institutions](http://www.eurofir.org/food-information/food-composition-databases/). An example POST request could be
     ```
     <?xml version="1.0" encoding="utf-8" ?>
     <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
