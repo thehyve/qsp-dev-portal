@@ -28,6 +28,20 @@ const usagePlans = [
       },
     ],
   },
+  {
+    id: 'ydkuz9',
+    name: 'enutri-basic',
+    apis: [
+      {
+        id: '30d4cgalvl',
+        image: '/sam-logo.png',
+        swagger: loadYaml('./eNutri-de-rct.yaml'),
+        summary: 'Advice based on Food Frequency Quentionnaire for eNutri'
+            + ' app, by University of Reading',
+        extraDoc: '/pdfs/eNutri.pdf'
+      },
+    ],
+  },
   // Disable until the service works again
   // {
   //   id: 'ekp75u',
