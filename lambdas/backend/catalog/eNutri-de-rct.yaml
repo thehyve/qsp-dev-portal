@@ -1,29 +1,40 @@
 ---
 swagger: "2.0"
 info:
-  version: "2019-08-16T14:32:22Z"
+  version: "2019-08-21T08:56:55Z"
   title: "eNutri API"
 host: "api.quisper.eu"
 basePath: "/enutri/de-rct"
 schemes:
-- "https"
+  - "https"
 paths:
   /advice:
     post:
+      consumes:
+        - "application/json"
       produces:
-      - "application/json"
-      responses:
-        200:
-          description: "200 response"
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "FFQ Json"
+          required: true
           schema:
             $ref: "#/definitions/Empty"
+      responses:
+        200:
+          description: "Nutritional Advice Json"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
       security:
-      - api_key: []
+        - api_key: []
     options:
       consumes:
-      - "application/json"
+        - "application/json"
       produces:
-      - "application/json"
+        - "application/json"
       responses:
         200:
           description: "200 response"
