@@ -1,7 +1,7 @@
 ---
 swagger: "2.0"
 info:
-  version: "2019-10-18T12:44:42Z"
+  version: "2019-10-18T13:13:24Z"
   title: "Personal Nutrition Questionnaires (myDNAHealth)"
 host: "api.quisper.eu"
 basePath: "/my-dna-health/alpha"
@@ -46,21 +46,8 @@ paths:
       parameters:
         - name: "type"
           in: "path"
-          description: "Type of questionnaire requested."
           required: true
           type: "string"
-          enum: [
-            "cravings",
-            "toxicity",
-            "efa",
-            "inflammation",
-            "sleep",
-            "stress_burnout",
-            "gluten",
-            "blood_sugar",
-            "fats",
-            "oestrogen"
-          ]
       responses:
         200:
           description: "200 response"
