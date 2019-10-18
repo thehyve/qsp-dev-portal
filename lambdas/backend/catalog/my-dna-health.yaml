@@ -1,0 +1,99 @@
+---
+swagger: "2.0"
+info:
+  version: "2019-10-18T12:44:42Z"
+  title: "Personal Nutrition Questionnaires (myDNAHealth)"
+host: "api.quisper.eu"
+basePath: "/my-dna-health/alpha"
+schemes:
+  - "https"
+paths:
+  /questionnaires:
+    get:
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+      security:
+        - api_key: []
+    options:
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /questionnaires/{type}:
+    get:
+      produces:
+        - "application/json"
+      parameters:
+        - name: "type"
+          in: "path"
+          description: "Type of questionnaire requested."
+          required: true
+          type: "string"
+          enum: [
+            "cravings",
+            "toxicity",
+            "efa",
+            "inflammation",
+            "sleep",
+            "stress_burnout",
+            "gluten",
+            "blood_sugar",
+            "fats",
+            "oestrogen"
+          ]
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+      security:
+        - api_key: []
+    options:
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+securityDefinitions:
+  api_key:
+    type: "apiKey"
+    name: "x-api-key"
+    in: "header"
+definitions:
+  Empty:
+    type: "object"
+    title: "Empty Schema"
