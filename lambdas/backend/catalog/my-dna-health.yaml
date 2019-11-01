@@ -1,7 +1,7 @@
 ---
 swagger: "2.0"
 info:
-  version: "2019-10-18T13:13:24Z"
+  version: "2019-10-18T13:42:15Z"
   title: "Personal Nutrition Questionnaires (myDNAHealth)"
 host: "api.quisper.eu"
 basePath: "/my-dna-health/alpha"
@@ -47,12 +47,25 @@ paths:
         - name: "type"
           in: "path"
           required: true
+          description: "Type of questionnaire requested."
           type: "string"
+          enum: [
+            "cravings",
+            "toxicity",
+            "efa",
+            "inflammation",
+            "sleep",
+            "stress_burnout",
+            "gluten",
+            "blood_sugar",
+            "fats",
+            "oestrogen"
+          ]
       responses:
         200:
           description: "200 response"
           schema:
-            $ref: "#/definitions/Empty"
+            $ref: "#/definitions/questionnaire"
           headers:
             Access-Control-Allow-Origin:
               type: "string"
@@ -84,3 +97,17 @@ definitions:
   Empty:
     type: "object"
     title: "Empty Schema"
+  questionnaire:
+    type: "object"
+    properties:
+      title:
+        type: "string"
+        description: "Title of the question."
+      subtitle:
+        type: "string"
+        description: "Subtitle of the question"
+      questions:
+        type: "array"
+        description: "Questions"
+        items:
+          type: "string"
