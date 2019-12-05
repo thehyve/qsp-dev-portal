@@ -1,7 +1,7 @@
 ---
 swagger: "2.0"
 info:
-  version: "2019-12-05T14:33:04Z"
+  version: "2019-12-05T14:45:58Z"
   title: "p4h"
 host: "api.quisper.eu"
 basePath: "/p4h/alpha"
@@ -16,10 +16,10 @@ paths:
         - "application/json"
       parameters:
         - in: "body"
-          name: "authform"
+          name: "Empty"
           required: true
           schema:
-            $ref: "#/definitions/authform"
+            $ref: "#/definitions/Empty"
       responses:
         200:
           description: "200 response"
@@ -71,12 +71,3 @@ definitions:
       user_display_name:
         type: "string"
         description: "Subtitle of the question"
-  authform:
-    type: "object"
-    properties:
-      username:
-        type: "string"
-        description: "username."
-      password:
-        type: "string"
-        description: "password"
