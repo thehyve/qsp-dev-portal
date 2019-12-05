@@ -1,7 +1,7 @@
 ---
 swagger: "2.0"
 info:
-  version: "2019-12-05T14:54:04Z"
+  version: "2019-12-05T14:59:12Z"
   title: "p4h"
 host: "api.quisper.eu"
 basePath: "/p4h/alpha"
@@ -10,8 +10,20 @@ schemes:
 paths:
   /aging-data:
     post:
+      consumes:
+        - "application/json"
       produces:
         - "application/json"
+      parameters:
+        - name: "Authorization"
+          in: "header"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "Empty"
+          required: true
+          schema:
+            $ref: "#/definitions/Empty"
       responses:
         200:
           description: "200 response"
