@@ -1,7 +1,7 @@
 ---
 swagger: "2.0"
 info:
-  version: "2019-12-05T14:23:39Z"
+  version: "2019-12-05T14:29:28Z"
   title: "p4h"
 host: "api.quisper.eu"
 basePath: "/p4h/alpha"
@@ -25,6 +25,8 @@ paths:
           description: "200 response"
           schema:
             $ref: "#/definitions/auth"
+      security:
+        - api_key: []
     options:
       consumes:
         - "application/json"
@@ -42,6 +44,11 @@ paths:
               type: "string"
             Access-Control-Allow-Headers:
               type: "string"
+securityDefinitions:
+  api_key:
+    type: "apiKey"
+    name: "x-api-key"
+    in: "header"
 definitions:
   Empty:
     type: "object"
