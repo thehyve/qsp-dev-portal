@@ -1,0 +1,72 @@
+---
+swagger: "2.0"
+info:
+  version: "2019-12-05T14:23:39Z"
+  title: "p4h"
+host: "api.quisper.eu"
+basePath: "/p4h/alpha"
+schemes:
+  - "https"
+paths:
+  /token:
+    post:
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "authform"
+          required: true
+          schema:
+            $ref: "#/definitions/authform"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/auth"
+    options:
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+definitions:
+  Empty:
+    type: "object"
+    title: "Empty Schema"
+  auth:
+    type: "object"
+    properties:
+      token:
+        type: "string"
+        description: "Title of the question."
+      user_email:
+        type: "string"
+        description: "Subtitle of the question"
+      user_nicename:
+        type: "string"
+        description: "Subtitle of the question"
+      user_display_name:
+        type: "string"
+        description: "Subtitle of the question"
+  authform:
+    type: "object"
+    properties:
+      username:
+        type: "string"
+        description: "username."
+      password:
+        type: "string"
+        description: "password"

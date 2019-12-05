@@ -43,6 +43,22 @@ const usagePlans = [
     ],
   },
   {
+    id: 'g12l31',
+    name: 'p4h-basic',
+    apis: [
+      {
+        id: 'hd0zlobu64',
+        image: '/sam-logo.png',
+        swagger: loadYaml('./p4h.yaml'),
+        summary: 'Retrieve AGING information by sending DNA results.'
+            + 'There are two endpoints needed to retrieve AGING information.'
+            + ' One is for authentication and the other is to get AGING'
+            + ' information',
+        extraDoc: '/pdfs/p4h.pdf'
+      },
+    ],
+  },
+  {
     id: 'ydkuz9',
     name: 'enutri-basic',
     apis: [
