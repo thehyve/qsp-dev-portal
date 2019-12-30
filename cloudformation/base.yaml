@@ -469,7 +469,7 @@ Resources:
       Handler: index.handler
       MemorySize: 128
       Role: !GetAtt DevPortalLambdaExecutionRole.Arn
-      Runtime: nodejs8.10
+      Runtime: nodejs10.x
       Timeout: 30
       Environment:
         Variables:
@@ -497,7 +497,7 @@ Resources:
       Handler: index.handler
       MemorySize: 128
       Role: !GetAtt DevPortalLambdaExecutionRole.Arn
-      Runtime: nodejs8.10
+      Runtime: nodejs10.x
       Timeout: 30
 
   PreSignupLambdaExecutionRole:
@@ -530,7 +530,7 @@ Resources:
       Handler: index.handler
       MemorySize: 128
       Role: !GetAtt PreSignupLambdaExecutionRole.Arn
-      Runtime: nodejs8.10
+      Runtime: nodejs10.x
       Timeout: 3
 
   CognitoUserPool:
