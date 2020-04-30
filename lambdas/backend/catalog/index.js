@@ -68,7 +68,7 @@ const usagePlans = [
         swagger: loadYaml('./eNutri-de-rct.yaml'),
         summary: 'Advice based on Food Frequency Questionnaire for eNutri'
             + ' app, by University of Reading',
-        extraDoc: '/pdfs/eNutri.pdf'
+        extraDoc: '/pdfs/eNutri_API_docs.pdf'
       },
     ],
   },
