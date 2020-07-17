@@ -22,6 +22,8 @@ paths:
           description: "200 response"
           schema:
             $ref: "#/definitions/Empty"
+      security:
+        - api_key: []
     options:
       consumes:
         - "application/json"
@@ -53,6 +55,8 @@ paths:
           description: "200 response"
           schema:
             $ref: "#/definitions/Empty"
+      security:
+        - api_key: []
     options:
       consumes:
         - "application/json"
