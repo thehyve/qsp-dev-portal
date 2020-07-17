@@ -44,7 +44,21 @@ paths:
         - name: "type"
           in: "path"
           required: true
+          description: "Name of the query."
           type: "string"
+          enum: [
+            "getAcquisitionType",
+            "getComponent",
+            "getCookingMet",
+            "getCountry",
+            "getFoodGroup",
+            "getMatrix",
+            "getMethodIndicator",
+            "getMethodIype",
+            "getReferenceType",
+            "getUnit",
+            "getValueType"
+          ]
       responses:
         200:
           description: "200 response"
