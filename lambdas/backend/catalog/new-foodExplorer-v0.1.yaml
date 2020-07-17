@@ -8,10 +8,77 @@ basePath: "/fdtp/alpha"
 schemes:
   - "https"
 paths:
-  /foodexplorer:
+  /foodexplorer/food-code/{food-code}:
     get:
       produces:
         - "application/json"
+      parameters:
+        - name: "food-code"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+    options:
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /foodexplorer/food-name/{food-name}:
+    get:
+      produces:
+        - "application/json"
+      parameters:
+        - name: "food-name"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+    options:
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /foodexplorer/nutritional-value/{foodcode}:
+    get:
+      produces:
+        - "application/json"
+      parameters:
+        - name: "foodcode"
+          in: "path"
+          required: true
+          type: "string"
       responses:
         200:
           description: "200 response"
