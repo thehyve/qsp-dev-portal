@@ -72,6 +72,20 @@ const usagePlans = [
       },
     ],
   },
+  {
+    id: 'ecoabw',
+    name: 'new-foodexplorer',
+    apis: [
+      {
+        id: 'rer1jlh0l8',
+        image: '/sam-logo.png',
+        swagger: loadYaml('./new-foodExplorer-v0.1.yaml'),
+        summary: 'POC Integrations to test new Implementation of FoodExplorer'
+            + 'based on REST',
+        extraDoc: '/pdfs/FoodEXplorer- v0.1.pdfeNutri_API_docs.pdf'
+      },
+    ],
+  },
   // Disable until the service works again
   // {
   //   id: 'ekp75u',
