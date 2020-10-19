@@ -86,6 +86,20 @@ const usagePlans = [
       },
     ],
   },
+  {
+    id: '3b2n44',
+    name: 'ffq-safecape-basic',
+    apis: [
+      {
+        id: 'txz1jr9ipi',
+        image: '/logo-ffq.png',
+        swagger: loadYaml('./ffq.yaml'),
+        summary: 'A service for calculating daily intake for a variety of'
+            + ' nutrients based on a simple Food Frequency Questionnaire',
+        extraDoc: '/pdfs/ffq-api-doc-v1.pdf'
+      },
+    ],
+  },
   // Disable until the service works again
   // {
   //   id: 'ekp75u',
