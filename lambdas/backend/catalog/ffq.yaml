@@ -1,0 +1,76 @@
+---
+swagger: "2.0"
+info:
+  description: "The Nutrient Intake Calculation Service is a service which calculates \
+    \ daily intake for a variety of nutrients. The service receives an individual’s answers \
+    \ to a simple Food Frequency Questionnaire, available \
+    \ [here](http://quisper.onsafecape.gr/ffq). The results received from the \
+    \ service can be used as input to the Personalised Nutrition Advice service or any other \
+    \ personalised dietary advice service."
+  version: "2020-10-15T16:02:13Z"
+  title: "Nutrient Intake Calculation Service(FFQ)"
+host: "api.quisper.eu"
+basePath: "/nutrient-intake-values/beta"
+schemes:
+  - "https"
+paths:
+  /ffq/{version}:
+    get:
+      produces:
+        - "application/json"
+      parameters:
+        - name: "version"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+      security:
+        - api_key: []
+    post:
+      produces:
+        - "application/json"
+      parameters:
+        - name: "version"
+          in: "path"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+      security:
+        - api_key: []
+    options:
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+securityDefinitions:
+  api_key:
+    type: "apiKey"
+    name: "x-api-key"
+    in: "header"
+definitions:
+  Empty:
+    type: "object"
+    title: "Empty Schema"
+externalDocs:
+  description: "PDF documentation"
+  url: "/pdfs/ffq-api-doc-v1.pdf"

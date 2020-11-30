@@ -43,6 +43,22 @@ const usagePlans = [
     ],
   },
   {
+    id: 'g12l31',
+    name: 'p4h-basic',
+    apis: [
+      {
+        id: 'hd0zlobu64',
+        image: '/sam-logo.png',
+        swagger: loadYaml('./p4h.yaml'),
+        summary: 'Retrieve AGING information by sending DNA results.'
+            + 'There are two endpoints needed to retrieve AGING information.'
+            + ' One is for authentication and the other is to get AGING'
+            + ' information',
+        extraDoc: '/pdfs/p4h.pdf'
+      },
+    ],
+  },
+  {
     id: 'ydkuz9',
     name: 'enutri-basic',
     apis: [
@@ -52,7 +68,35 @@ const usagePlans = [
         swagger: loadYaml('./eNutri-de-rct.yaml'),
         summary: 'Advice based on Food Frequency Questionnaire for eNutri'
             + ' app, by University of Reading',
-        extraDoc: '/pdfs/eNutri.pdf'
+        extraDoc: '/pdfs/eNutri_API_docs.pdf'
+      },
+    ],
+  },
+  {
+    id: 'ecoabw',
+    name: 'new-foodexplorer',
+    apis: [
+      {
+        id: 'rer1jlh0l8',
+        image: '/sam-logo.png',
+        swagger: loadYaml('./new-foodExplorer-v0.1.yaml'),
+        summary: 'POC Integrations to test new Implementation of FoodExplorer'
+            + 'based on REST',
+        extraDoc: '/pdfs/FoodEXplorer- v0.1.pdfeNutri_API_docs.pdf'
+      },
+    ],
+  },
+  {
+    id: '3b2n44',
+    name: 'ffq-safecape-basic',
+    apis: [
+      {
+        id: 'txz1jr9ipi',
+        image: '/logo-ffq.png',
+        swagger: loadYaml('./ffq.yaml'),
+        summary: 'A service for calculating daily intake for a variety of'
+            + ' nutrients based on a simple Food Frequency Questionnaire',
+        extraDoc: '/pdfs/ffq-api-doc-v1.pdf'
       },
     ],
   },
