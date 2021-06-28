@@ -7,7 +7,7 @@ info:
     \ [here](http://quisper.onsafecape.gr/ffq). The results received from the \
     \ service can be used as input to the Personalised Nutrition Advice service or any other \
     \ personalised dietary advice service."
-  version: "2020-10-15T16:02:13Z"
+  version: "1.2"
   title: "Nutrient Intake Calculation Service(FFQ)"
 host: "api.quisper.eu"
 basePath: "/nutrient-intake-values/beta"

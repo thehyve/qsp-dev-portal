@@ -96,10 +96,37 @@ const usagePlans = [
         swagger: loadYaml('./ffq.yaml'),
         summary: 'A service for calculating daily intake for a variety of'
             + ' nutrients based on a simple Food Frequency Questionnaire',
-        extraDoc: '/pdfs/ffq-api-doc-v1.pdf'
+        extraDoc: '/pdfs/ffq-api-doc-v1.2.pdf'
       },
     ],
   },
+  {
+    id: 'wq96j0',
+    name: 'food4me-l1-safecape-basic',
+    apis: [
+      {
+        id: 'nhxiy6ft2b',
+        image: '/logo-pna-l1.png',
+        swagger: loadYaml('./food4me-l1.yaml'),
+        summary: '',
+        extraDoc: '/pdfs/food4me-api-doc-v1.0.pdf'
+      },
+    ],
+   },
+   {
+    id: 'x6qz7w',
+    name: 'ffq-food4me-safecape-basic',
+    apis: [
+      {
+        id: 'fryr6joc4f',
+        image: '/logo-ffq-pna-l1.png',
+        swagger: loadYaml('./ffq-food4me-l1.yaml'),
+        summary: 'An integrated service for providing personalized dietary advice based on the guidelines developed by the Food4Me project,' +
+        ' using a simple Food Frequency Questionnaire.',
+        extraDoc: '/pdfs/ffq-food4me-api-doc-v1.0.pdf'
+      },
+    ],
+   },
   // Disable until the service works again
   // {
   //   id: 'ekp75u',
