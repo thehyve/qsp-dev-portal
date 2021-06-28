@@ -1,0 +1,79 @@
+---
+swagger: "2.0"
+info:
+  description: "A service for providing personalized dietary advice based on the guidelines\
+    \ developed by the Food4Me project."
+  version: "1.0"
+  title: "Personalized Nutrition Advice L1 Service"
+host: "api.quisper.eu"
+basePath: "/personalised-nutrition-advice/beta"
+schemes:
+- "https"
+paths:
+  /food4me-l1/{version}:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "version"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      security:
+      - api_key: []
+    post:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "version"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+      security:
+      - api_key: []
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+securityDefinitions:
+  api_key:
+    type: "apiKey"
+    name: "x-api-key"
+    in: "header"
+definitions:
+  Empty:
+    type: "object"
+    title: "Empty Schema"
+externalDocs:
+  description: "PDF documentation"
+  url: "/pdfs/food4me-api-doc-v1.0.pdf"
