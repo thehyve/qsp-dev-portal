@@ -4,14 +4,32 @@ info:
   description: "An integrated service for providing personalized dietary advice based\
     \ on the guidelines developed by the Food4Me project, using a simple Food Frequency\
     \ Questionnaire."
-  version: "1.0"
+  version: "2021-06-28T15:55:42Z"
   title: "Nutrient Intake Calculation-Personalized Nutrition Advice L1 Integrated\
     \ Service"
 host: "api.quisper.eu"
-basePath: "/ffq-personalised-nutrition-advice/ffq-food4me-l1-beta"
+basePath: "/ffq-personalised-nutrition-advice/beta"
 schemes:
 - "https"
 paths:
+  /ffq-food4me-l1:
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
   /ffq-food4me-l1/{version}:
     get:
       produces:
@@ -81,6 +99,3 @@ definitions:
   Empty:
     type: "object"
     title: "Empty Schema"
-externalDocs:
-  description: "PDF documentation"
-  url: "/pdfs/ffq-food4me-api-doc-v1.0.pdf"
